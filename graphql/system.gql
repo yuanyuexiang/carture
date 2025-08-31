@@ -1,0 +1,19 @@
+# 系统级查询 - 获取当前用户信息
+query GetCurrentUser {
+  users_me {
+    id
+    email
+    first_name
+    last_name
+    avatar {
+      id
+      filename_download
+    }
+    role {
+      id
+      name
+    }
+    status
+    last_access
+  }
+}

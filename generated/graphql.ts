@@ -3136,21 +3136,20 @@ export type GetUserQueryVariables = Exact<{
 }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', users_by_id?: { __typename?: 'users', id: string, name: string, email: string } | null };
+export type GetUserQuery = { __typename?: 'Query', users_by_id?: { __typename?: 'users', id: string, name: string, email: string, created_at?: any | null, updated_at?: any | null } | null };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'users', id: string, name: string, email: string }> };
+export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'users', id: string, name: string, email: string, created_at?: any | null }> };
 
 export type UpdateUserMutationVariables = Exact<{
   id: Scalars['ID']['input'];
-  name?: InputMaybe<Scalars['String']['input']>;
-  email?: InputMaybe<Scalars['String']['input']>;
+  data: Update_Users_Input;
 }>;
 
 
-export type UpdateUserMutation = { __typename?: 'Mutation', update_users_item?: { __typename?: 'users', id: string, name: string, email: string } | null };
+export type UpdateUserMutation = { __typename?: 'Mutation', update_users_item?: { __typename?: 'users', id: string, name: string, email: string, updated_at?: any | null } | null };
 
 
 export const GetCategoriesDocument = gql`
@@ -3308,6 +3307,8 @@ export const GetUserDocument = gql`
     id
     name
     email
+    created_at
+    updated_at
   }
 }
     `;
@@ -3350,6 +3351,7 @@ export const GetUsersDocument = gql`
     id
     name
     email
+    created_at
   }
 }
     `;
@@ -3386,11 +3388,12 @@ export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery
 export type GetUsersSuspenseQueryHookResult = ReturnType<typeof useGetUsersSuspenseQuery>;
 export type GetUsersQueryResult = ApolloReactCommon.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
 export const UpdateUserDocument = gql`
-    mutation UpdateUser($id: ID!, $name: String, $email: String) {
-  update_users_item(id: $id, data: {name: $name, email: $email}) {
+    mutation UpdateUser($id: ID!, $data: update_users_input!) {
+  update_users_item(id: $id, data: $data) {
     id
     name
     email
+    updated_at
   }
 }
     `;
@@ -3410,8 +3413,7 @@ export type UpdateUserMutationFn = ApolloReactCommon.MutationFunction<UpdateUser
  * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
  *   variables: {
  *      id: // value for 'id'
- *      name: // value for 'name'
- *      email: // value for 'email'
+ *      data: // value for 'data'
  *   },
  * });
  */
