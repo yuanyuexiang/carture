@@ -31,3 +31,39 @@
 ✅ 代理响应: 200 /api/graphql/system
 🔄 代理请求: POST /api/graphql/system -> https://forge.matrix-net.tech/graphql/system
 ✅ 代理响应: 200 /api/graphql/system
+🔄 代理请求: POST /api/graphql/system -> https://forge.matrix-net.tech/graphql/system
+✅ 代理响应: 200 /api/graphql/system
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+✅ 代理响应: 200 /api/graphql
+✅ 代理响应: 200 /api/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+✅ 代理响应: 200 /api/graphql
+✅ 代理响应: 200 /api/graphql
+🔄 代理请求: POST /api/graphql/system -> https://forge.matrix-net.tech/graphql/system
+✅ 代理响应: 200 /api/graphql/system
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+✅ 代理响应: 200 /api/graphql
+✅ 代理响应: 200 /api/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+✅ 代理响应: 200 /api/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+✅ 代理响应: 200 /api/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+✅ 代理响应: 200 /api/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+✅ 代理响应: 200 /api/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+✅ 代理响应: 200 /api/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+✅ 代理响应: 200 /api/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+✅ 代理响应: 200 /api/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+✅ 代理响应: 200 /api/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+✅ 代理响应: 200 /api/graphql
+🔄 代理请求: POST /api/graphql -> https://forge.matrix-net.tech/graphql
+✅ 代理响应: 200 /api/graphql

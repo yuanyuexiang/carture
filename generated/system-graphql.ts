@@ -5830,14 +5830,14 @@ export type SystemWrite_Directus_Relations_Schema_Input = {
 export type SystemGetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SystemGetCurrentUserQuery = { __typename?: 'Query', users_me?: { __typename?: 'directus_users', id: string, email?: string | null, first_name?: string | null, last_name?: string | null, status?: string | null, last_access?: any | null, avatar?: { __typename?: 'directus_files', id: string, filename_download: string } | null, role?: { __typename?: 'directus_roles', id: string, name: string } | null } | null };
+export type SystemGetCurrentUserQuery = { __typename?: 'Query', permissions_me?: any | null, users_me?: { __typename?: 'directus_users', id: string, email?: string | null, first_name?: string | null, last_name?: string | null, location?: string | null, title?: string | null, description?: string | null, tags?: any | null, language?: string | null, status?: string | null, last_access?: any | null, last_page?: string | null, provider?: string | null, email_notifications?: boolean | null, appearance?: string | null, theme_dark?: string | null, theme_light?: string | null, text_direction?: string | null, avatar?: { __typename?: 'directus_files', id: string, filename_download: string, title?: string | null, type?: string | null, width?: number | null, height?: number | null, filesize?: any | null } | null, role?: { __typename?: 'directus_roles', id: string, name: string, description?: string | null, icon?: string | null } | null } | null, roles_me?: Array<{ __typename?: 'directus_roles', id: string, name: string, description?: string | null, icon?: string | null } | null> | null };
 
 export type SystemUpdateCurrentUserMutationVariables = Exact<{
   data: SystemUpdate_Directus_Users_Input;
 }>;
 
 
-export type SystemUpdateCurrentUserMutation = { __typename?: 'Mutation', update_users_me?: { __typename?: 'directus_users', id: string, email?: string | null, first_name?: string | null, last_name?: string | null, status?: string | null } | null };
+export type SystemUpdateCurrentUserMutation = { __typename?: 'Mutation', update_users_me?: { __typename?: 'directus_users', id: string, email?: string | null, first_name?: string | null, last_name?: string | null, location?: string | null, title?: string | null, description?: string | null, tags?: any | null, language?: string | null, status?: string | null, email_notifications?: boolean | null, appearance?: string | null, theme_dark?: string | null, theme_light?: string | null, text_direction?: string | null, avatar?: { __typename?: 'directus_files', id: string, filename_download: string } | null } | null };
 
 
 export const GetCurrentUserDocument = gql`
@@ -5847,16 +5847,42 @@ export const GetCurrentUserDocument = gql`
     email
     first_name
     last_name
+    location
+    title
+    description
+    tags
     avatar {
       id
       filename_download
+      title
+      type
+      width
+      height
+      filesize
     }
+    language
+    status
     role {
       id
       name
+      description
+      icon
     }
-    status
     last_access
+    last_page
+    provider
+    email_notifications
+    appearance
+    theme_dark
+    theme_light
+    text_direction
+  }
+  permissions_me
+  roles_me {
+    id
+    name
+    description
+    icon
   }
 }
     `;
@@ -5899,7 +5925,21 @@ export const UpdateCurrentUserDocument = gql`
     email
     first_name
     last_name
+    location
+    title
+    description
+    tags
+    avatar {
+      id
+      filename_download
+    }
+    language
     status
+    email_notifications
+    appearance
+    theme_dark
+    theme_light
+    text_direction
   }
 }
     `;

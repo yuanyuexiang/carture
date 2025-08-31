@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useRef, useState } from 'react';
-import { ActivityIndicator, Dimensions, FlatList, Platform, RefreshControl, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, FlatList, Platform, RefreshControl, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import ProductCard from '../components/ProductCard';
 import Tab from '../components/Tab';
 import { useGetCategoriesQuery, useGetProductsQuery } from '../generated/graphql';
@@ -127,12 +127,14 @@ const ProductListScreen: React.FC = () => {
           </View>
         </View>
         <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.searchIcon}>
+          
+          {/* <TouchableOpacity style={styles.searchIcon}>
             <Ionicons name="search" size={20} color="#666" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.couponButton}>
             <Text style={styles.couponText}>轮播</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          
         </View>
       </View>
 
