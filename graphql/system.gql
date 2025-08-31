@@ -17,3 +17,14 @@ query GetCurrentUser {
     last_access
   }
 }
+
+# 系统级变更 - 更新当前用户信息
+mutation UpdateCurrentUser($data: update_directus_users_input!) {
+  update_users_me(data: $data) {
+    id
+    email
+    first_name
+    last_name
+    status
+  }
+}

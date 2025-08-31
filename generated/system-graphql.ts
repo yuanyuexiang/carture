@@ -5832,6 +5832,13 @@ export type SystemGetCurrentUserQueryVariables = Exact<{ [key: string]: never; }
 
 export type SystemGetCurrentUserQuery = { __typename?: 'Query', users_me?: { __typename?: 'directus_users', id: string, email?: string | null, first_name?: string | null, last_name?: string | null, status?: string | null, last_access?: any | null, avatar?: { __typename?: 'directus_files', id: string, filename_download: string } | null, role?: { __typename?: 'directus_roles', id: string, name: string } | null } | null };
 
+export type SystemUpdateCurrentUserMutationVariables = Exact<{
+  data: SystemUpdate_Directus_Users_Input;
+}>;
+
+
+export type SystemUpdateCurrentUserMutation = { __typename?: 'Mutation', update_users_me?: { __typename?: 'directus_users', id: string, email?: string | null, first_name?: string | null, last_name?: string | null, status?: string | null } | null };
+
 
 export const GetCurrentUserDocument = gql`
     query GetCurrentUser {
@@ -5885,3 +5892,40 @@ export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQ
 export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
 export type GetCurrentUserSuspenseQueryHookResult = ReturnType<typeof useGetCurrentUserSuspenseQuery>;
 export type GetCurrentUserQueryResult = ApolloReactCommon.QueryResult<SystemGetCurrentUserQuery, SystemGetCurrentUserQueryVariables>;
+export const UpdateCurrentUserDocument = gql`
+    mutation UpdateCurrentUser($data: update_directus_users_input!) {
+  update_users_me(data: $data) {
+    id
+    email
+    first_name
+    last_name
+    status
+  }
+}
+    `;
+export type SystemUpdateCurrentUserMutationFn = ApolloReactCommon.MutationFunction<SystemUpdateCurrentUserMutation, SystemUpdateCurrentUserMutationVariables>;
+
+/**
+ * __useUpdateCurrentUserMutation__
+ *
+ * To run a mutation, you first call `useUpdateCurrentUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCurrentUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCurrentUserMutation, { data, loading, error }] = useUpdateCurrentUserMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdateCurrentUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SystemUpdateCurrentUserMutation, SystemUpdateCurrentUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<SystemUpdateCurrentUserMutation, SystemUpdateCurrentUserMutationVariables>(UpdateCurrentUserDocument, options);
+      }
+export type UpdateCurrentUserMutationHookResult = ReturnType<typeof useUpdateCurrentUserMutation>;
+export type UpdateCurrentUserMutationResult = ApolloReactCommon.MutationResult<SystemUpdateCurrentUserMutation>;
+export type UpdateCurrentUserMutationOptions = ApolloReactCommon.BaseMutationOptions<SystemUpdateCurrentUserMutation, SystemUpdateCurrentUserMutationVariables>;
