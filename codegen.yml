@@ -20,7 +20,7 @@ generates:
       - https://forge.matrix-net.tech/graphql/system:
           headers:
             Authorization: Bearer CCZnVSanwCwzS6edoC8-2ImbzJiZLeAD
-    documents: "graphql/system.gql"
+    documents: "graphql/{system,boutique}.gql"
     plugins:
       - typescript
       - typescript-operations

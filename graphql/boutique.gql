@@ -1,0 +1,32 @@
+query GetUserBoutique {
+  boutiques(filter: { user: { id: { _eq: "$CURRENT_USER" } } }) {
+    id
+    name
+    address
+    main_image
+    images
+    stars
+    status
+    sort
+    date_created
+    date_updated
+    user {
+      id
+      first_name
+      last_name
+      email
+    }
+  }
+}
+
+mutation UpdateBoutique($id: ID!, $data: update_boutiques_input!) {
+  update_boutiques_item(id: $id, data: $data) {
+    id
+    name
+    address
+    main_image
+    images
+    stars
+    status
+  }
+}

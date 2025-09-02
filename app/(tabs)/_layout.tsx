@@ -42,8 +42,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: '我的',
-          tabBarIcon: ({ color }) => <IconSymbol size={24} name="person.crop.circle" color={color} />,
+          title: '店铺',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="storefront" color={color} />,
         }}
       />
     </Tabs>
