@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Directus 配置
-DIRECTUS_URL="https://forge.matrix-net.tech"
+DIRECTUS_URL="https://directus.matrix-net.tech"
 EMAIL="tom.nanjing@gmail.com"
 PASSWORD="sual116y"
 
