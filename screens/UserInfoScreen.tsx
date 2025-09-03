@@ -1,18 +1,18 @@
 import { ApolloProvider } from '@apollo/client';
 import React from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Button,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Switch,
-    Text,
-    TextInput,
-    View
+  ActivityIndicator,
+  Alert,
+  Button,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  View
 } from 'react-native';
-import { systemApolloClient } from '../components/SystemApolloProvider';
+import { useSystemApolloClient } from '../components/SystemApolloProvider';
 import { useGetCurrentUserQuery, useUpdateCurrentUserMutation } from '../generated/system-graphql';
 
 // 内部组件 - 使用系统Apollo Client获取当前用户
@@ -297,8 +297,10 @@ const UserInfoContent: React.FC = () => {
 };
 
 const UserInfoScreen: React.FC = () => {
+  const systemClient = useSystemApolloClient();
+  
   return (
-    <ApolloProvider client={systemApolloClient}>
+    <ApolloProvider client={systemClient}>
       <UserInfoContent />
     </ApolloProvider>
   );
