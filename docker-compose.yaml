@@ -6,7 +6,7 @@ services:
     healthcheck:
       disable: true
     ports:
-      - "80:80"
+      - "80"
     networks:
       - matrix-network
     labels:
