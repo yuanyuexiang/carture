@@ -1,9 +1,10 @@
 services:
   carture:
     container_name: carture
-    build: .
-    image: carture:latest
+    image: ${DOCKER_IMAGE_TAG}
     restart: always
+    healthcheck:
+      disable: true
     ports:
       - "80:80"
     networks:
