@@ -1,0 +1,13 @@
+query GetUserBoutique($userId: ID!) {
+  boutiques(filter: { user: { id: { _eq: $userId } } }, limit: 1) {
+    id
+    name
+    address
+    main_image
+    images
+    stars
+    status
+    date_created
+    date_updated
+  }
+}

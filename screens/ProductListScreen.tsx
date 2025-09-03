@@ -1,6 +1,6 @@
-import { Ionicons } from '@expo/vector-icons';
 import React, { useRef, useState } from 'react';
 import { ActivityIndicator, Dimensions, FlatList, Platform, RefreshControl, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import BrandHeader from '../components/BrandHeader';
 import ProductCard from '../components/ProductCard';
 import Tab from '../components/Tab';
 import { useGetCategoriesQuery, useGetProductsQuery } from '../generated/graphql';
@@ -110,22 +110,7 @@ const ProductListScreen: React.FC = () => {
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       {/* 顶部品牌区域 */}
       <View style={styles.header}>
-        <View style={styles.brandSection}>
-          <View style={styles.brandLogo}>
-            <Text style={styles.logoText}>衣橱</Text>
-          </View>
-          <View style={styles.brandInfo}>
-            <Text style={styles.brandName}>朱老板服装旗舰店</Text>
-            <View style={styles.ratingSection}>
-              <View style={styles.stars}>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Ionicons key={star} name="star" size={12} color="#ff6b35" />
-                ))}
-              </View>
-              <Text style={styles.ratingText}>11.5高分</Text>
-            </View>
-          </View>
-        </View>
+        <BrandHeader />
         <View style={styles.headerRight}>
           
           {/* <TouchableOpacity style={styles.searchIcon}>
@@ -236,46 +221,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
-  },
-  brandSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  brandLogo: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: '#ff6b35',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  logoText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  brandInfo: {
-    flex: 1,
-  },
-  brandName: {
-    fontSize: 20, // 增加品牌名称字体大小，让品牌更突出
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
-  },
-  ratingSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  stars: {
-    flexDirection: 'row',
-    marginRight: 6,
-  },
-  ratingText: {
-    fontSize: 13, // 增加评分文字大小，提高可读性
-    color: '#666',
   },
   headerRight: {
     flexDirection: 'row',

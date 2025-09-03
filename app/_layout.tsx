@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import 'react-native-reanimated';
+import DataInitializer from '../components/DataInitializer';
 import WardrobeApolloProvider from '../components/WardrobeApolloProvider';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -53,21 +54,23 @@ export default function RootLayout() {
 
   return (
       <WardrobeApolloProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen 
-              name="ProductDetail" 
-              options={{ 
-                title: '商品详情',
-                headerShown: true,
-                presentation: 'card'
-              }} 
-            />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
+        <DataInitializer>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen 
+                name="ProductDetail" 
+                options={{ 
+                  title: '商品详情',
+                  headerShown: true,
+                  presentation: 'card'
+                }} 
+              />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </DataInitializer>
       </WardrobeApolloProvider>
   );
 }
