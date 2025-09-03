@@ -79,7 +79,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
                   {product.subtitle}
                 </Text>
               )}
-              {renderStars(product.stars)}
+              {renderStars(product.rating_avg)}
               <Text style={styles.price}>
                 ￥{product.price !== undefined ? product.price : '价格'}
               </Text>
@@ -97,7 +97,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
               {product.subtitle}
             </Text>
           )}
-          {renderStars(product.stars)}
+          {renderStars(product.rating_avg)}
           <Text style={[styles.price, { color: '#ff6b35', textShadowColor: 'transparent' }]}>
             ￥{product.price !== undefined ? product.price : '价格'}
           </Text>

@@ -1,17 +1,17 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Dimensions,
-    Image,
-    Modal,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  Modal,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { useGetProductByIdQuery } from '../generated/business-graphql';
 import { getDirectusThumbnailUrl } from '../utils/directus';
@@ -101,16 +101,7 @@ const ProductDetailScreen: React.FC = () => {
 
   return (
     <>
-      {/* 返回按钮 */}
-      <SafeAreaView style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => router.back()}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.backButtonText}>← 返回</Text>
-        </TouchableOpacity>
-      </SafeAreaView>
+      
       
       <ScrollView style={styles.container}>
         {mainImageUrl && (

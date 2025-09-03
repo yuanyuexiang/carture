@@ -3648,7 +3648,7 @@ export type BusinessGetProductsQueryVariables = Exact<{
 }>;
 
 
-export type BusinessGetProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'products', id: string, name: string, subtitle?: string | null, description?: string | null, price: number, main_image?: string | null, images?: any | null, stars?: number | null, category_id?: { __typename?: 'categories', id: string, name: string, description?: string | null } | null }> };
+export type BusinessGetProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'products', id: string, name: string, subtitle?: string | null, description?: string | null, price: number, main_image?: string | null, images?: any | null, rating_avg?: number | null, category_id?: { __typename?: 'categories', id: string, name: string, description?: string | null } | null }> };
 
 export type BusinessGetProductByIdQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -3807,7 +3807,7 @@ export const GetProductsDocument = gql`
     price
     main_image
     images
-    stars
+    rating_avg
     category_id {
       id
       name
