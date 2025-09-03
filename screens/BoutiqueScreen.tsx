@@ -1,76 +1,132 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { useUserBoutique } from '@/hooks/useUserBoutique';
+import { getDirectusImageUrl, getDirectusThumbnailUrl } from '@/utils/directus';
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
-    Alert,
-    Dimensions,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  Modal,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
-
-// 临时的模拟数据类型
-interface BoutiqueData {
-  id: string;
-  name: string;
-  address: string;
-  main_image?: string;
-  images?: string[];
-  stars: number;
-  status: string;
-}
 
 const { width } = Dimensions.get('window');
 
 export default function BoutiqueScreen() {
   const colorScheme = useColorScheme();
-  const [isEditing, setIsEditing] = useState(false);
-  const [boutiqueData, setBoutiqueData] = useState<BoutiqueData>({
-    id: '1',
-    name: '我的精品店',
-    address: '上海市黄浦区南京东路123号',
-    main_image: 'https://via.placeholder.com/400x200',
-    images: [
-      'https://via.placeholder.com/400x200',
-      'https://via.placeholder.com/400x200',
-      'https://via.placeholder.com/400x200',
-    ],
-    stars: 4,
-    status: 'published',
-  });
+  
+  // 图片预览状态
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [currentImageUrl, setCurrentImageUrl] = useState<string>('');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // 使用真实的数据hook
+  const { 
+    currentUser, 
+    userBoutique, 
+    loading, 
+    error, 
+    hasUser, 
+    hasBoutique, 
+    isEmpty 
+  } = useUserBoutique();
 
-  const [editForm, setEditForm] = useState({
-    name: boutiqueData.name,
-    address: boutiqueData.address,
-  });
-
-  const handleSave = async () => {
-    try {
-      // TODO: 实现实际的保存逻辑
-      setBoutiqueData({
-        ...boutiqueData,
-        name: editForm.name,
-        address: editForm.address,
+  // 获取所有图片URL (用于预览)
+  const getAllImages = () => {
+    const images: string[] = [];
+    
+    // 添加主图片 (高质量预览)
+    if (userBoutique?.main_image) {
+      images.push(getDirectusImageUrl(userBoutique.main_image, 1200, 800, 95));
+    }
+    
+    // 添加其他图片 (高质量预览)
+    if (userBoutique?.images) {
+      let imageArray = [];
+      if (typeof userBoutique.images === 'string') {
+        try {
+          imageArray = JSON.parse(userBoutique.images);
+        } catch {
+          imageArray = [];
+        }
+      } else if (Array.isArray(userBoutique.images)) {
+        imageArray = userBoutique.images;
+      }
+      
+      imageArray.forEach((imageId: string) => {
+        images.push(getDirectusImageUrl(imageId, 1200, 800, 95));
       });
-      setIsEditing(false);
-      Alert.alert('成功', '店铺信息已更新');
-    } catch (error) {
-      Alert.alert('错误', '保存失败，请重试');
+    }
+    
+    return images;
+  };
+
+  // 打开图片预览
+  const openImagePreview = (imageUrl: string, index: number) => {
+    console.log('Opening image preview:', { imageUrl, index });
+    setCurrentImageUrl(imageUrl);
+    setCurrentImageIndex(index);
+    setPreviewVisible(true);
+  };
+  
+  // 关闭图片预览
+  const closeImagePreview = () => {
+    setPreviewVisible(false);
+  };
+  
+  // 上一张图片
+  const goToPrevImage = () => {
+    const allImages = getAllImages();
+    console.log('Going to prev image:', { currentImageIndex, totalImages: allImages.length });
+    if (currentImageIndex > 0) {
+      const prevIndex = currentImageIndex - 1;
+      setCurrentImageIndex(prevIndex);
+      setCurrentImageUrl(allImages[prevIndex]);
+      console.log('Prev image URL:', allImages[prevIndex]);
+    }
+  };
+  
+  // 下一张图片
+  const goToNextImage = () => {
+    const allImages = getAllImages();
+    console.log('Going to next image:', { currentImageIndex, totalImages: allImages.length });
+    if (currentImageIndex < allImages.length - 1) {
+      const nextIndex = currentImageIndex + 1;
+      setCurrentImageIndex(nextIndex);
+      setCurrentImageUrl(allImages[nextIndex]);
+      console.log('Next image URL:', allImages[nextIndex]);
     }
   };
 
-  const handleCancel = () => {
-    setEditForm({
-      name: boutiqueData.name,
-      address: boutiqueData.address,
-    });
-    setIsEditing(false);
-  };
+  // 键盘事件处理 (仅在Web平台)
+  React.useEffect(() => {
+    const handleKeyPress = (event: any) => {
+      if (!previewVisible) return;
+      
+      if (event.key === 'ArrowLeft') {
+        goToPrevImage();
+      } else if (event.key === 'ArrowRight') {
+        goToNextImage();
+      } else if (event.key === 'Escape') {
+        setPreviewVisible(false);
+      }
+    };
+
+    // 只在Web平台添加键盘监听
+    if (typeof window !== 'undefined' && window.document) {
+      document.addEventListener('keydown', handleKeyPress);
+      return () => document.removeEventListener('keydown', handleKeyPress);
+    }
+  }, [previewVisible, currentImageIndex]);
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -91,13 +147,31 @@ export default function BoutiqueScreen() {
   };
 
   const renderImageGallery = () => {
-    if (!boutiqueData.images || boutiqueData.images.length === 0) {
+    const images = userBoutique?.images;
+    
+    if (!images || (Array.isArray(images) && images.length === 0)) {
       return (
         <View style={styles.noImagesContainer}>
+          <Ionicons name="images-outline" size={32} color="#ccc" />
           <Text style={styles.noImagesText}>暂无图片</Text>
         </View>
       );
     }
+
+    // 处理images可能是JSON字符串的情况
+    let imageArray = [];
+    if (typeof images === 'string') {
+      try {
+        imageArray = JSON.parse(images);
+      } catch {
+        imageArray = [];
+      }
+    } else if (Array.isArray(images)) {
+      imageArray = images;
+    }
+
+    const allImages = getAllImages();
+    let imageIndex = 0;
 
     return (
       <ScrollView
@@ -106,132 +180,274 @@ export default function BoutiqueScreen() {
         style={styles.imageGallery}
         contentContainerStyle={styles.imageGalleryContent}
       >
-        {boutiqueData.images.map((imageUri, index) => (
-          <TouchableOpacity
-            key={index}
+        {/* 主图片 */}
+        {userBoutique?.main_image && (
+          <TouchableOpacity 
             style={styles.imageContainer}
-            onPress={() => {
-              // TODO: 实现图片预览功能
-            }}
+            onPress={() => openImagePreview(allImages[imageIndex], imageIndex)}
           >
             <Image
-              source={{ uri: imageUri }}
+              source={{ uri: getDirectusThumbnailUrl(userBoutique.main_image, 150) }}
               style={styles.galleryImage}
               resizeMode="cover"
             />
+            <View style={styles.mainImageBadge}>
+              <Text style={styles.mainImageText}>主图</Text>
+            </View>
           </TouchableOpacity>
-        ))}
+        )}
+        
+        {/* 其他图片 */}
+        {imageArray.map((imageUri: string, index: number) => {
+          const actualIndex = userBoutique?.main_image ? index + 1 : index;
+          return (
+            <TouchableOpacity
+              key={index}
+              style={styles.imageContainer}
+              onPress={() => openImagePreview(allImages[actualIndex], actualIndex)}
+            >
+              <Image
+                source={{ uri: getDirectusThumbnailUrl(imageUri, 150) }}
+                style={styles.galleryImage}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
     );
   };
 
+  // Loading状态
+  if (loading) {
+    return (
+      <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#ff6b35" />
+          <ThemedText style={styles.loadingText}>加载店铺信息中...</ThemedText>
+        </SafeAreaView>
+      </ThemedView>
+    );
+  }
+
+  // 错误状态
+  if (error) {
+    return (
+      <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.errorContainer}>
+          <Ionicons name="alert-circle-outline" size={48} color="#ff6b35" />
+          <ThemedText style={styles.errorTitle}>获取信息失败</ThemedText>
+          <Text style={styles.errorMessage}>{error}</Text>
+          <TouchableOpacity 
+            style={styles.retryButton}
+            onPress={() => window.location.reload()}
+          >
+            <Text style={styles.retryButtonText}>重试</Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </ThemedView>
+    );
+  }
+
+  // 空状态 - 没有店铺信息
+  if (isEmpty) {
+    return (
+      <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.emptyContainer}>
+          <Ionicons name="storefront-outline" size={64} color="#ccc" />
+          <ThemedText style={styles.emptyTitle}>还没有店铺信息</ThemedText>
+          <Text style={styles.emptyMessage}>
+            您还没有创建店铺，请联系管理员为您开通店铺功能
+          </Text>
+          <TouchableOpacity style={styles.contactButton}>
+            <Ionicons name="chatbubble-outline" size={20} color="white" />
+            <Text style={styles.contactButtonText}>联系客服</Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </ThemedView>
+    );
+  }
+
   return (
     <ThemedView style={styles.container}>
-      <ScrollView style={styles.scrollContainer}>
-        {/* 店铺头部信息 */}
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+        
+        {/* 顶部导航 */}
         <View style={styles.header}>
-          {boutiqueData.main_image && (
-            <Image
-              source={{ uri: boutiqueData.main_image }}
-              style={styles.headerImage}
-              resizeMode="cover"
-            />
-          )}
-          <View style={styles.headerOverlay}>
+          <ThemedText style={styles.headerTitle}>我的店铺</ThemedText>
+        </View>
+
+        <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+          {/* 店铺头部卡片 */}
+          <View style={styles.headerCard}>
+            {userBoutique?.main_image ? (
+              <Image
+                source={{ uri: getDirectusImageUrl(userBoutique.main_image, 400, 200, 80) }}
+                style={styles.headerImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <View style={styles.placeholderImage}>
+                <Ionicons name="storefront-outline" size={48} color="#ccc" />
+              </View>
+            )}
+            
             <View style={styles.headerContent}>
-              {isEditing ? (
-                <TextInput
-                  style={styles.nameInput}
-                  value={editForm.name}
-                  onChangeText={(text) => setEditForm({ ...editForm, name: text })}
-                  placeholder="店铺名称"
-                  placeholderTextColor="#999"
-                />
-              ) : (
-                <ThemedText style={styles.boutiqueName}>
-                  {boutiqueData.name}
-                </ThemedText>
-              )}
+              <ThemedText style={styles.boutiqueName}>
+                {userBoutique?.name || '未命名店铺'}
+              </ThemedText>
               
               <View style={styles.ratingContainer}>
-                {renderStars(boutiqueData.stars)}
-                <Text style={styles.ratingText}>({boutiqueData.stars}/5)</Text>
+                {renderStars(userBoutique?.stars || 0)}
+                <Text style={styles.ratingText}>
+                  ({userBoutique?.stars || 0}/5)
+                </Text>
+              </View>
+              
+              <View style={styles.statusContainer}>
+                <View style={[
+                  styles.statusBadge,
+                  {
+                    backgroundColor: userBoutique?.status === 'published' ? '#4CAF50' : '#FF9800',
+                  },
+                ]}>
+                  <Text style={styles.statusText}>
+                    {userBoutique?.status === 'published' ? '营业中' : '暂停营业'}
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
-        </View>
 
-        {/* 店铺详细信息 */}
-        <View style={styles.detailsContainer}>
-          <View style={styles.infoSection}>
+          {/* 店铺信息卡片 */}
+          <View style={styles.infoCard}>
             <ThemedText style={styles.sectionTitle}>店铺信息</ThemedText>
             
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>地址：</Text>
-              {isEditing ? (
-                <TextInput
-                  style={styles.addressInput}
-                  value={editForm.address}
-                  onChangeText={(text) => setEditForm({ ...editForm, address: text })}
-                  placeholder="店铺地址"
-                  placeholderTextColor="#999"
-                  multiline
-                />
-              ) : (
-                <Text style={styles.infoValue}>{boutiqueData.address}</Text>
-              )}
+              <View style={styles.infoIcon}>
+                <Ionicons name="location-outline" size={20} color="#ff6b35" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>地址</Text>
+                <Text style={styles.infoValue}>
+                  {userBoutique?.address || '暂未设置地址'}
+                </Text>
+              </View>
             </View>
 
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>状态：</Text>
-              <Text
-                style={[
-                  styles.statusBadge,
-                  {
-                    backgroundColor:
-                      boutiqueData.status === 'published' ? '#4CAF50' : '#FF9800',
-                  },
-                ]}
-              >
-                {boutiqueData.status === 'published' ? '营业中' : '暂停营业'}
-              </Text>
+              <View style={styles.infoIcon}>
+                <Ionicons name="person-outline" size={20} color="#ff6b35" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>店主</Text>
+                <Text style={styles.infoValue}>
+                  {currentUser?.first_name || currentUser?.email || '未知'}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.infoRow}>
+              <View style={styles.infoIcon}>
+                <Ionicons name="calendar-outline" size={20} color="#ff6b35" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>创建时间</Text>
+                <Text style={styles.infoValue}>
+                  {userBoutique?.date_created 
+                    ? new Date(userBoutique.date_created).toLocaleDateString('zh-CN')
+                    : '未知'
+                  }
+                </Text>
+              </View>
             </View>
           </View>
 
-          {/* 店铺图片 */}
-          <View style={styles.imagesSection}>
-            <ThemedText style={styles.sectionTitle}>店铺图片</ThemedText>
+          {/* 店铺图片卡片 */}
+          <View style={styles.imagesCard}>
+            <View style={styles.sectionHeader}>
+              <ThemedText style={styles.sectionTitle}>店铺图片</ThemedText>
+            </View>
             {renderImageGallery()}
           </View>
-
-          {/* 操作按钮 */}
-          <View style={styles.actionsContainer}>
-            {isEditing ? (
-              <View style={styles.editActions}>
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.cancelButton]}
-                  onPress={handleCancel}
-                >
-                  <Text style={styles.cancelButtonText}>取消</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.saveButton]}
-                  onPress={handleSave}
-                >
-                  <Text style={styles.saveButtonText}>保存</Text>
-                </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
+      
+      {/* 图片预览模态框 */}
+      <Modal
+        visible={previewVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={closeImagePreview}
+      >
+        <StatusBar backgroundColor="rgba(0,0,0,0.9)" barStyle="light-content" />
+        <SafeAreaView style={styles.modalContainer}>
+          <TouchableOpacity 
+            style={styles.modalOverlay} 
+            activeOpacity={1}
+            onPress={closeImagePreview}
+          >
+            <View style={styles.imagePreviewContainer}>
+              <Image 
+                source={{ uri: currentImageUrl }} 
+                style={styles.previewImage}
+                resizeMode="contain"
+                onError={(error) => {
+                  console.log('Image load error:', error.nativeEvent.error);
+                }}
+                onLoad={() => {
+                  console.log('Image loaded successfully:', currentImageUrl);
+                }}
+              />
+              
+              {/* 左右切换按钮 */}
+              {getAllImages().length > 1 && (
+                <>
+                  {currentImageIndex > 0 && (
+                    <TouchableOpacity 
+                      style={styles.prevButton}
+                      onPress={goToPrevImage}
+                    >
+                      <Text style={styles.arrowText}>‹</Text>
+                    </TouchableOpacity>
+                  )}
+                  {currentImageIndex < getAllImages().length - 1 && (
+                    <TouchableOpacity 
+                      style={styles.nextButton}
+                      onPress={goToNextImage}
+                    >
+                      <Text style={styles.arrowText}>›</Text>
+                    </TouchableOpacity>
+                  )}
+                </>
+              )}
+              
+              {/* 图片指示器 */}
+              <View style={styles.imageIndicator}>
+                <Text style={styles.indicatorText}>
+                  {currentImageIndex + 1} / {getAllImages().length}
+                </Text>
               </View>
-            ) : (
-              <TouchableOpacity
-                style={[styles.actionButton, styles.editButton]}
-                onPress={() => setIsEditing(true)}
+              
+              {/* 关闭按钮 */}
+              <TouchableOpacity 
+                style={styles.closeButton}
+                onPress={closeImagePreview}
               >
-                <Text style={styles.editButtonText}>编辑店铺信息</Text>
+                <Text style={styles.closeButtonText}>×</Text>
               </TouchableOpacity>
-            )}
-          </View>
-        </View>
-      </ScrollView>
+              
+              {/* 键盘提示 */}
+              {getAllImages().length > 1 && (
+                <View style={styles.keyboardHint}>
+                  <Text style={styles.keyboardHintText}>使用 ← → 键或点击按钮切换图片</Text>
+                </View>
+              )}
+            </View>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </Modal>
     </ThemedView>
   );
 }
@@ -239,170 +455,411 @@ export default function BoutiqueScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  safeArea: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#666',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  errorMessage: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  retryButton: {
+    backgroundColor: '#ff6b35',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyMessage: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  contactButton: {
+    backgroundColor: '#ff6b35',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    gap: 8,
+  },
+  contactButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  editButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  editButtonText: {
+    color: '#ff6b35',
+    fontWeight: '500',
   },
   scrollContainer: {
     flex: 1,
   },
-  header: {
-    height: 200,
-    position: 'relative',
+  headerCard: {
+    backgroundColor: 'white',
+    margin: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   headerImage: {
     width: '100%',
-    height: '100%',
+    height: 150,
   },
-  headerOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    padding: 16,
+  placeholderImage: {
+    width: '100%',
+    height: 150,
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerContent: {
-    flexDirection: 'column',
+    padding: 16,
   },
   boutiqueName: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: 'white',
     marginBottom: 8,
   },
   nameInput: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: 'white',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    padding: 8,
-    borderRadius: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    paddingVertical: 4,
     marginBottom: 8,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 8,
   },
   star: {
     fontSize: 16,
     marginRight: 2,
   },
   ratingText: {
-    color: 'white',
-    marginLeft: 8,
     fontSize: 14,
+    color: '#666',
+    marginLeft: 8,
   },
-  detailsContainer: {
+  statusContainer: {
+    flexDirection: 'row',
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  statusText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  infoCard: {
+    backgroundColor: 'white',
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 12,
     padding: 16,
-  },
-  infoSection: {
-    marginBottom: 24,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 16,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 12,
+    marginBottom: 16,
+  },
+  infoIcon: {
+    width: 40,
+    alignItems: 'center',
+    paddingTop: 2,
+  },
+  infoContent: {
+    flex: 1,
   },
   infoLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    minWidth: 60,
+    fontSize: 14,
     color: '#666',
+    marginBottom: 4,
   },
   infoValue: {
     fontSize: 16,
-    flex: 1,
-    lineHeight: 24,
+    color: '#333',
   },
   addressInput: {
     fontSize: 16,
-    flex: 1,
-    backgroundColor: '#F5F5F5',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
     padding: 8,
-    borderRadius: 4,
-    textAlignVertical: 'top',
     minHeight: 60,
+    textAlignVertical: 'top',
   },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+  imagesCard: {
+    backgroundColor: 'white',
+    marginHorizontal: 16,
+    marginBottom: 16,
     borderRadius: 12,
-    color: 'white',
-    fontSize: 14,
+    padding: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  addImageButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  addImageText: {
+    color: '#ff6b35',
     fontWeight: '500',
   },
-  imagesSection: {
-    marginBottom: 24,
-  },
   imageGallery: {
-    marginTop: 8,
+    flexDirection: 'row',
   },
   imageGalleryContent: {
     paddingRight: 16,
   },
   imageContainer: {
+    position: 'relative',
     marginRight: 12,
   },
   galleryImage: {
-    width: 120,
-    height: 80,
+    width: 100,
+    height: 100,
     borderRadius: 8,
+  },
+  mainImageBadge: {
+    position: 'absolute',
+    bottom: 4,
+    left: 4,
+    backgroundColor: '#ff6b35',
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  mainImageText: {
+    color: 'white',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
   noImagesContainer: {
-    height: 80,
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
-    marginTop: 8,
+    paddingVertical: 40,
   },
   noImagesText: {
-    color: '#999',
     fontSize: 14,
+    color: '#999',
+    marginTop: 8,
   },
   actionsContainer: {
-    marginTop: 24,
-    marginBottom: 32,
-  },
-  actionButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  editButton: {
-    backgroundColor: '#007AFF',
-  },
-  editButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  editActions: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingBottom: 32,
     gap: 12,
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#f5f5f5',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
   },
   cancelButtonText: {
-    color: '#333',
-    fontSize: 16,
-    fontWeight: '500',
+    color: '#666',
+    fontWeight: 'bold',
   },
   saveButton: {
     flex: 1,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#ff6b35',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
   },
   saveButtonText: {
     color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
+    fontWeight: 'bold',
+  },
+  
+  // 图片预览相关样式
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.95)',
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imagePreviewContainer: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  previewImage: {
+    maxWidth: '90%',
+    maxHeight: '80%',
+    minWidth: 200,
+    minHeight: 200,
+  },
+  prevButton: {
+    position: 'absolute',
+    left: 20,
+    top: '50%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 25,
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  nextButton: {
+    position: 'absolute',
+    right: 20,
+    top: '50%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 25,
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  arrowText: {
+    color: 'white',
+    fontSize: 30,
+    fontWeight: 'bold',
+  },
+  imageIndicator: {
+    position: 'absolute',
+    bottom: 100,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 15,
+  },
+  indicatorText: {
+    color: 'white',
+    fontSize: 14,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  keyboardHint: {
+    position: 'absolute',
+    bottom: 50,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 15,
+  },
+  keyboardHintText: {
+    color: 'white',
+    fontSize: 12,
   },
 });

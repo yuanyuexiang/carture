@@ -1,2 +1,2 @@
-import BoutiqueScreen from '../../screens/BoutiqueScreen';
-export default BoutiqueScreen;
+import UserInfoScreen from '../../screens/UserInfoScreen';
+export default UserInfoScreen;
