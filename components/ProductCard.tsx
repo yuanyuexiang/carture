@@ -28,6 +28,33 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
   // 获取优化后的图片 URL
   const imageUrl = product.main_image ? getDirectusThumbnailUrl(product.main_image, 320) : null;
 
+  // 渲染星级评分
+  const renderStars = (stars: number | null | undefined) => {
+    if (!stars) return null;
+    
+    const fullStars = Math.floor(stars);
+    const hasHalfStar = stars % 1 !== 0;
+    const starsArray = [];
+    
+    for (let i = 0; i < fullStars; i++) {
+      starsArray.push('⭐');
+    }
+    if (hasHalfStar) {
+      starsArray.push('⭐');
+    }
+    
+    return (
+      <View style={styles.starsContainer}>
+        <Text style={styles.stars}>
+          {starsArray.join('')}
+        </Text>
+        <Text style={styles.starsNumber}>
+          ({stars.toFixed(1)})
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <TouchableOpacity style={[styles.card, vertical && styles.verticalCard]} onPress={handlePress} activeOpacity={0.85}>
       {imageUrl ? (
@@ -52,6 +79,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
                   {product.subtitle}
                 </Text>
               )}
+              {renderStars(product.stars)}
               <Text style={styles.price}>
                 ￥{product.price !== undefined ? product.price : '价格'}
               </Text>
@@ -69,6 +97,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
               {product.subtitle}
             </Text>
           )}
+          {renderStars(product.stars)}
           <Text style={[styles.price, { color: '#ff6b35', textShadowColor: 'transparent' }]}>
             ￥{product.price !== undefined ? product.price : '价格'}
           </Text>
@@ -167,6 +196,22 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 1)',
     textShadowOffset: { width: 2, height: 2 }, // 增强阴影
     textShadowRadius: 4, // 增强阴影
+  },
+  starsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  stars: {
+    fontSize: 14,
+    marginRight: 4,
+  },
+  starsNumber: {
+    fontSize: 12,
+    color: '#f5f5f5',
+    textShadowColor: 'rgba(0, 0, 0, 1)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   price: {
     fontSize: 24, // 增加到24px，确保价格醒目

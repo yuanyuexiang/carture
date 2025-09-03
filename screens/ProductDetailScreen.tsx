@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -18,6 +18,7 @@ import { getDirectusThumbnailUrl } from '../utils/directus';
 
 const ProductDetailScreen: React.FC = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
   const { data, loading, error } = useGetProductByIdQuery({ variables: { id: id as string } });
   const product = data?.products_by_id;
   
@@ -100,6 +101,17 @@ const ProductDetailScreen: React.FC = () => {
 
   return (
     <>
+      {/* 返回按钮 */}
+      <SafeAreaView style={styles.header}>
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={() => router.back()}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.backButtonText}>← 返回</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+      
       <ScrollView style={styles.container}>
         {mainImageUrl && (
           <View style={styles.imageWrap}>
@@ -382,6 +394,27 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'left',
     marginBottom: 4,
+  },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+    backgroundColor: 'transparent',
+    paddingTop: 20,
+  },
+  backButton: {
+    margin: 16,
+    padding: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  backButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 
