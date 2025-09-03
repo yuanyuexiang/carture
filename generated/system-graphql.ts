@@ -5928,6 +5928,11 @@ export type SystemGetCurrentUserQueryVariables = Exact<{ [key: string]: never; }
 
 export type SystemGetCurrentUserQuery = { __typename?: 'Query', permissions_me?: any | null, users_me?: { __typename?: 'directus_users', id: string, email?: string | null, first_name?: string | null, last_name?: string | null, location?: string | null, title?: string | null, description?: string | null, tags?: any | null, language?: string | null, status?: string | null, last_access?: any | null, last_page?: string | null, provider?: string | null, email_notifications?: boolean | null, appearance?: string | null, theme_dark?: string | null, theme_light?: string | null, text_direction?: string | null, avatar?: { __typename?: 'directus_files', id: string, filename_download: string, title?: string | null, type?: string | null, width?: number | null, height?: number | null, filesize?: any | null } | null, role?: { __typename?: 'directus_roles', id: string, name: string, description?: string | null, icon?: string | null } | null } | null, roles_me?: Array<{ __typename?: 'directus_roles', id: string, name: string, description?: string | null, icon?: string | null } | null> | null };
 
+export type SystemGetUserBasicQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SystemGetUserBasicQuery = { __typename?: 'Query', users_me?: { __typename?: 'directus_users', id: string, email?: string | null, first_name?: string | null, last_name?: string | null } | null };
+
 export type SystemUpdateCurrentUserMutationVariables = Exact<{
   data: SystemUpdate_Directus_Users_Input;
 }>;
@@ -6014,6 +6019,48 @@ export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQ
 export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
 export type GetCurrentUserSuspenseQueryHookResult = ReturnType<typeof useGetCurrentUserSuspenseQuery>;
 export type GetCurrentUserQueryResult = ApolloReactCommon.QueryResult<SystemGetCurrentUserQuery, SystemGetCurrentUserQueryVariables>;
+export const GetUserBasicDocument = gql`
+    query GetUserBasic {
+  users_me {
+    id
+    email
+    first_name
+    last_name
+  }
+}
+    `;
+
+/**
+ * __useGetUserBasicQuery__
+ *
+ * To run a query within a React component, call `useGetUserBasicQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserBasicQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserBasicQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserBasicQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<SystemGetUserBasicQuery, SystemGetUserBasicQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<SystemGetUserBasicQuery, SystemGetUserBasicQueryVariables>(GetUserBasicDocument, options);
+      }
+export function useGetUserBasicLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<SystemGetUserBasicQuery, SystemGetUserBasicQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<SystemGetUserBasicQuery, SystemGetUserBasicQueryVariables>(GetUserBasicDocument, options);
+        }
+export function useGetUserBasicSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<SystemGetUserBasicQuery, SystemGetUserBasicQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<SystemGetUserBasicQuery, SystemGetUserBasicQueryVariables>(GetUserBasicDocument, options);
+        }
+export type GetUserBasicQueryHookResult = ReturnType<typeof useGetUserBasicQuery>;
+export type GetUserBasicLazyQueryHookResult = ReturnType<typeof useGetUserBasicLazyQuery>;
+export type GetUserBasicSuspenseQueryHookResult = ReturnType<typeof useGetUserBasicSuspenseQuery>;
+export type GetUserBasicQueryResult = ApolloReactCommon.QueryResult<SystemGetUserBasicQuery, SystemGetUserBasicQueryVariables>;
 export const UpdateCurrentUserDocument = gql`
     mutation UpdateCurrentUser($data: update_directus_users_input!) {
   update_users_me(data: $data) {

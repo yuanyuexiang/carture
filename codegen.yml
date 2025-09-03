@@ -1,9 +1,9 @@
 overwrite: true
 generates:
-  # 业务schema的类型生成
-  generated/graphql.ts:
+  # 业务schema的类型生成 (普通端点 /graphql)
+  generated/business-graphql.ts:
     schema: "./schema.graphql"
-    documents: "graphql/**/!(system).{gql,graphql}"
+    documents: "graphql/business/**/*.graphql.ts"
     plugins:
       - typescript
       - typescript-operations
@@ -13,14 +13,15 @@ generates:
       apolloReactHooksImportFrom: "@apollo/client"
       apolloReactCommonImportFrom: "@apollo/client"
       reactApolloVersion: 3
+      typesPrefix: Business
   
-  # 系统schema的类型生成
+  # 系统schema的类型生成 (系统端点 /graphql/system)  
   generated/system-graphql.ts:
     schema: 
       - https://forge.matrix-net.tech/graphql/system:
           headers:
             Authorization: Bearer CCZnVSanwCwzS6edoC8-2ImbzJiZLeAD
-    documents: "graphql/{system,boutique}.gql"
+    documents: "graphql/system/**/*.graphql.ts"
     plugins:
       - typescript
       - typescript-operations
