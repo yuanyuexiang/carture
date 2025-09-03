@@ -55,10 +55,9 @@ docker-compose --profile dev up -d carture-dev
 ```
 /
 ├── Dockerfile              # 生产环境构建文件
-├── Dockerfile.dev          # 开发环境构建文件
+├── Dockerfile.dev          # 开发环境构建文件  
 ├── docker-compose.yaml     # Docker Compose 配置
 ├── .dockerignore           # Docker 忽略文件
-├── nginx.conf              # Nginx 配置
 └── scripts/
     └── docker-build.sh     # 构建脚本
 ```

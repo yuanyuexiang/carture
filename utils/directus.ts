@@ -2,8 +2,25 @@
  * Directus 工具函数
  */
 
-// Directus 基础 URL
-const DIRECTUS_BASE_URL = 'https://forge.matrix-net.tech';
+// Directus 基础 URL - 支持环境变量配置
+const getDirectusBaseUrl = () => {
+  // 优先使用环境变量
+  const envDirectusUrl = process.env.EXPO_PUBLIC_DIRECTUS_URL || process.env.REACT_APP_DIRECTUS_URL;
+  if (envDirectusUrl) {
+    return envDirectusUrl;
+  }
+  
+  // 生产环境必须设置环境变量
+  const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV !== 'production';
+  if (!isDev) {
+    throw new Error('生产环境必须设置 EXPO_PUBLIC_DIRECTUS_URL 环境变量');
+  }
+  
+  // 开发环境默认URL
+  return 'https://forge.matrix-net.tech';
+};
+
+const DIRECTUS_BASE_URL = getDirectusBaseUrl();
 
 /**
  * 将 Directus 文件 ID 转换为完整的图片 URL

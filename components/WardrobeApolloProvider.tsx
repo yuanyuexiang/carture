@@ -5,6 +5,13 @@ import React from 'react';
 
 // 选择API端点
 const getApiUri = () => {
+  // 优先使用环境变量配置的API端点
+  const envApiUrl = process.env.EXPO_PUBLIC_API_URL || process.env.REACT_APP_API_URL;
+  if (envApiUrl) {
+    console.log('🌐 使用环境变量API端点:', envApiUrl);
+    return envApiUrl;
+  }
+
   // 重新检测环境，确保在运行时检测
   const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV !== 'production';
   const isRealWeb = typeof window !== 'undefined' && 
@@ -22,17 +29,22 @@ const getApiUri = () => {
     __DEV__: typeof __DEV__ !== 'undefined' ? __DEV__ : 'undefined'
   });
   
-  // 只有真正的Web环境才使用代理
+  // 生产环境必须设置环境变量
+  if (!isDev) {
+    throw new Error('生产环境必须设置 EXPO_PUBLIC_API_URL 环境变量');
+  }
+  
+  // 开发环境：只有真正的Web环境才使用代理
   if (isRealWeb && isDev) {
     // Web平台，使用本地代理
     const proxyUri = 'http://localhost:3001/api/graphql';
     console.log('🔄 Web环境使用代理:', proxyUri);
     return proxyUri;
   } else {
-    // 服务器端渲染或移动端，直接连接
-    const directUri = 'https://forge.matrix-net.tech/graphql';
-    console.log('📱 直接连接API:', directUri);
-    return directUri;
+    // 开发环境：服务器端渲染或移动端，直接连接开发服务器
+    const devDirectUri = 'https://forge.matrix-net.tech/graphql';
+    console.log('📱 开发环境直接连接API:', devDirectUri);
+    return devDirectUri;
   }
 };
 

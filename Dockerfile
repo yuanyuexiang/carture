@@ -63,8 +63,31 @@ RUN rm -rf ./*
 # 复制构建产物 (Expo Web 输出到 dist 目录)
 COPY --from=builder /app/dist ./
 
-# 复制 nginx 配置
-COPY --chown=nextjs:nodejs nginx.conf /etc/nginx/nginx.conf
+# 创建简单的nginx配置（仅用于静态文件服务）
+RUN echo 'server { \
+    listen 80; \
+    server_name _; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    \
+    # 处理SPA路由 \
+    location / { \
+        try_files $uri $uri/ /index.html; \
+    } \
+    \
+    # 静态资源缓存 \
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ { \
+        expires 1y; \
+        add_header Cache-Control "public, immutable"; \
+    } \
+    \
+    # 健康检查端点 \
+    location /health { \
+        access_log off; \
+        return 200 "healthy\n"; \
+        add_header Content-Type text/plain; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
 
 # 设置权限
 RUN chown -R nextjs:nodejs /usr/share/nginx/html && \
