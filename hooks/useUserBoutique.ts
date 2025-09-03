@@ -1,20 +1,10 @@
 import { ApolloError } from '@apollo/client';
 import { useEffect } from 'react';
 
-// 从系统端点导入用户查询
-import {
-    SystemGetCurrentUserQuery,
-    useGetCurrentUserQuery
-} from '../generated/system-graphql';
-
 // 从普通端点导入店铺查询
-import {
-    GetUserBoutiqueQuery,
-    useGetUserBoutiqueQuery
-} from '../generated/graphql';
+import { useGetUserBoutiqueQuery } from '../generated/business-graphql';
 
-import { systemApolloClient } from '../components/SystemApolloProvider';
-import { CurrentUser, useUserBoutiqueStore } from '../store/user-boutique';
+import { useUserBoutiqueStore } from '../store/user-boutique';
 
 export const useUserBoutique = () => {
   const {
@@ -28,28 +18,18 @@ export const useUserBoutique = () => {
     setError,
   } = useUserBoutiqueStore();
 
-  // 获取当前用户信息 (系统端点)
-  const { 
-    data: userData, 
-    loading: userLoading, 
-    error: userError 
-  } = useGetCurrentUserQuery({
-    client: systemApolloClient, // 使用系统端点的Apollo Client
-    onCompleted: (data: SystemGetCurrentUserQuery) => {
-      if (data?.users_me) {
-        const user: CurrentUser = {
-          id: data.users_me.id,
-          email: data.users_me.email || '',
-          first_name: data.users_me.first_name || undefined,
-          last_name: data.users_me.last_name || undefined,
-        };
-        setCurrentUser(user);
-      }
-    },
-    onError: (err: ApolloError) => {
-      setError(`获取用户信息失败: ${err.message}`);
+  // 暂时硬编码一个用户ID，用于测试
+  // TODO: 从真实的用户认证系统获取
+  useEffect(() => {
+    if (!currentUser) {
+      setCurrentUser({
+        id: '1', // 硬编码用户ID
+        email: 'test@example.com',
+        first_name: 'Test',
+        last_name: 'User'
+      });
     }
-  });
+  }, [currentUser, setCurrentUser]);
 
   // 获取用户店铺信息 (普通端点)
   const { 
@@ -58,8 +38,8 @@ export const useUserBoutique = () => {
     error: boutiqueError 
   } = useGetUserBoutiqueQuery({
     variables: { userId: currentUser?.id || '' },
-    skip: !currentUser?.id, // 只有获取到用户ID后才查询店铺信息
-    onCompleted: (data: GetUserBoutiqueQuery) => {
+    skip: !currentUser?.id,
+    onCompleted: (data: any) => {
       if (data?.boutiques && data.boutiques.length > 0) {
         setUserBoutique(data.boutiques[0]);
       } else {
@@ -71,28 +51,33 @@ export const useUserBoutique = () => {
     }
   });
 
-  // 更新loading状态
+  // 更新全局 loading 状态
   useEffect(() => {
-    setLoading(userLoading || boutiqueLoading);
-  }, [userLoading, boutiqueLoading, setLoading]);
+    setLoading(boutiqueLoading);
+  }, [boutiqueLoading, setLoading]);
 
-  // 更新error状态
+  // 更新全局 error 状态
   useEffect(() => {
-    if (userError || boutiqueError) {
-      setError(userError?.message || boutiqueError?.message || '未知错误');
-    } else {
-      setError(null);
+    if (boutiqueError) {
+      setError(boutiqueError.message);
     }
-  }, [userError, boutiqueError, setError]);
+  }, [boutiqueError, setError]);
+
+  // 添加一些便利属性
+  const hasUser = !!currentUser;
+  const hasBoutique = !!userBoutique;
+  const isEmpty = hasUser && !hasBoutique && !loading;
 
   return {
     currentUser,
     userBoutique,
     loading,
     error,
-    // 便利方法
-    hasUser: !!currentUser,
-    hasBoutique: !!userBoutique,
-    isEmpty: !loading && !userBoutique,
+    hasUser,
+    hasBoutique,
+    isEmpty,
+    refetch: () => {
+      // 可以添加重新获取数据的逻辑
+    }
   };
 };

@@ -1,4 +1,4 @@
-import { ApolloProvider } from '@apollo/client';
+import { ApolloProvider, gql, useMutation, useQuery } from '@apollo/client';
 import React from 'react';
 import {
   ActivityIndicator,
@@ -13,11 +13,84 @@ import {
   View
 } from 'react-native';
 import { useSystemApolloClient } from '../components/SystemApolloProvider';
-import { useGetCurrentUserQuery, useUpdateCurrentUserMutation } from '../generated/system-graphql';
+
+// 定义系统查询
+const GET_CURRENT_USER = gql`
+  query GetCurrentUser {
+    users_me {
+      id
+      email
+      first_name
+      last_name
+      location
+      title
+      description
+      tags
+      avatar {
+        id
+        filename_download
+        title
+        type
+        width
+        height
+        filesize
+      }
+      language
+      status
+      role {
+        id
+        name
+        description
+        icon
+      }
+      last_access
+      last_page
+      provider
+      email_notifications
+      appearance
+      theme_dark
+      theme_light
+      text_direction
+    }
+    permissions_me
+    roles_me {
+      id
+      name
+      description
+      icon
+    }
+  }
+`;
+
+const UPDATE_CURRENT_USER = gql`
+  mutation UpdateCurrentUser($data: update_directus_users_input!) {
+    update_users_me(data: $data) {
+      id
+      email
+      first_name
+      last_name
+      location
+      title
+      description
+      tags
+      avatar {
+        id
+        filename_download
+      }
+      language
+      status
+      email_notifications
+      appearance
+      theme_dark
+      theme_light
+      text_direction
+    }
+  }
+`;
 
 // 内部组件 - 使用系统Apollo Client获取当前用户
 const UserInfoContent: React.FC = () => {
-  const { data: systemData, loading: systemLoading, error: systemError } = useGetCurrentUserQuery();
+  const { data: systemData, loading: systemLoading, error: systemError } = useQuery(GET_CURRENT_USER);
   const currentUser = systemData?.users_me;
   const permissions = systemData?.permissions_me;
   const roles = systemData?.roles_me;
@@ -33,7 +106,7 @@ const UserInfoContent: React.FC = () => {
   const [emailNotifications, setEmailNotifications] = React.useState(false);
   const [appearance, setAppearance] = React.useState('');
   
-  const [updateUser, { loading: updating }] = useUpdateCurrentUserMutation();
+  const [updateUser, { loading: updating }] = useMutation(UPDATE_CURRENT_USER);
 
   React.useEffect(() => {
     if (currentUser) {
@@ -158,7 +231,7 @@ const UserInfoContent: React.FC = () => {
         {roles && roles.length > 0 && (
           <View style={styles.rolesContainer}>
             <Text style={styles.infoLabel}>用户角色</Text>
-            {roles.map((role, index) => role && (
+            {roles.map((role: any, index: number) => role && (
               <View key={role.id} style={styles.roleItem}>
                 <Text style={styles.roleName}>{role.icon || '👤'} {role.name}</Text>
                 <Text style={styles.roleDescription}>{role.description || '无描述'}</Text>

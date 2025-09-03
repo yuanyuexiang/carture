@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Boutiques } from '../generated/graphql';
+import { BusinessBoutiques } from '../generated/business-graphql';
 
 // 自定义类型，简化系统用户类型
 export interface CurrentUser {
@@ -9,24 +9,26 @@ export interface CurrentUser {
   last_name?: string;
 }
 
-interface UserBoutiqueState {
-  // 状态
+interface UserBoutiqueStore {
+  // 当前用户信息
   currentUser: CurrentUser | null;
-  userBoutique: Boutiques | null;
+  
+  // 用户店铺信息
+  userBoutique: BusinessBoutiques | null;
+  
+  // 状态
   loading: boolean;
   error: string | null;
   
   // Actions
   setCurrentUser: (user: CurrentUser | null) => void;
-  setUserBoutique: (boutique: Boutiques | null) => void;
+  setUserBoutique: (boutique: BusinessBoutiques | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  
-  // 清除状态
   reset: () => void;
 }
 
-export const useUserBoutiqueStore = create<UserBoutiqueState>((set) => ({
+export const useUserBoutiqueStore = create<UserBoutiqueStore>((set) => ({
   // 初始状态
   currentUser: null,
   userBoutique: null,
@@ -35,7 +37,7 @@ export const useUserBoutiqueStore = create<UserBoutiqueState>((set) => ({
   
   // Actions
   setCurrentUser: (user: CurrentUser | null) => set({ currentUser: user }),
-  setUserBoutique: (boutique: Boutiques | null) => set({ userBoutique: boutique }),
+  setUserBoutique: (boutique: BusinessBoutiques | null) => set({ userBoutique: boutique }),
   setLoading: (loading: boolean) => set({ loading }),
   setError: (error: string | null) => set({ error }),
   

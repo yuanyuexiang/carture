@@ -3635,21 +3635,6 @@ export type BusinessGetBoutiquesQueryVariables = Exact<{
 
 export type BusinessGetBoutiquesQuery = { __typename?: 'Query', boutiques: Array<{ __typename?: 'boutiques', id: string, name?: string | null, address?: string | null, main_image?: string | null, images?: any | null, stars?: number | null, status?: string | null, date_created?: any | null }> };
 
-export type BusinessUpdateBoutiqueMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
-  data: BusinessUpdate_Boutiques_Input;
-}>;
-
-
-export type BusinessUpdateBoutiqueMutation = { __typename?: 'Mutation', update_boutiques_item?: { __typename?: 'boutiques', id: string, name?: string | null, address?: string | null, main_image?: string | null, images?: any | null, stars?: number | null, status?: string | null, date_updated?: any | null } | null };
-
-export type BusinessCreateBoutiqueMutationVariables = Exact<{
-  data: BusinessCreate_Boutiques_Input;
-}>;
-
-
-export type BusinessCreateBoutiqueMutation = { __typename?: 'Mutation', create_boutiques_item?: { __typename?: 'boutiques', id: string, name?: string | null, address?: string | null, main_image?: string | null, images?: any | null, stars?: number | null, status?: string | null, date_created?: any | null } | null };
-
 export type BusinessGetCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3665,12 +3650,12 @@ export type BusinessGetProductsQueryVariables = Exact<{
 
 export type BusinessGetProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'products', id: string, name: string, subtitle?: string | null, description?: string | null, price: number, main_image?: string | null, images?: any | null, category_id?: { __typename?: 'categories', id: string, name: string, description?: string | null } | null }> };
 
-export type BusinessGetProductDetailQueryVariables = Exact<{
+export type BusinessGetProductByIdQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type BusinessGetProductDetailQuery = { __typename?: 'Query', products_by_id?: { __typename?: 'products', id: string, name: string, subtitle?: string | null, description?: string | null, price: number, market_price?: number | null, stock?: number | null, main_image?: string | null, images?: any | null, brand?: string | null, category_id?: { __typename?: 'categories', id: string, name: string, description?: string | null } | null } | null };
+export type BusinessGetProductByIdQuery = { __typename?: 'Query', products_by_id?: { __typename?: 'products', id: string, name: string, subtitle?: string | null, description?: string | null, price: number, main_image?: string | null, images?: any | null, category_id?: { __typename?: 'categories', id: string, name: string, description?: string | null } | null } | null };
 
 
 export const GetUserBoutiqueDocument = gql`
@@ -3771,87 +3756,6 @@ export type GetBoutiquesQueryHookResult = ReturnType<typeof useGetBoutiquesQuery
 export type GetBoutiquesLazyQueryHookResult = ReturnType<typeof useGetBoutiquesLazyQuery>;
 export type GetBoutiquesSuspenseQueryHookResult = ReturnType<typeof useGetBoutiquesSuspenseQuery>;
 export type GetBoutiquesQueryResult = ApolloReactCommon.QueryResult<BusinessGetBoutiquesQuery, BusinessGetBoutiquesQueryVariables>;
-export const UpdateBoutiqueDocument = gql`
-    mutation UpdateBoutique($id: ID!, $data: update_boutiques_input!) {
-  update_boutiques_item(id: $id, data: $data) {
-    id
-    name
-    address
-    main_image
-    images
-    stars
-    status
-    date_updated
-  }
-}
-    `;
-export type BusinessUpdateBoutiqueMutationFn = ApolloReactCommon.MutationFunction<BusinessUpdateBoutiqueMutation, BusinessUpdateBoutiqueMutationVariables>;
-
-/**
- * __useUpdateBoutiqueMutation__
- *
- * To run a mutation, you first call `useUpdateBoutiqueMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateBoutiqueMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateBoutiqueMutation, { data, loading, error }] = useUpdateBoutiqueMutation({
- *   variables: {
- *      id: // value for 'id'
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useUpdateBoutiqueMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessUpdateBoutiqueMutation, BusinessUpdateBoutiqueMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<BusinessUpdateBoutiqueMutation, BusinessUpdateBoutiqueMutationVariables>(UpdateBoutiqueDocument, options);
-      }
-export type UpdateBoutiqueMutationHookResult = ReturnType<typeof useUpdateBoutiqueMutation>;
-export type UpdateBoutiqueMutationResult = ApolloReactCommon.MutationResult<BusinessUpdateBoutiqueMutation>;
-export type UpdateBoutiqueMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessUpdateBoutiqueMutation, BusinessUpdateBoutiqueMutationVariables>;
-export const CreateBoutiqueDocument = gql`
-    mutation CreateBoutique($data: create_boutiques_input!) {
-  create_boutiques_item(data: $data) {
-    id
-    name
-    address
-    main_image
-    images
-    stars
-    status
-    date_created
-  }
-}
-    `;
-export type BusinessCreateBoutiqueMutationFn = ApolloReactCommon.MutationFunction<BusinessCreateBoutiqueMutation, BusinessCreateBoutiqueMutationVariables>;
-
-/**
- * __useCreateBoutiqueMutation__
- *
- * To run a mutation, you first call `useCreateBoutiqueMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateBoutiqueMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createBoutiqueMutation, { data, loading, error }] = useCreateBoutiqueMutation({
- *   variables: {
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useCreateBoutiqueMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessCreateBoutiqueMutation, BusinessCreateBoutiqueMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<BusinessCreateBoutiqueMutation, BusinessCreateBoutiqueMutationVariables>(CreateBoutiqueDocument, options);
-      }
-export type CreateBoutiqueMutationHookResult = ReturnType<typeof useCreateBoutiqueMutation>;
-export type CreateBoutiqueMutationResult = ApolloReactCommon.MutationResult<BusinessCreateBoutiqueMutation>;
-export type CreateBoutiqueMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessCreateBoutiqueMutation, BusinessCreateBoutiqueMutationVariables>;
 export const GetCategoriesDocument = gql`
     query GetCategories {
   categories {
@@ -3947,19 +3851,16 @@ export type GetProductsQueryHookResult = ReturnType<typeof useGetProductsQuery>;
 export type GetProductsLazyQueryHookResult = ReturnType<typeof useGetProductsLazyQuery>;
 export type GetProductsSuspenseQueryHookResult = ReturnType<typeof useGetProductsSuspenseQuery>;
 export type GetProductsQueryResult = ApolloReactCommon.QueryResult<BusinessGetProductsQuery, BusinessGetProductsQueryVariables>;
-export const GetProductDetailDocument = gql`
-    query GetProductDetail($id: ID!) {
+export const GetProductByIdDocument = gql`
+    query GetProductById($id: ID!) {
   products_by_id(id: $id) {
     id
     name
     subtitle
     description
     price
-    market_price
-    stock
     main_image
     images
-    brand
     category_id {
       id
       name
@@ -3970,34 +3871,34 @@ export const GetProductDetailDocument = gql`
     `;
 
 /**
- * __useGetProductDetailQuery__
+ * __useGetProductByIdQuery__
  *
- * To run a query within a React component, call `useGetProductDetailQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProductDetailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetProductByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProductByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetProductDetailQuery({
+ * const { data, loading, error } = useGetProductByIdQuery({
  *   variables: {
  *      id: // value for 'id'
  *   },
  * });
  */
-export function useGetProductDetailQuery(baseOptions: ApolloReactHooks.QueryHookOptions<BusinessGetProductDetailQuery, BusinessGetProductDetailQueryVariables> & ({ variables: BusinessGetProductDetailQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useGetProductByIdQuery(baseOptions: ApolloReactHooks.QueryHookOptions<BusinessGetProductByIdQuery, BusinessGetProductByIdQueryVariables> & ({ variables: BusinessGetProductByIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<BusinessGetProductDetailQuery, BusinessGetProductDetailQueryVariables>(GetProductDetailDocument, options);
+        return ApolloReactHooks.useQuery<BusinessGetProductByIdQuery, BusinessGetProductByIdQueryVariables>(GetProductByIdDocument, options);
       }
-export function useGetProductDetailLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetProductDetailQuery, BusinessGetProductDetailQueryVariables>) {
+export function useGetProductByIdLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetProductByIdQuery, BusinessGetProductByIdQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<BusinessGetProductDetailQuery, BusinessGetProductDetailQueryVariables>(GetProductDetailDocument, options);
+          return ApolloReactHooks.useLazyQuery<BusinessGetProductByIdQuery, BusinessGetProductByIdQueryVariables>(GetProductByIdDocument, options);
         }
-export function useGetProductDetailSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetProductDetailQuery, BusinessGetProductDetailQueryVariables>) {
+export function useGetProductByIdSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetProductByIdQuery, BusinessGetProductByIdQueryVariables>) {
           const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<BusinessGetProductDetailQuery, BusinessGetProductDetailQueryVariables>(GetProductDetailDocument, options);
+          return ApolloReactHooks.useSuspenseQuery<BusinessGetProductByIdQuery, BusinessGetProductByIdQueryVariables>(GetProductByIdDocument, options);
         }
-export type GetProductDetailQueryHookResult = ReturnType<typeof useGetProductDetailQuery>;
-export type GetProductDetailLazyQueryHookResult = ReturnType<typeof useGetProductDetailLazyQuery>;
-export type GetProductDetailSuspenseQueryHookResult = ReturnType<typeof useGetProductDetailSuspenseQuery>;
-export type GetProductDetailQueryResult = ApolloReactCommon.QueryResult<BusinessGetProductDetailQuery, BusinessGetProductDetailQueryVariables>;
+export type GetProductByIdQueryHookResult = ReturnType<typeof useGetProductByIdQuery>;
+export type GetProductByIdLazyQueryHookResult = ReturnType<typeof useGetProductByIdLazyQuery>;
+export type GetProductByIdSuspenseQueryHookResult = ReturnType<typeof useGetProductByIdSuspenseQuery>;
+export type GetProductByIdQueryResult = ApolloReactCommon.QueryResult<BusinessGetProductByIdQuery, BusinessGetProductByIdQueryVariables>;

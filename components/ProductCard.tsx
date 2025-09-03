@@ -1,10 +1,10 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { GetProductsQuery } from '../generated/graphql';
+import { BusinessGetProductsQuery } from '../generated/business-graphql';
 import { getDirectusThumbnailUrl } from '../utils/directus';
 
-export type Product = GetProductsQuery['products'][0];
+export type Product = BusinessGetProductsQuery['products'][0];
 
 interface ProductCardProps {
   product: Product;

@@ -1,24 +1,24 @@
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Dimensions,
-  Image,
-  Modal,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    ActivityIndicator,
+    Dimensions,
+    Image,
+    Modal,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
-import { useGetProductDetailQuery } from '../generated/graphql';
+import { useGetProductByIdQuery } from '../generated/business-graphql';
 import { getDirectusThumbnailUrl } from '../utils/directus';
 
 const ProductDetailScreen: React.FC = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { data, loading, error } = useGetProductDetailQuery({ variables: { id: id as string } });
+  const { data, loading, error } = useGetProductByIdQuery({ variables: { id: id as string } });
   const product = data?.products_by_id;
   
   // 图片预览状态
@@ -110,17 +110,7 @@ const ProductDetailScreen: React.FC = () => {
         )}
         <Text style={styles.name}>{product.name}</Text>
         {product.subtitle && <Text style={styles.desc}>{product.subtitle}</Text>}
-        <Text style={styles.price}>￥{product.price}
-          {product.market_price && (
-            <Text style={styles.marketPrice}>  原价￥{product.market_price}</Text>
-          )}
-        </Text>
-        {product.stock !== undefined && (
-          <Text style={styles.stock}>库存：{product.stock}</Text>
-        )}
-        {product.brand && (
-          <Text style={styles.brand}>品牌：{product.brand}</Text>
-        )}
+        <Text style={styles.price}>￥{product.price}</Text>
         {product.category_id && (
           <Text style={styles.category}>分类：{product.category_id.name}</Text>
         )}

@@ -3,7 +3,7 @@ import { ActivityIndicator, Dimensions, FlatList, Platform, RefreshControl, Safe
 import BrandHeader from '../components/BrandHeader';
 import ProductCard from '../components/ProductCard';
 import Tab from '../components/Tab';
-import { useGetCategoriesQuery, useGetProductsQuery } from '../generated/graphql';
+import { useGetCategoriesQuery, useGetProductsQuery } from '../generated/business-graphql';
 
 // 计算卡片宽度 - 与ProductCard中的计算保持一致
 const { width: screenWidth } = Dimensions.get('window');

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useGetCategoriesQuery, useGetProductsQuery } from '../generated/graphql';
+import { useGetCategoriesQuery, useGetProductsQuery } from '../generated/business-graphql';
 
 const NetworkTestScreen = () => {
   const [testResults, setTestResults] = useState<string[]>([]);

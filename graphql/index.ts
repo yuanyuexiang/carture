@@ -1,9 +1,12 @@
-// ================ 业务端点 GraphQL 导出 (/graphql) ================
-export * from './business/boutiques.graphql';
-export * from './business/products.graphql';
-
-// ================ 系统端点 GraphQL 导出 (/graphql/system) ================
-export * from './system/users.graphql';
+// ================ GraphQL 类型和查询统一导出 ================
+// 
+// 所有 GraphQL 查询和类型现在统一使用自动生成的文件：
+// - 业务相关：generated/business-graphql.ts (前缀: Business)  
+// - 系统相关：generated/system-graphql.ts (前缀: System)
+//
+// 使用方法：
+// import { useGetUserBoutiqueQuery, BusinessGetUserBoutiqueQuery } from '../generated/business-graphql';
+// import { useGetCurrentUserQuery, SystemGetCurrentUserQuery } from '../generated/system-graphql';
 
 // ================ 类型汇总 ================
 // 这里可以导出一些组合类型或者通用类型
