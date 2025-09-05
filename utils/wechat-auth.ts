@@ -107,7 +107,7 @@ export class WechatAuth {
         throw new Error('State参数验证失败');
       }
 
-      const response = await fetch('/api/wechat/auth', {
+      const response = await fetch('/vista/wechat/api/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -151,7 +151,7 @@ export class WechatAuth {
    */
   static async checkAuthStatus(openid: string): Promise<AuthStatusResponse> {
     try {
-      const response = await fetch(`/api/user/${openid}`);
+      const response = await fetch(`/vista/wechat/api/user/${openid}`);
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
