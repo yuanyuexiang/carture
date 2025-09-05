@@ -45,16 +45,30 @@ export const useWechatAuth = (): UseWechatAuthResult => {
           return;
         }
 
+        console.log('开始微信授权初始化...');
         const result = await WechatAuth.initialize();
-        setUserInfo(result);
-
-        if (!result) {
-          console.log('未获取到用户信息，可能需要授权');
+        
+        if (result) {
+          console.log('微信授权成功，用户信息:', result);
+          setUserInfo(result);
+        } else {
+          console.log('未获取到用户信息，开始授权流程');
+          // 自动开始授权
+          WechatAuth.startAuth();
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : '授权初始化失败';
         console.error('微信授权初始化失败:', err);
         setError(errorMessage);
+        
+        // 如果在微信浏览器中且初始化失败，尝试启动授权
+        if (isWechatBrowser) {
+          try {
+            WechatAuth.startAuth();
+          } catch (authErr) {
+            console.error('启动授权失败:', authErr);
+          }
+        }
       } finally {
         setLoading(false);
       }
