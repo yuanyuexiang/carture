@@ -75,8 +75,13 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
 
   // 关键逻辑：只有在微信浏览器中且未授权时才显示授权界面
   // 其他情况（非微信环境 或 已授权）都直接进入主界面
-  if (!isWechatBrowser || isAuthorized) {
-    console.log('进入主界面 - 微信环境:', isWechatBrowser, '已授权:', isAuthorized);
+  
+  // 临时简化逻辑：如果URL有force_main参数，直接进入主界面
+  const urlParams = new URLSearchParams(window.location.search);
+  const forceMain = urlParams.get('force_main') === 'true';
+  
+  if (!isWechatBrowser || isAuthorized || forceMain) {
+    console.log('进入主界面 - 微信环境:', isWechatBrowser, '已授权:', isAuthorized, '强制主界面:', forceMain);
     return <>{children}</>;
   }
 

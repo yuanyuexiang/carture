@@ -53,6 +53,28 @@ export const useWechatAuth = (): UseWechatAuthResult => {
           setUserInfo(result);
         } else {
           console.log('未获取到用户信息，需要用户手动授权');
+          
+          // 开发模式：如果URL有force_main参数，创建一个临时用户信息
+          const urlParams = new URLSearchParams(window.location.search);
+          const forceMain = urlParams.get('force_main') === 'true';
+          if (forceMain) {
+            console.log('开发模式：创建临时用户信息以进入主界面');
+            const tempUserInfo = {
+              openid: 'temp_user_' + Date.now(),
+              nickname: '测试用户',
+              headimgurl: '',
+              sex: 1,
+              language: 'zh_CN',
+              country: '中国',
+              province: '北京',
+              city: '北京',
+              privilege: [],
+              login_time: Math.floor(Date.now() / 1000),
+            };
+            setUserInfo(tempUserInfo);
+            return;
+          }
+          
           // 不再自动开始授权，需要用户手动点击
         }
       } catch (err) {

@@ -125,6 +125,22 @@ export const WechatAuthStatus: React.FC<WechatAuthStatusProps> = ({
             <Text style={styles.authButtonText}>开始微信授权</Text>
           </TouchableOpacity>
           
+          {/* 开发模式：跳过授权按钮 */}
+          {__DEV__ && (
+            <TouchableOpacity 
+              style={[styles.authButton, { backgroundColor: '#FF6B35', marginTop: 12 }]}
+              onPress={() => {
+                // 添加force_main参数并刷新页面
+                const newUrl = window.location.href + 
+                  (window.location.href.includes('?') ? '&' : '?') + 
+                  'force_main=true';
+                window.location.href = newUrl;
+              }}
+            >
+              <Text style={styles.authButtonText}>开发模式：跳过授权</Text>
+            </TouchableOpacity>
+          )}
+          
           <View style={styles.authTips}>
             <Text style={styles.tipsTitle}>授权说明：</Text>
             <Text style={styles.tipsText}>• 获取您的微信昵称和头像</Text>
