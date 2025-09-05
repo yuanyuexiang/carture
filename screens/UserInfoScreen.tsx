@@ -5,6 +5,7 @@ import {
     StatusBar,
     StyleSheet,
     Text,
+    TouchableOpacity,
     View,
 } from 'react-native';
 import { WechatAuthStatus } from '../components/WechatAuthStatus';
@@ -57,8 +58,14 @@ const UserInfoScreen: React.FC = () => {
             // 显示微信用户信息
             <WechatUserCard
               userInfo={userInfo}
-              onForceReauth={forceReauth}
-              onClearAuth={clearAuth}
+              onForceReauth={() => {
+                console.log('UserInfoScreen: forceReauth 被调用');
+                forceReauth();
+              }}
+              onClearAuth={() => {
+                console.log('UserInfoScreen: clearAuth 被调用');
+                clearAuth();
+              }}
             />
           ) : (
             // 显示授权状态
@@ -110,6 +117,29 @@ const UserInfoScreen: React.FC = () => {
                 错误: {error}
               </Text>
             )}
+            
+            {/* 调试按钮 */}
+            <View style={styles.debugButtons}>
+              <TouchableOpacity 
+                style={styles.debugButton} 
+                onPress={() => {
+                  console.log('直接调用 clearAuth');
+                  clearAuth();
+                }}
+              >
+                <Text style={styles.debugButtonText}>直接清除授权</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.debugButton} 
+                onPress={() => {
+                  console.log('直接调用 forceReauth');
+                  forceReauth();
+                }}
+              >
+                <Text style={styles.debugButtonText}>直接重新授权</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       </ScrollView>
@@ -197,6 +227,24 @@ const styles = StyleSheet.create({
     color: '#e64340',
     lineHeight: 16,
     marginTop: 4,
+  },
+  debugButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 12,
+  },
+  debugButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 4,
+    minWidth: 80,
+    alignItems: 'center',
+  },
+  debugButtonText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '500',
   },
 });
 

@@ -80,17 +80,46 @@ export const useWechatAuth = (): UseWechatAuthResult => {
 
   // 强制重新授权
   const forceReauth = () => {
-    WechatAuth.clearUserInfo();
-    setUserInfo(null);
-    setError(null);
-    startAuth();
+    console.log('开始强制重新授权...');
+    try {
+      // 清除本地数据
+      WechatAuth.clearUserInfo();
+      // 立即更新状态
+      setUserInfo(null);
+      setError(null);
+      setLoading(false);
+      
+      // 检查是否在微信浏览器中
+      if (!isWechatBrowser) {
+        setError('请在微信浏览器中打开');
+        return;
+      }
+      
+      // 开始新的授权流程
+      WechatAuth.startAuth();
+    } catch (err) {
+      console.error('强制重新授权失败:', err);
+      const errorMessage = err instanceof Error ? err.message : '重新授权失败';
+      setError(errorMessage);
+    }
   };
 
   // 清除授权信息
   const clearAuth = () => {
-    WechatAuth.clearUserInfo();
-    setUserInfo(null);
-    setError(null);
+    console.log('清除授权信息...');
+    try {
+      // 清除本地数据
+      WechatAuth.clearUserInfo();
+      // 立即更新状态
+      setUserInfo(null);
+      setError(null);
+      setLoading(false);
+      console.log('授权信息已清除');
+    } catch (err) {
+      console.error('清除授权失败:', err);
+      const errorMessage = err instanceof Error ? err.message : '清除授权失败';
+      setError(errorMessage);
+    }
   };
 
   return {

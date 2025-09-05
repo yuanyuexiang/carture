@@ -38,26 +38,48 @@ export const WechatUserCard: React.FC<WechatUserCardProps> = ({
 
   // 确认重新授权
   const handleForceReauth = () => {
-    Alert.alert(
-      '重新授权',
-      '确定要重新获取微信授权吗？',
-      [
-        { text: '取消', style: 'cancel' },
-        { text: '确定', onPress: onForceReauth },
-      ]
-    );
+    // 在Web环境中使用window.confirm，在原生环境中使用Alert.alert
+    if (typeof window !== 'undefined') {
+      // Web环境
+      const confirmed = window.confirm('确定要重新获取微信授权吗？');
+      if (confirmed && onForceReauth) {
+        console.log('用户确认重新授权');
+        onForceReauth();
+      }
+    } else {
+      // 原生环境
+      Alert.alert(
+        '重新授权',
+        '确定要重新获取微信授权吗？',
+        [
+          { text: '取消', style: 'cancel' },
+          { text: '确定', onPress: onForceReauth },
+        ]
+      );
+    }
   };
 
   // 确认清除授权
   const handleClearAuth = () => {
-    Alert.alert(
-      '清除授权',
-      '确定要清除微信授权信息吗？',
-      [
-        { text: '取消', style: 'cancel' },
-        { text: '确定', onPress: onClearAuth },
-      ]
-    );
+    // 在Web环境中使用window.confirm，在原生环境中使用Alert.alert
+    if (typeof window !== 'undefined') {
+      // Web环境
+      const confirmed = window.confirm('确定要清除微信授权信息吗？');
+      if (confirmed && onClearAuth) {
+        console.log('用户确认清除授权');
+        onClearAuth();
+      }
+    } else {
+      // 原生环境
+      Alert.alert(
+        '清除授权',
+        '确定要清除微信授权信息吗？',
+        [
+          { text: '取消', style: 'cancel' },
+          { text: '确定', onPress: onClearAuth },
+        ]
+      );
+    }
   };
 
   return (
@@ -125,7 +147,11 @@ export const WechatUserCard: React.FC<WechatUserCardProps> = ({
         {onForceReauth && (
           <TouchableOpacity 
             style={[styles.actionButton, styles.reauthButton]}
-            onPress={handleForceReauth}
+            onPress={() => {
+              console.log('重新授权按钮被点击');
+              handleForceReauth();
+            }}
+            activeOpacity={0.7}
           >
             <Text style={styles.reauthButtonText}>重新授权</Text>
           </TouchableOpacity>
@@ -134,7 +160,11 @@ export const WechatUserCard: React.FC<WechatUserCardProps> = ({
         {onClearAuth && (
           <TouchableOpacity 
             style={[styles.actionButton, styles.clearButton]}
-            onPress={handleClearAuth}
+            onPress={() => {
+              console.log('清除授权按钮被点击');
+              handleClearAuth();
+            }}
+            activeOpacity={0.7}
           >
             <Text style={styles.clearButtonText}>清除授权</Text>
           </TouchableOpacity>
