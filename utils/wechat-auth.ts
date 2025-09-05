@@ -39,7 +39,18 @@ export class WechatAuth {
    */
   static isWechatBrowser(): boolean {
     const userAgent = navigator.userAgent.toLowerCase();
-    return userAgent.includes('micromessenger');
+    const isWechat = userAgent.includes('micromessenger');
+    
+    // 开发模式：可以通过URL参数强制启用微信模式
+    const urlParams = new URLSearchParams(window.location.search);
+    const forceWechat = urlParams.get('force_wechat') === 'true';
+    
+    console.log('=== 检查微信浏览器环境 ===');
+    console.log('User Agent:', userAgent);
+    console.log('是否包含 micromessenger:', isWechat);
+    console.log('强制微信模式:', forceWechat);
+    
+    return isWechat || forceWechat;
   }
 
   /**
@@ -67,13 +78,22 @@ export class WechatAuth {
    * 开始微信授权流程
    */
   static startAuth(): void {
+    console.log('=== WechatAuth.startAuth 开始 ===');
+    console.log('检查微信浏览器环境...');
+    
     if (!this.isWechatBrowser()) {
       console.warn('当前不在微信浏览器中，无法进行微信授权');
+      console.log('User Agent:', navigator.userAgent);
       return;
     }
     
+    console.log('在微信浏览器中，构建授权URL...');
     const authURL = this.buildAuthURL();
+    console.log('授权URL:', authURL);
+    console.log('即将跳转到微信授权页面...');
+    
     window.location.href = authURL;
+    console.log('跳转命令已执行');
   }
 
   /**

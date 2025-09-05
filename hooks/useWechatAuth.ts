@@ -71,14 +71,21 @@ export const useWechatAuth = (): UseWechatAuthResult => {
 
   // 开始授权
   const startAuth = () => {
+    console.log('=== startAuth 被调用 ===');
+    console.log('isWechatBrowser:', isWechatBrowser);
+    
     if (!isWechatBrowser) {
+      console.log('不在微信浏览器中，设置错误信息');
       setError('请在微信浏览器中打开');
       return;
     }
 
     try {
+      console.log('调用 WechatAuth.startAuth()...');
       WechatAuth.startAuth();
+      console.log('WechatAuth.startAuth() 调用完成');
     } catch (err) {
+      console.error('启动授权失败:', err);
       const errorMessage = err instanceof Error ? err.message : '启动授权失败';
       setError(errorMessage);
     }

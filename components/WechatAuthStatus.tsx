@@ -1,5 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { WechatAuth } from '../utils/wechat-auth';
+import { QRCodeAuth } from './QRCodeAuth';
 
 interface WechatAuthStatusProps {
   /** 是否正在加载 */
@@ -58,8 +60,11 @@ export const WechatAuthStatus: React.FC<WechatAuthStatusProps> = ({
     );
   }
 
-  // 非微信浏览器
-  if (!isWechatBrowser) {
+  // 非微信浏览器但强制微信模式
+  const urlParams = new URLSearchParams(window.location.search);
+  const forceWechat = urlParams.get('force_wechat') === 'true';
+  
+  if (!isWechatBrowser && !forceWechat) {
     return (
       <View style={styles.container}>
         <View style={styles.warningSection}>
@@ -68,7 +73,40 @@ export const WechatAuthStatus: React.FC<WechatAuthStatusProps> = ({
           <Text style={styles.warningMessage}>
             该功能需要在微信浏览器中使用，请在微信中打开此页面
           </Text>
+          
+          {/* 开发模式：显示强制微信模式链接 */}
+          {__DEV__ && (
+            <TouchableOpacity 
+              style={styles.devButton}
+              onPress={() => {
+                const newUrl = window.location.href + (window.location.href.includes('?') ? '&' : '?') + 'force_wechat=true';
+                window.location.href = newUrl;
+              }}
+            >
+              <Text style={styles.devButtonText}>开发模式：模拟微信环境</Text>
+            </TouchableOpacity>
+          )}
         </View>
+      </View>
+    );
+  }
+
+  // 如果是强制微信模式但在普通浏览器中，显示二维码
+  if (!isWechatBrowser && forceWechat) {
+    const authUrl = WechatAuth.buildAuthURL();
+    return (
+      <View style={styles.container}>
+        <QRCodeAuth 
+          authUrl={authUrl}
+          onCopyLink={() => {
+            if (navigator.clipboard) {
+              navigator.clipboard.writeText(authUrl);
+              alert('链接已复制到剪贴板');
+            } else {
+              prompt('请复制以下链接:', authUrl);
+            }
+          }}
+        />
       </View>
     );
   }
@@ -225,5 +263,17 @@ const styles = StyleSheet.create({
     color: '#666',
     lineHeight: 18,
     marginBottom: 4,
+  },
+  devButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 6,
+    marginTop: 16,
+  },
+  devButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
