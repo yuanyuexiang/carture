@@ -84,6 +84,9 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
 
         {/* 授权提示 */}
         <View style={styles.authContent}>
+          <Text style={styles.authPrompt}>为了提供个性化服务</Text>
+          <Text style={styles.authSubtext}>需要获取您的微信基本信息</Text>
+          
           <WechatAuthStatus
             loading={loading}
             error={error}
@@ -97,7 +100,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
         {/* 底部说明 */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            为了提供更好的服务体验，我们需要获取您的基本信息
+            点击"开始微信授权"按钮即表示您同意我们获取您的基本信息用于个性化服务
           </Text>
         </View>
       </View>
@@ -147,6 +150,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  authPrompt: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  authSubtext: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 30,
+    textAlign: 'center',
   },
   footer: {
     alignItems: 'center',
