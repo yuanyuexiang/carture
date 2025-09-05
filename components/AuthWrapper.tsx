@@ -32,17 +32,25 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
-    // 如果不在微信浏览器中，直接显示子组件
+    console.log('=== AuthWrapper 状态检查 ===');
+    console.log('isWechatBrowser:', isWechatBrowser);
+    console.log('loading:', loading);
+    console.log('isAuthorized:', isAuthorized);
+    console.log('userInfo:', userInfo);
+    
+    // 如果不在微信浏览器中，直接显示子组件（主界面）
     if (!isWechatBrowser) {
+      console.log('非微信环境，直接进入主界面');
       setInitializing(false);
       return;
     }
 
     // 在微信浏览器中，等待授权初始化完成
     if (!loading) {
+      console.log('授权检查完成，initializing设为false');
       setInitializing(false);
     }
-  }, [loading, isWechatBrowser]);
+  }, [loading, isWechatBrowser, isAuthorized, userInfo]);
 
   // 重试授权
   const handleRetry = () => {
@@ -59,14 +67,16 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
         <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#ff6b35" />
-          <Text style={styles.loadingText}>正在初始化...</Text>
+          <Text style={styles.loadingText}>正在检查授权状态...</Text>
         </View>
       </SafeAreaView>
     );
   }
 
-  // 如果不在微信浏览器中，或者已经授权成功，显示子组件
+  // 关键逻辑：只有在微信浏览器中且未授权时才显示授权界面
+  // 其他情况（非微信环境 或 已授权）都直接进入主界面
   if (!isWechatBrowser || isAuthorized) {
+    console.log('进入主界面 - 微信环境:', isWechatBrowser, '已授权:', isAuthorized);
     return <>{children}</>;
   }
 

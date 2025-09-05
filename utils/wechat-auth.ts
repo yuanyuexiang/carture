@@ -236,19 +236,25 @@ export class WechatAuth {
    */
   static async initialize(): Promise<WechatUserInfo | null> {
     try {
+      console.log('=== 微信授权初始化开始 ===');
+      
       // 检查URL中是否有授权回调参数
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get('code');
       const state = urlParams.get('state');
 
       if (code && state) {
+        console.log('检测到授权回调，code:', code, 'state:', state);
         // 处理微信授权回调
         return await this.handleAuthCallback(code, state);
       }
 
       // 检查本地是否有用户信息
+      console.log('检查本地用户信息...');
       const localUserInfo = this.getUserInfo();
       if (localUserInfo) {
+        console.log('找到本地用户信息:', localUserInfo);
+        
         // 检查是否过期
         if (this.isAuthExpired(localUserInfo)) {
           console.log('本地授权已过期，需要重新授权');
@@ -256,6 +262,7 @@ export class WechatAuth {
           return null;
         }
 
+        console.log('本地授权未过期，验证服务器状态...');
         // 服务器端验证授权状态
         try {
           const authStatus = await this.checkAuthStatus(localUserInfo.openid);
@@ -265,6 +272,7 @@ export class WechatAuth {
             return null;
           }
 
+          console.log('服务器验证通过，用户授权有效');
           // 授权有效，返回用户信息
           return authStatus.user_info || localUserInfo;
         } catch (error) {
@@ -273,6 +281,7 @@ export class WechatAuth {
         }
       }
 
+      console.log('没有本地用户信息，需要重新授权');
       return null;
     } catch (error) {
       console.error('微信授权初始化失败:', error);
