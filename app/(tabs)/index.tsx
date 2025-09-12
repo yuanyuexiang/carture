@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import DebugInfo from '../../components/DebugInfo';
-import DebugPanel from '../../components/DebugPanel';
 import { useGetAllProductsWithBoutiqueQuery } from '../../generated/business-graphql';
 import ProductListScreen from '../../screens/ProductListScreen';
 
@@ -16,7 +15,6 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <ProductListScreen />
-      <DebugPanel />
       
       {/* 调试信息切换按钮 */}
       {__DEV__ && (

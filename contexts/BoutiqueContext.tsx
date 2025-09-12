@@ -81,24 +81,3 @@ export const useBoutiqueId = (): string | null => {
   const { boutiqueId } = useBoutiqueContext();
   return boutiqueId;
 };
-
-/**
- * 店铺切换Hook
- * @returns 切换店铺的函数
- */
-export const useBoutiqueSwitcher = () => {
-  const { setBoutiqueId } = useBoutiqueContext();
-  
-  const switchToBoutique = (id: string) => {
-    setBoutiqueId(id);
-  };
-
-  const clearBoutique = () => {
-    setBoutiqueId(null);
-  };
-
-  return {
-    switchToBoutique,
-    clearBoutique,
-  };
-};
