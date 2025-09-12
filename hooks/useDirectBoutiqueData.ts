@@ -33,7 +33,7 @@ export const useDirectBoutiqueData = () => {
   } = useGetCategoriesByBoutiqueQuery({
     variables: { 
       boutiqueFilter: { 
-        boutique: { id: { _eq: numericBoutiqueId } } 
+        boutique_id: { id: { _eq: numericBoutiqueId } } 
       } 
     },
     skip: !numericBoutiqueId,
