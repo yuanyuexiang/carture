@@ -1,7 +1,7 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { useUserBoutique } from '@/hooks/useUserBoutique';
+import { useDirectBoutiqueData } from '@/hooks/useDirectBoutiqueData';
 import { getDirectusImageUrl, getDirectusThumbnailUrl } from '@/utils/directus';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
@@ -29,37 +29,34 @@ export default function BoutiqueScreen() {
   const [currentImageUrl, setCurrentImageUrl] = useState<string>('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
-  // 使用真实的数据hook
+  // 使用新的直接查询方式获取店铺数据
   const { 
-    currentUser, 
-    userBoutique, 
-    loading, 
-    error, 
-    hasUser, 
-    hasBoutique, 
-    isEmpty 
-  } = useUserBoutique();
+    boutique, 
+    boutiqueLoading, 
+    boutiqueError, 
+    boutiqueNotFound
+  } = useDirectBoutiqueData();
 
   // 获取所有图片URL (用于预览)
   const getAllImages = () => {
     const images: string[] = [];
     
     // 添加主图片 (高质量预览)
-    if (userBoutique?.main_image) {
-      images.push(getDirectusImageUrl(userBoutique.main_image, 1200, 800, 95));
+    if (boutique?.main_image) {
+      images.push(getDirectusImageUrl(boutique.main_image, 1200, 800, 95));
     }
     
     // 添加其他图片 (高质量预览)
-    if (userBoutique?.images) {
+    if (boutique?.images) {
       let imageArray = [];
-      if (typeof userBoutique.images === 'string') {
+      if (typeof boutique.images === 'string') {
         try {
-          imageArray = JSON.parse(userBoutique.images);
+          imageArray = JSON.parse(boutique.images);
         } catch {
           imageArray = [];
         }
-      } else if (Array.isArray(userBoutique.images)) {
-        imageArray = userBoutique.images;
+      } else if (Array.isArray(boutique.images)) {
+        imageArray = boutique.images;
       }
       
       imageArray.forEach((imageId: string) => {
@@ -147,7 +144,7 @@ export default function BoutiqueScreen() {
   };
 
   const renderImageGallery = () => {
-    const images = userBoutique?.images;
+    const images = boutique?.images;
     
     if (!images || (Array.isArray(images) && images.length === 0)) {
       return (
@@ -181,13 +178,13 @@ export default function BoutiqueScreen() {
         contentContainerStyle={styles.imageGalleryContent}
       >
         {/* 主图片 */}
-        {userBoutique?.main_image && (
+        {boutique?.main_image && (
           <TouchableOpacity 
             style={styles.imageContainer}
             onPress={() => openImagePreview(allImages[imageIndex], imageIndex)}
           >
             <Image
-              source={{ uri: getDirectusThumbnailUrl(userBoutique.main_image, 150) }}
+              source={{ uri: getDirectusThumbnailUrl(boutique.main_image, 150) }}
               style={styles.galleryImage}
               resizeMode="cover"
             />
@@ -199,7 +196,7 @@ export default function BoutiqueScreen() {
         
         {/* 其他图片 */}
         {imageArray.map((imageUri: string, index: number) => {
-          const actualIndex = userBoutique?.main_image ? index + 1 : index;
+          const actualIndex = boutique?.main_image ? index + 1 : index;
           return (
             <TouchableOpacity
               key={index}
@@ -219,7 +216,7 @@ export default function BoutiqueScreen() {
   };
 
   // Loading状态
-  if (loading) {
+  if (boutiqueLoading) {
     return (
       <ThemedView style={styles.container}>
         <SafeAreaView style={styles.loadingContainer}>
@@ -231,13 +228,13 @@ export default function BoutiqueScreen() {
   }
 
   // 错误状态
-  if (error) {
+  if (boutiqueError) {
     return (
       <ThemedView style={styles.container}>
         <SafeAreaView style={styles.errorContainer}>
           <Ionicons name="alert-circle-outline" size={48} color="#ff6b35" />
           <ThemedText style={styles.errorTitle}>获取信息失败</ThemedText>
-          <Text style={styles.errorMessage}>{error}</Text>
+          <Text style={styles.errorMessage}>{boutiqueError.message}</Text>
           <TouchableOpacity 
             style={styles.retryButton}
             onPress={() => window.location.reload()}
@@ -249,20 +246,16 @@ export default function BoutiqueScreen() {
     );
   }
 
-  // 空状态 - 没有店铺信息
-  if (isEmpty) {
+  // 店铺不存在状态
+  if (boutiqueNotFound) {
     return (
       <ThemedView style={styles.container}>
         <SafeAreaView style={styles.emptyContainer}>
           <Ionicons name="storefront-outline" size={64} color="#ccc" />
-          <ThemedText style={styles.emptyTitle}>还没有店铺信息</ThemedText>
+          <ThemedText style={styles.emptyTitle}>店铺不存在</ThemedText>
           <Text style={styles.emptyMessage}>
-            您还没有创建店铺，请联系管理员为您开通店铺功能
+            请在链接中提供有效的店铺 ID，例如：?boutique_id=1
           </Text>
-          <TouchableOpacity style={styles.contactButton}>
-            <Ionicons name="chatbubble-outline" size={20} color="white" />
-            <Text style={styles.contactButtonText}>联系客服</Text>
-          </TouchableOpacity>
         </SafeAreaView>
       </ThemedView>
     );
@@ -281,9 +274,9 @@ export default function BoutiqueScreen() {
         <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
           {/* 店铺头部卡片 */}
           <View style={styles.headerCard}>
-            {userBoutique?.main_image ? (
+            {boutique?.main_image ? (
               <Image
-                source={{ uri: getDirectusImageUrl(userBoutique.main_image, 400, 200, 80) }}
+                source={{ uri: getDirectusImageUrl(boutique.main_image, 400, 200, 80) }}
                 style={styles.headerImage}
                 resizeMode="cover"
               />
@@ -295,13 +288,13 @@ export default function BoutiqueScreen() {
             
             <View style={styles.headerContent}>
               <ThemedText style={styles.boutiqueName}>
-                {userBoutique?.name || '未命名店铺'}
+                {boutique?.name || '未命名店铺'}
               </ThemedText>
               
               <View style={styles.ratingContainer}>
-                {renderStars(userBoutique?.stars || 0)}
+                {renderStars(boutique?.stars || 0)}
                 <Text style={styles.ratingText}>
-                  ({userBoutique?.stars || 0}/5)
+                  ({boutique?.stars || 0}/5)
                 </Text>
               </View>
               
@@ -309,11 +302,11 @@ export default function BoutiqueScreen() {
                 <View style={[
                   styles.statusBadge,
                   {
-                    backgroundColor: userBoutique?.status === 'published' ? '#4CAF50' : '#FF9800',
+                    backgroundColor: boutique?.status === 'published' ? '#4CAF50' : '#FF9800',
                   },
                 ]}>
                   <Text style={styles.statusText}>
-                    {userBoutique?.status === 'published' ? '营业中' : '暂停营业'}
+                    {boutique?.status === 'published' ? '营业中' : '暂停营业'}
                   </Text>
                 </View>
               </View>
@@ -331,7 +324,7 @@ export default function BoutiqueScreen() {
               <View style={styles.infoContent}>
                 <Text style={styles.infoLabel}>地址</Text>
                 <Text style={styles.infoValue}>
-                  {userBoutique?.address || '暂未设置地址'}
+                  {boutique?.address || '暂未设置地址'}
                 </Text>
               </View>
             </View>
@@ -343,7 +336,7 @@ export default function BoutiqueScreen() {
               <View style={styles.infoContent}>
                 <Text style={styles.infoLabel}>店主</Text>
                 <Text style={styles.infoValue}>
-                  {currentUser?.first_name || currentUser?.email || '未知'}
+                  店主信息
                 </Text>
               </View>
             </View>
@@ -355,8 +348,8 @@ export default function BoutiqueScreen() {
               <View style={styles.infoContent}>
                 <Text style={styles.infoLabel}>创建时间</Text>
                 <Text style={styles.infoValue}>
-                  {userBoutique?.date_created 
-                    ? new Date(userBoutique.date_created).toLocaleDateString('zh-CN')
+                  {boutique?.date_created 
+                    ? new Date(boutique.date_created).toLocaleDateString('zh-CN')
                     : '未知'
                   }
                 </Text>
