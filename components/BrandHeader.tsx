@@ -1,13 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { useUserBoutique } from '../hooks/useUserBoutique';
+import { useDirectBoutiqueData } from '../hooks/useDirectBoutiqueData';
 
 const BrandHeader: React.FC = () => {
-  const { userBoutique, loading, error, isEmpty } = useUserBoutique();
+  const { boutique, boutiqueLoading, boutiqueError, boutiqueNotFound } = useDirectBoutiqueData();
+
+  // 如果店铺不存在，不渲染任何内容
+  if (boutiqueNotFound) {
+    return null;
+  }
 
   // Loading状态
-  if (loading) {
+  if (boutiqueLoading) {
     return (
       <View style={styles.brandSection}>
         <View style={styles.brandLogo}>
@@ -22,7 +27,7 @@ const BrandHeader: React.FC = () => {
   }
 
   // Error状态
-  if (error) {
+  if (boutiqueError) {
     return (
       <View style={styles.brandSection}>
         <View style={styles.brandLogo}>
@@ -30,14 +35,14 @@ const BrandHeader: React.FC = () => {
         </View>
         <View style={styles.brandInfo}>
           <Text style={styles.brandName}>加载店铺信息失败</Text>
-          <Text style={styles.errorText}>{error}</Text>
+          <Text style={styles.errorText}>{boutiqueError.message || '未知错误'}</Text>
         </View>
       </View>
     );
   }
 
   // Empty状态 - 没有店铺信息
-  if (isEmpty || !userBoutique) {
+  if (!boutique) {
     return (
       <View style={styles.brandSection}>
         <View style={styles.brandLogo}>
@@ -81,14 +86,14 @@ const BrandHeader: React.FC = () => {
       </View>
       <View style={styles.brandInfo}>
         <Text style={styles.brandName}>
-          {userBoutique.name || '我的精品店'}
+          {boutique.name || '我的精品店'}
         </Text>
         <View style={styles.ratingSection}>
           <View style={styles.stars}>
-            {renderStars(userBoutique.stars || 0)}
+            {renderStars(boutique.stars || 0)}
           </View>
           <Text style={styles.ratingText}>
-            {userBoutique.stars ? `${userBoutique.stars}.0高分` : '暂无评分'}
+            {boutique.stars ? `${boutique.stars}.0高分` : '暂无评分'}
           </Text>
         </View>
       </View>

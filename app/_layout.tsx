@@ -7,6 +7,7 @@ import 'react-native-reanimated';
 import { AuthWrapper } from '../components/AuthWrapper';
 import DataInitializer from '../components/DataInitializer';
 import WardrobeApolloProvider from '../components/WardrobeApolloProvider';
+import { BoutiqueProvider } from '../contexts/BoutiqueContext';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -56,23 +57,25 @@ export default function RootLayout() {
   return (
       <WardrobeApolloProvider>
         <DataInitializer>
-          <AuthWrapper>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-              <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen 
-                  name="ProductDetail" 
-                  options={{ 
-                    title: '商品详情',
-                    headerShown: true,
-                    presentation: 'card'
-                  }} 
-                />
-                <Stack.Screen name="+not-found" />
-              </Stack>
-              <StatusBar style="auto" />
-            </ThemeProvider>
-          </AuthWrapper>
+          <BoutiqueProvider>
+            <AuthWrapper>
+              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                <Stack>
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen 
+                    name="ProductDetail" 
+                    options={{ 
+                      title: '商品详情',
+                      headerShown: true,
+                      presentation: 'card'
+                    }} 
+                  />
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+                <StatusBar style="auto" />
+              </ThemeProvider>
+            </AuthWrapper>
+          </BoutiqueProvider>
         </DataInitializer>
       </WardrobeApolloProvider>
   );

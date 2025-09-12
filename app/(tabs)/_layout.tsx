@@ -6,9 +6,11 @@ import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { useDirectBoutiqueData } from '../../hooks/useDirectBoutiqueData';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { boutiqueNotFound } = useDirectBoutiqueData();
 
   return (
     <Tabs
@@ -17,7 +19,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
-        tabBarStyle: {
+        tabBarStyle: boutiqueNotFound ? { display: 'none' } : {
           backgroundColor: '#fff',
           borderTopWidth: 1,
           borderTopColor: '#f0f0f0',

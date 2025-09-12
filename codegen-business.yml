@@ -1,0 +1,16 @@
+overwrite: true
+generates:
+  # 业务schema的类型生成 (普通端点 /graphql)
+  generated/business-graphql.ts:
+    schema: "./schema.graphql"
+    documents: "graphql/business/**/*.graphql.ts"
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      withHooks: true
+      apolloReactHooksImportFrom: "@apollo/client"
+      apolloReactCommonImportFrom: "@apollo/client"
+      reactApolloVersion: 3
+      typesPrefix: Business

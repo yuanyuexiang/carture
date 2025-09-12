@@ -3,7 +3,9 @@ import { ActivityIndicator, Dimensions, FlatList, Platform, RefreshControl, Safe
 import BrandHeader from '../components/BrandHeader';
 import ProductCard from '../components/ProductCard';
 import Tab from '../components/Tab';
-import { useGetCategoriesQuery, useGetProductsQuery } from '../generated/business-graphql';
+import { useBoutiqueContext } from '../contexts/BoutiqueContext';
+import { useGetProductsQuery } from '../generated/business-graphql';
+import { useDirectBoutiqueData } from '../hooks/useDirectBoutiqueData';
 
 // 计算卡片宽度 - 与ProductCard中的计算保持一致
 const { width: screenWidth } = Dimensions.get('window');
@@ -21,14 +23,24 @@ const TAB_BAR_HEIGHT = Platform.select({
 const BOTTOM_PADDING = TAB_BAR_HEIGHT + 16; // 选项卡高度 + 额外间距
 
 const ProductListScreen: React.FC = () => {
+  const { boutiqueId } = useBoutiqueContext();
   const [selectedCategory, setSelectedCategory] = useState<string | null>("recommended");
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   
-  // 使用真实的API
-  const { data: categoryData, loading: categoryLoading, error: categoryError } = useGetCategoriesQuery();
+  // 使用新的直接查询方式获取店铺和分类数据
+  const {
+    boutique,
+    categories,
+    loading: boutiqueDataLoading,
+    error: boutiqueDataError,
+    hasBoutique,
+    hasCategories,
+    boutiqueNotFound,
+    debug
+  } = useDirectBoutiqueData();
   
   // 构建查询变量
   const buildQueryVariables = () => {
@@ -36,6 +48,15 @@ const ProductListScreen: React.FC = () => {
     
     // 构建动态 filter 对象
     const filters: any[] = [];
+    
+    // 添加店铺过滤器（如果有选择的店铺）
+    if (boutiqueId) {
+      filters.push({
+        boutique_id: { 
+          id: { _eq: parseInt(boutiqueId) } 
+        }
+      });
+    }
     
     // 处理推荐商品分类（获取最新上架的5个商品）
     if (selectedCategory === "recommended") {
@@ -82,13 +103,26 @@ const ProductListScreen: React.FC = () => {
 
   // 调试信息
   React.useEffect(() => {
-    if (categoryError) {
-      console.log('分类加载错误:', categoryError);
+    console.log('🏪 ProductListScreen 调试信息:');
+    console.log('  - boutiqueId:', boutiqueId);
+    console.log('  - boutiqueDataLoading:', boutiqueDataLoading);
+    console.log('  - selectedCategory:', selectedCategory);
+    console.log('  - 查询变量:', buildQueryVariables());
+    console.log('  - 店铺信息:', boutique);
+    console.log('  - 分类信息:', categories);
+    
+    if (boutiqueDataError) {
+      console.log('  - 数据加载错误:', boutiqueDataError);
     }
     if (productError) {
-      console.log('商品加载错误:', productError);
+      console.log('  - 商品加载错误:', productError);
     }
-  }, [categoryError, productError]);
+    
+    if (productData?.products) {
+      console.log('  - 商品数量:', productData.products.length);
+      console.log('  - 商品列表:', productData.products.map(p => ({ id: p.id, name: p.name })));
+    }
+  }, [boutiqueId, boutiqueDataLoading, selectedCategory, boutiqueDataError, productError, productData, boutique, categories]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -108,10 +142,27 @@ const ProductListScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      {/* 顶部品牌区域 */}
-      <View style={styles.header}>
-        <BrandHeader />
-        <View style={styles.headerRight}>
+      
+      {/* 店铺不存在提示 */}
+      {boutiqueNotFound && (
+        <View style={styles.notFoundContainer}>
+          <Text style={styles.notFoundTitle}>店铺不存在</Text>
+          <Text style={styles.notFoundMessage}>
+            {boutiqueId 
+              ? `找不到 ID 为 ${boutiqueId} 的店铺，请检查链接是否正确。`
+              : '请在链接中提供有效的店铺 ID，例如：?boutique_id=1'
+            }
+          </Text>
+        </View>
+      )}
+      
+      {/* 只有在店铺存在时才显示正常内容 */}
+      {!boutiqueNotFound && (
+        <>
+          {/* 顶部品牌区域 */}
+          <View style={styles.header}>
+            <BrandHeader />
+            <View style={styles.headerRight}>
           
           {/* <TouchableOpacity style={styles.searchIcon}>
             <Ionicons name="search" size={20} color="#666" />
@@ -127,14 +178,14 @@ const ProductListScreen: React.FC = () => {
       <View style={styles.mainSection}>
         {/* 左侧分类导航 */}
         <View style={styles.leftCategory}>
-          {categoryLoading ? (
+          {boutiqueDataLoading ? (
             <ActivityIndicator size="small" color="#ff6b35" />
           ) : (
             <FlatList
-              data={[
+              data={hasBoutique ? [
                 { id: "recommended", name: "热卖爆款" },
-                ...(categoryData?.categories || [])
-              ]}
+                ...(categories || [])
+              ] : []}
               keyExtractor={(cat) => cat.id}
               renderItem={({ item: cat }) => (
                 <Tab
@@ -180,6 +231,8 @@ const ProductListScreen: React.FC = () => {
           />
         </View>
       </View>
+        </>
+      )}
     </SafeAreaView>
   );
 };
@@ -286,6 +339,26 @@ const styles = StyleSheet.create({
   },
   itemSeparator: {
     width: 12,
+  },
+  // 店铺不存在样式
+  notFoundContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+    backgroundColor: '#f8f8f8',
+  },
+  notFoundTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 16,
+  },
+  notFoundMessage: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    lineHeight: 24,
   },
 });
 
