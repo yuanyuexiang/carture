@@ -105,6 +105,15 @@ const ProductDetailScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* 自定义返回按钮 */}
+      <TouchableOpacity 
+        style={styles.backButton} 
+        onPress={() => router.back()}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.backButtonText}>← 返回</Text>
+      </TouchableOpacity>
+      
       <ScrollView style={styles.container}>
         {mainImageUrl && (
           <View style={styles.imageWrap}>

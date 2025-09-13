@@ -66,7 +66,7 @@ export default function RootLayout() {
                     name="ProductDetail" 
                     options={{ 
                       title: '商品详情',
-                      headerShown: true,
+                      headerShown: false, // 禁用默认头部避免图标加载问题
                       presentation: 'card'
                     }} 
                   />
