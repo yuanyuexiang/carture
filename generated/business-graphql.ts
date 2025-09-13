@@ -4513,6 +4513,14 @@ export type BusinessUpdateCustomerMutationVariables = Exact<{
 
 export type BusinessUpdateCustomerMutation = { __typename?: 'Mutation', update_customers_item?: { __typename?: 'customers', id: string, nick_name?: string | null, avatar?: string | null, sex?: number | null, date_updated?: any | null } | null };
 
+export type BusinessCreateVisitWithFullDataMutationVariables = Exact<{
+  customerData: BusinessCreate_Customers_Input;
+  boutiqueData: BusinessCreate_Boutiques_Input;
+}>;
+
+
+export type BusinessCreateVisitWithFullDataMutation = { __typename?: 'Mutation', create_visits_item?: { __typename?: 'visits', id: string, date_created?: any | null, customer?: { __typename?: 'customers', id: string, nick_name?: string | null } | null, boutique?: { __typename?: 'boutiques', id: string, name?: string | null } | null } | null };
+
 
 export const GetBoutiqueByIdDocument = gql`
     query GetBoutiqueById($boutiqueId: GraphQLStringOrFloat!) {
@@ -5171,3 +5179,46 @@ export function useUpdateCustomerMutation(baseOptions?: ApolloReactHooks.Mutatio
 export type UpdateCustomerMutationHookResult = ReturnType<typeof useUpdateCustomerMutation>;
 export type UpdateCustomerMutationResult = ApolloReactCommon.MutationResult<BusinessUpdateCustomerMutation>;
 export type UpdateCustomerMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessUpdateCustomerMutation, BusinessUpdateCustomerMutationVariables>;
+export const CreateVisitWithFullDataDocument = gql`
+    mutation CreateVisitWithFullData($customerData: create_customers_input!, $boutiqueData: create_boutiques_input!) {
+  create_visits_item(data: {customer: $customerData, boutique: $boutiqueData}) {
+    id
+    date_created
+    customer {
+      id
+      nick_name
+    }
+    boutique {
+      id
+      name
+    }
+  }
+}
+    `;
+export type BusinessCreateVisitWithFullDataMutationFn = ApolloReactCommon.MutationFunction<BusinessCreateVisitWithFullDataMutation, BusinessCreateVisitWithFullDataMutationVariables>;
+
+/**
+ * __useCreateVisitWithFullDataMutation__
+ *
+ * To run a mutation, you first call `useCreateVisitWithFullDataMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateVisitWithFullDataMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createVisitWithFullDataMutation, { data, loading, error }] = useCreateVisitWithFullDataMutation({
+ *   variables: {
+ *      customerData: // value for 'customerData'
+ *      boutiqueData: // value for 'boutiqueData'
+ *   },
+ * });
+ */
+export function useCreateVisitWithFullDataMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessCreateVisitWithFullDataMutation, BusinessCreateVisitWithFullDataMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<BusinessCreateVisitWithFullDataMutation, BusinessCreateVisitWithFullDataMutationVariables>(CreateVisitWithFullDataDocument, options);
+      }
+export type CreateVisitWithFullDataMutationHookResult = ReturnType<typeof useCreateVisitWithFullDataMutation>;
+export type CreateVisitWithFullDataMutationResult = ApolloReactCommon.MutationResult<BusinessCreateVisitWithFullDataMutation>;
+export type CreateVisitWithFullDataMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessCreateVisitWithFullDataMutation, BusinessCreateVisitWithFullDataMutationVariables>;

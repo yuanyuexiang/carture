@@ -2,40 +2,49 @@ import { useLazyQuery, useMutation } from '@apollo/client';
 import {
     CREATE_CUSTOMER_SIMPLE,
     CREATE_CUSTOMER_WITH_BOUTIQUE,
+    CREATE_VISIT_WITH_FULL_DATA,
     GET_CUSTOMER_BY_OPENID_AND_BOUTIQUE,
     UPDATE_CUSTOMER,
 } from '../graphql/business/visits.graphql';
 import { WechatUserInfo } from '../utils/wechat-auth';
 
 /**
- * 访问记录管理 Hook
- * 使用纯 GraphQL 实现，严格遵循不使用 REST API 的要求
+ * 判断是否需要更新客户信息
+ */
+function shouldUpdateCustomer(customer: any, wechatUserInfo: WechatUserInfo): boolean {
+  return (
+    customer.nick_name !== wechatUserInfo.nickname ||
+    customer.avatar !== wechatUserInfo.headimgurl
+  );
+}
+
+/**
+ * 访问管理 Hook
+ * 
+ * 功能：
+ * 1. 检查或创建客户记录（每个店铺独立的客户记录）
+ * 2. 更新客户信息
+ * 3. 创建访问记录
  */
 export const useVisitManager = () => {
   const [getCustomerByOpenIdAndBoutique] = useLazyQuery(GET_CUSTOMER_BY_OPENID_AND_BOUTIQUE);
   const [createCustomerSimple] = useMutation(CREATE_CUSTOMER_SIMPLE);
   const [createCustomerWithBoutique] = useMutation(CREATE_CUSTOMER_WITH_BOUTIQUE);
   const [updateCustomer] = useMutation(UPDATE_CUSTOMER);
+  const [createVisit] = useMutation(CREATE_VISIT_WITH_FULL_DATA);
 
   /**
-   * 检查客户信息是否需要更新
-   */
-  const shouldUpdateCustomer = (existing: any, wechatInfo: WechatUserInfo): boolean => {
-    return (
-      existing.nick_name !== wechatInfo.nickname ||
-      existing.avatar !== wechatInfo.headimgurl ||
-      existing.sex !== wechatInfo.sex
-    );
-  };
-
-  /**
-   * 记录用户访问店铺
+   * 记录访问
    * @param wechatUserInfo 微信用户信息
    * @param boutiqueId 店铺ID
+   * @returns 记录结果
    */
-  const recordVisit = async (wechatUserInfo: WechatUserInfo, boutiqueId: string) => {
+  const recordVisit = async (
+    wechatUserInfo: WechatUserInfo,
+    boutiqueId: string
+  ) => {
     try {
-      console.log('=== 开始记录用户访问 ===');
+      console.log('开始记录访问...');
       console.log('微信用户:', wechatUserInfo.nickname);
       console.log('店铺ID:', boutiqueId);
 
@@ -67,23 +76,53 @@ export const useVisitManager = () => {
               id: customerId,
               nick_name: wechatUserInfo.nickname,
               avatar: wechatUserInfo.headimgurl,
-              sex: wechatUserInfo.sex
             }
           });
           console.log('客户信息更新完成');
         }
 
-        // 注意: 访问记录创建暂时跳过，等待后端提供正确的 GraphQL 语法
-        console.log('✅ 客户记录管理完成');
+        // 3. 创建访问记录
+        const visitResult = await createVisit({
+          variables: {
+            customer: {
+              id: customer.id,
+              wechat_openid: customer.wechat_openid,
+              wechat_unionid: customer.wechat_unionid,
+              wechat_avatar: customer.wechat_avatar,
+              wechat_nickname: customer.wechat_nickname,
+              phone: customer.phone,
+              created_time: customer.created_time,
+              boutique: customer.boutique ? {
+                id: customer.boutique.id,
+                name: customer.boutique.name,
+                auth_config: customer.boutique.auth_config
+              } : null
+            },
+            boutique: {
+              id: boutiqueId,
+              name: customer.boutique?.name || '未知店铺',
+              auth_config: customer.boutique?.auth_config || {}
+            }
+          }
+        });
+
+        if (visitResult.errors) {
+          console.error('创建访问记录失败:', visitResult.errors);
+          throw new Error('创建访问记录失败');
+        }
+
+        const visit = visitResult.data?.create_visits_item;
+        console.log('✅ 成功创建访问记录:', visit);
 
         return {
           success: true,
-          customerId: customerId,
+          customerId: customer.id,
+          visitId: visit?.id,
+          visitInfo: visit,
           isNewCustomerForBoutique: false,
           boutiqueId: boutiqueId,
-          message: '找到现有店铺专属客户记录，客户信息已更新',
-          customerInfo: customer,
-          note: '访问记录创建需要后端实现正确的 GraphQL 语法'
+          message: '客户记录已存在，成功创建访问记录',
+          customerInfo: customer
         };
       } else {
         // 该用户在这家店铺还没有客户记录，创建新的客户记录并关联店铺
@@ -107,17 +146,49 @@ export const useVisitManager = () => {
         console.log('创建客户记录成功:', customerId);
         console.log('客户记录已成功关联店铺:', newCustomer.create_customers_item.boutique?.name);
         
-        // 注意: 访问记录创建暂时跳过，等待后端提供正确的 GraphQL 语法
-        console.log('✅ 客户记录管理完成');
+        // 3. 创建访问记录
+        const customer = newCustomer.create_customers_item;
+        const visitResult = await createVisit({
+          variables: {
+            customer: {
+              id: customer.id,
+              wechat_openid: customer.wechat_openid,
+              wechat_unionid: customer.wechat_unionid,
+              wechat_avatar: customer.wechat_avatar,
+              wechat_nickname: customer.wechat_nickname,
+              phone: customer.phone,
+              created_time: customer.created_time,
+              boutique: customer.boutique ? {
+                id: customer.boutique.id,
+                name: customer.boutique.name,
+                auth_config: customer.boutique.auth_config
+              } : null
+            },
+            boutique: {
+              id: boutiqueId,
+              name: customer.boutique?.name || '未知店铺',
+              auth_config: customer.boutique?.auth_config || {}
+            }
+          }
+        });
+
+        if (visitResult.errors) {
+          console.error('创建访问记录失败:', visitResult.errors);
+          throw new Error('创建访问记录失败');
+        }
+
+        const visit = visitResult.data?.create_visits_item;
+        console.log('✅ 成功创建访问记录:', visit);
         
         return {
           success: true,
           customerId: customerId,
+          visitId: visit?.id,
+          visitInfo: visit,
           isNewCustomerForBoutique: true,
           boutiqueId: boutiqueId,
-          message: '创建客户记录并成功关联店铺',
-          customerInfo: newCustomer.create_customers_item,
-          note: '访问记录创建需要后端实现正确的 GraphQL 语法'
+          message: '创建客户记录并成功关联店铺，成功创建访问记录',
+          customerInfo: customer
         };
       }
 
