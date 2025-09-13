@@ -105,6 +105,15 @@ const ProductDetailScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* 返回按钮 */}
+      <TouchableOpacity 
+        style={styles.backButton} 
+        onPress={() => router.back()}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.backButtonText}>← 返回</Text>
+      </TouchableOpacity>
+      
       <ScrollView style={styles.container}>
         {mainImageUrl && (
           <View style={styles.imageWrap}>
@@ -400,6 +409,23 @@ const styles = StyleSheet.create({
     zIndex: 1000,
     backgroundColor: 'transparent',
     paddingTop: 20,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 60,
+    left: 16,
+    zIndex: 1001,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    minWidth: 80,
+    alignItems: 'center',
+  },
+  backButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 

@@ -34,20 +34,28 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
     
     const fullStars = Math.floor(stars);
     const hasHalfStar = stars % 1 !== 0;
-    const starsArray = [];
     
+    // 使用多种fallback确保兼容性
+    const renderStar = (index: number) => (
+      <Text key={index} style={styles.singleStar}>
+        ⭐
+      </Text>
+    );
+    
+    const starElements = [];
     for (let i = 0; i < fullStars; i++) {
-      starsArray.push('★'); // 使用实心星星 Unicode
+      starElements.push(renderStar(i));
     }
+    
     if (hasHalfStar) {
-      starsArray.push('★'); // 半星也用实心星星
+      starElements.push(renderStar(fullStars));
     }
     
     return (
       <View style={styles.starsContainer}>
-        <Text style={styles.stars}>
-          {starsArray.join('')}
-        </Text>
+        <View style={styles.starsWrapper}>
+          {starElements}
+        </View>
         <Text style={styles.starsNumber}>
           ({stars.toFixed(1)})
         </Text>
@@ -201,12 +209,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
+  starsWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  singleStar: {
+    fontSize: 16,
+    lineHeight: 18,
+    marginRight: 2, // 适中间距
+  },
   stars: {
-    fontSize: 16, // 稍微增大字体
+    fontSize: 18, // 进一步增大字体确保可见
     marginRight: 4,
     color: '#FFD700', // 金色星星
     fontWeight: 'bold', // 加粗确保显示
-    textAlign: 'left', // 明确文本对齐
+    lineHeight: 20, // 添加行高
+    fontFamily: 'system', // 使用系统字体确保兼容性
   },
   starsNumber: {
     fontSize: 12,
