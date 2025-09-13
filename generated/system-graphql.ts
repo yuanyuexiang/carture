@@ -1,4 +1,6 @@
 import { gql } from '@apollo/client';
+import * as ApolloReactCommon from '@apollo/client';
+import * as ApolloReactHooks from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -6,6 +8,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string; }
@@ -2021,6 +2024,7 @@ export type SystemSubscription = {
   __typename?: 'Subscription';
   boutiques_mutated?: Maybe<SystemBoutiques_Mutated>;
   categories_mutated?: Maybe<SystemCategories_Mutated>;
+  customers_mutated?: Maybe<SystemCustomers_Mutated>;
   directus_access_mutated?: Maybe<SystemDirectus_Access_Mutated>;
   directus_activity_mutated?: Maybe<SystemDirectus_Activity_Mutated>;
   directus_comments_mutated?: Maybe<SystemDirectus_Comments_Mutated>;
@@ -2044,9 +2048,10 @@ export type SystemSubscription = {
   directus_webhooks_mutated?: Maybe<SystemDirectus_Webhooks_Mutated>;
   order_items_mutated?: Maybe<SystemOrder_Items_Mutated>;
   orders_mutated?: Maybe<SystemOrders_Mutated>;
-  payments_mutated?: Maybe<SystemPayments_Mutated>;
   products_mutated?: Maybe<SystemProducts_Mutated>;
-  users_mutated?: Maybe<SystemUsers_Mutated>;
+  terminals_mutated?: Maybe<SystemTerminals_Mutated>;
+  views_mutated?: Maybe<SystemViews_Mutated>;
+  visits_mutated?: Maybe<SystemVisits_Mutated>;
 };
 
 
@@ -2056,6 +2061,11 @@ export type SystemSubscriptionBoutiques_MutatedArgs = {
 
 
 export type SystemSubscriptionCategories_MutatedArgs = {
+  event?: InputMaybe<SystemEventEnum>;
+};
+
+
+export type SystemSubscriptionCustomers_MutatedArgs = {
   event?: InputMaybe<SystemEventEnum>;
 };
 
@@ -2175,17 +2185,22 @@ export type SystemSubscriptionOrders_MutatedArgs = {
 };
 
 
-export type SystemSubscriptionPayments_MutatedArgs = {
-  event?: InputMaybe<SystemEventEnum>;
-};
-
-
 export type SystemSubscriptionProducts_MutatedArgs = {
   event?: InputMaybe<SystemEventEnum>;
 };
 
 
-export type SystemSubscriptionUsers_MutatedArgs = {
+export type SystemSubscriptionTerminals_MutatedArgs = {
+  event?: InputMaybe<SystemEventEnum>;
+};
+
+
+export type SystemSubscriptionViews_MutatedArgs = {
+  event?: InputMaybe<SystemEventEnum>;
+};
+
+
+export type SystemSubscriptionVisits_MutatedArgs = {
   event?: InputMaybe<SystemEventEnum>;
 };
 
@@ -2227,10 +2242,16 @@ export type SystemBoolean_Filter_Operators = {
 export type SystemBoutiques = {
   __typename?: 'boutiques';
   address?: Maybe<Scalars['String']['output']>;
+  category?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']['output']>;
+  code?: Maybe<Scalars['String']['output']>;
+  contact?: Maybe<Scalars['String']['output']>;
   date_created?: Maybe<Scalars['Date']['output']>;
   date_created_func?: Maybe<SystemDatetime_Functions>;
   date_updated?: Maybe<Scalars['Date']['output']>;
   date_updated_func?: Maybe<SystemDatetime_Functions>;
+  expire_date?: Maybe<Scalars['Date']['output']>;
+  expire_date_func?: Maybe<SystemDatetime_Functions>;
   id: Scalars['ID']['output'];
   images?: Maybe<Scalars['JSON']['output']>;
   images_func?: Maybe<SystemCount_Functions>;
@@ -2239,19 +2260,8 @@ export type SystemBoutiques = {
   sort?: Maybe<Scalars['Int']['output']>;
   stars?: Maybe<Scalars['Int']['output']>;
   status?: Maybe<Scalars['String']['output']>;
-  user?: Maybe<SystemDirectus_Users>;
   user_created?: Maybe<SystemDirectus_Users>;
   user_updated?: Maybe<SystemDirectus_Users>;
-};
-
-
-export type SystemBoutiquesUserArgs = {
-  filter?: InputMaybe<SystemDirectus_Users_Filter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
@@ -2278,10 +2288,16 @@ export type SystemBoutiques_Filter = {
   _and?: InputMaybe<Array<InputMaybe<SystemBoutiques_Filter>>>;
   _or?: InputMaybe<Array<InputMaybe<SystemBoutiques_Filter>>>;
   address?: InputMaybe<SystemString_Filter_Operators>;
+  category?: InputMaybe<SystemString_Filter_Operators>;
+  city?: InputMaybe<SystemString_Filter_Operators>;
+  code?: InputMaybe<SystemString_Filter_Operators>;
+  contact?: InputMaybe<SystemString_Filter_Operators>;
   date_created?: InputMaybe<SystemDate_Filter_Operators>;
   date_created_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
   date_updated?: InputMaybe<SystemDate_Filter_Operators>;
   date_updated_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
+  expire_date?: InputMaybe<SystemDate_Filter_Operators>;
+  expire_date_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
   id?: InputMaybe<SystemNumber_Filter_Operators>;
   images?: InputMaybe<SystemString_Filter_Operators>;
   images_func?: InputMaybe<SystemCount_Function_Filter_Operators>;
@@ -2290,7 +2306,6 @@ export type SystemBoutiques_Filter = {
   sort?: InputMaybe<SystemNumber_Filter_Operators>;
   stars?: InputMaybe<SystemNumber_Filter_Operators>;
   status?: InputMaybe<SystemString_Filter_Operators>;
-  user?: InputMaybe<SystemDirectus_Users_Filter>;
   user_created?: InputMaybe<SystemDirectus_Users_Filter>;
   user_updated?: InputMaybe<SystemDirectus_Users_Filter>;
 };
@@ -2304,25 +2319,73 @@ export type SystemBoutiques_Mutated = {
 
 export type SystemCategories = {
   __typename?: 'categories';
-  created_at?: Maybe<Scalars['Date']['output']>;
-  created_at_func?: Maybe<SystemDatetime_Functions>;
+  boutique?: Maybe<SystemBoutiques>;
+  boutique_id?: Maybe<SystemBoutiques>;
+  date_created?: Maybe<Scalars['Date']['output']>;
+  date_created_func?: Maybe<SystemDatetime_Functions>;
+  date_updated?: Maybe<Scalars['Date']['output']>;
+  date_updated_func?: Maybe<SystemDatetime_Functions>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
-  updated_at?: Maybe<Scalars['Date']['output']>;
-  updated_at_func?: Maybe<SystemDatetime_Functions>;
+  user_created?: Maybe<SystemDirectus_Users>;
+  user_updated?: Maybe<SystemDirectus_Users>;
+};
+
+
+export type SystemCategoriesBoutiqueArgs = {
+  filter?: InputMaybe<SystemBoutiques_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemCategoriesBoutique_IdArgs = {
+  filter?: InputMaybe<SystemBoutiques_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemCategoriesUser_CreatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemCategoriesUser_UpdatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 export type SystemCategories_Filter = {
   _and?: InputMaybe<Array<InputMaybe<SystemCategories_Filter>>>;
   _or?: InputMaybe<Array<InputMaybe<SystemCategories_Filter>>>;
-  created_at?: InputMaybe<SystemDate_Filter_Operators>;
-  created_at_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
+  boutique?: InputMaybe<SystemBoutiques_Filter>;
+  boutique_id?: InputMaybe<SystemBoutiques_Filter>;
+  date_created?: InputMaybe<SystemDate_Filter_Operators>;
+  date_created_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
+  date_updated?: InputMaybe<SystemDate_Filter_Operators>;
+  date_updated_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
   description?: InputMaybe<SystemString_Filter_Operators>;
   id?: InputMaybe<SystemNumber_Filter_Operators>;
   name?: InputMaybe<SystemString_Filter_Operators>;
-  updated_at?: InputMaybe<SystemDate_Filter_Operators>;
-  updated_at_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
+  user_created?: InputMaybe<SystemDirectus_Users_Filter>;
+  user_updated?: InputMaybe<SystemDirectus_Users_Filter>;
 };
 
 export type SystemCategories_Mutated = {
@@ -2603,6 +2666,82 @@ export type SystemCreate_Directus_Webhooks_Input = {
   status?: InputMaybe<Scalars['String']['input']>;
   url: Scalars['String']['input'];
   was_active_before_deprecation: Scalars['Boolean']['input'];
+};
+
+export type SystemCustomers = {
+  __typename?: 'customers';
+  avatar?: Maybe<Scalars['String']['output']>;
+  boutique?: Maybe<SystemBoutiques>;
+  date_created?: Maybe<Scalars['Date']['output']>;
+  date_created_func?: Maybe<SystemDatetime_Functions>;
+  date_updated?: Maybe<Scalars['Date']['output']>;
+  date_updated_func?: Maybe<SystemDatetime_Functions>;
+  id: Scalars['ID']['output'];
+  nick_name?: Maybe<Scalars['String']['output']>;
+  open_id: Scalars['String']['output'];
+  sex?: Maybe<Scalars['Int']['output']>;
+  sort?: Maybe<Scalars['Int']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+  user_created?: Maybe<SystemDirectus_Users>;
+  user_updated?: Maybe<SystemDirectus_Users>;
+};
+
+
+export type SystemCustomersBoutiqueArgs = {
+  filter?: InputMaybe<SystemBoutiques_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemCustomersUser_CreatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemCustomersUser_UpdatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+export type SystemCustomers_Filter = {
+  _and?: InputMaybe<Array<InputMaybe<SystemCustomers_Filter>>>;
+  _or?: InputMaybe<Array<InputMaybe<SystemCustomers_Filter>>>;
+  avatar?: InputMaybe<SystemString_Filter_Operators>;
+  boutique?: InputMaybe<SystemBoutiques_Filter>;
+  date_created?: InputMaybe<SystemDate_Filter_Operators>;
+  date_created_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
+  date_updated?: InputMaybe<SystemDate_Filter_Operators>;
+  date_updated_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
+  id?: InputMaybe<SystemNumber_Filter_Operators>;
+  nick_name?: InputMaybe<SystemString_Filter_Operators>;
+  open_id?: InputMaybe<SystemString_Filter_Operators>;
+  sex?: InputMaybe<SystemNumber_Filter_Operators>;
+  sort?: InputMaybe<SystemNumber_Filter_Operators>;
+  status?: InputMaybe<SystemString_Filter_Operators>;
+  type?: InputMaybe<SystemString_Filter_Operators>;
+  user_created?: InputMaybe<SystemDirectus_Users_Filter>;
+  user_updated?: InputMaybe<SystemDirectus_Users_Filter>;
+};
+
+export type SystemCustomers_Mutated = {
+  __typename?: 'customers_mutated';
+  data?: Maybe<SystemCustomers>;
+  event?: Maybe<SystemEventEnum>;
+  key: Scalars['ID']['output'];
 };
 
 export type SystemDate_Filter_Operators = {
@@ -5090,19 +5229,63 @@ export type SystemOrder_Items_Mutated = {
 
 export type SystemOrders = {
   __typename?: 'orders';
-  created_at?: Maybe<Scalars['Date']['output']>;
-  created_at_func?: Maybe<SystemDatetime_Functions>;
+  boutique?: Maybe<SystemBoutiques>;
+  boutique_id?: Maybe<SystemBoutiques>;
+  customers_id?: Maybe<SystemCustomers>;
+  date_created?: Maybe<Scalars['Date']['output']>;
+  date_created_func?: Maybe<SystemDatetime_Functions>;
+  date_updated?: Maybe<Scalars['Date']['output']>;
+  date_updated_func?: Maybe<SystemDatetime_Functions>;
   id: Scalars['ID']['output'];
   status?: Maybe<Scalars['String']['output']>;
   total_price?: Maybe<Scalars['Float']['output']>;
-  updated_at?: Maybe<Scalars['Date']['output']>;
-  updated_at_func?: Maybe<SystemDatetime_Functions>;
-  user_id?: Maybe<SystemUsers>;
+  user_created?: Maybe<SystemDirectus_Users>;
+  user_updated?: Maybe<SystemDirectus_Users>;
 };
 
 
-export type SystemOrdersUser_IdArgs = {
-  filter?: InputMaybe<SystemUsers_Filter>;
+export type SystemOrdersBoutiqueArgs = {
+  filter?: InputMaybe<SystemBoutiques_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemOrdersBoutique_IdArgs = {
+  filter?: InputMaybe<SystemBoutiques_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemOrdersCustomers_IdArgs = {
+  filter?: InputMaybe<SystemCustomers_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemOrdersUser_CreatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemOrdersUser_UpdatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
@@ -5113,47 +5296,23 @@ export type SystemOrdersUser_IdArgs = {
 export type SystemOrders_Filter = {
   _and?: InputMaybe<Array<InputMaybe<SystemOrders_Filter>>>;
   _or?: InputMaybe<Array<InputMaybe<SystemOrders_Filter>>>;
-  created_at?: InputMaybe<SystemDate_Filter_Operators>;
-  created_at_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
+  boutique?: InputMaybe<SystemBoutiques_Filter>;
+  boutique_id?: InputMaybe<SystemBoutiques_Filter>;
+  customers_id?: InputMaybe<SystemCustomers_Filter>;
+  date_created?: InputMaybe<SystemDate_Filter_Operators>;
+  date_created_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
+  date_updated?: InputMaybe<SystemDate_Filter_Operators>;
+  date_updated_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
   id?: InputMaybe<SystemNumber_Filter_Operators>;
   status?: InputMaybe<SystemString_Filter_Operators>;
   total_price?: InputMaybe<SystemNumber_Filter_Operators>;
-  updated_at?: InputMaybe<SystemDate_Filter_Operators>;
-  updated_at_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
-  user_id?: InputMaybe<SystemUsers_Filter>;
+  user_created?: InputMaybe<SystemDirectus_Users_Filter>;
+  user_updated?: InputMaybe<SystemDirectus_Users_Filter>;
 };
 
 export type SystemOrders_Mutated = {
   __typename?: 'orders_mutated';
   data?: Maybe<SystemOrders>;
-  event?: Maybe<SystemEventEnum>;
-  key: Scalars['ID']['output'];
-};
-
-export type SystemPayments = {
-  __typename?: 'payments';
-  amount?: Maybe<Scalars['Float']['output']>;
-  id: Scalars['ID']['output'];
-  order_id?: Maybe<SystemOrders>;
-  paid_at?: Maybe<Scalars['Date']['output']>;
-  paid_at_func?: Maybe<SystemDatetime_Functions>;
-  payment_method?: Maybe<Scalars['String']['output']>;
-  status?: Maybe<Scalars['String']['output']>;
-};
-
-
-export type SystemPaymentsOrder_IdArgs = {
-  filter?: InputMaybe<SystemOrders_Filter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-export type SystemPayments_Mutated = {
-  __typename?: 'payments_mutated';
-  data?: Maybe<SystemPayments>;
   event?: Maybe<SystemEventEnum>;
   key: Scalars['ID']['output'];
 };
@@ -5168,11 +5327,16 @@ export type SystemPolicy_Me_Globals_Type = {
 export type SystemProducts = {
   __typename?: 'products';
   barcode?: Maybe<Scalars['String']['output']>;
+  boutique?: Maybe<SystemBoutiques>;
   boutique_id?: Maybe<SystemBoutiques>;
   brand?: Maybe<Scalars['String']['output']>;
   category_id?: Maybe<SystemCategories>;
   created_at?: Maybe<Scalars['Date']['output']>;
   created_at_func?: Maybe<SystemDatetime_Functions>;
+  date_created?: Maybe<Scalars['Date']['output']>;
+  date_created_func?: Maybe<SystemDatetime_Functions>;
+  date_updated?: Maybe<Scalars['Date']['output']>;
+  date_updated_func?: Maybe<SystemDatetime_Functions>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   images?: Maybe<Scalars['JSON']['output']>;
@@ -5191,7 +5355,19 @@ export type SystemProducts = {
   total_sales_volume?: Maybe<Scalars['Int']['output']>;
   updated_at?: Maybe<Scalars['Date']['output']>;
   updated_at_func?: Maybe<SystemDatetime_Functions>;
+  user_created?: Maybe<SystemDirectus_Users>;
+  user_updated?: Maybe<SystemDirectus_Users>;
   video_url?: Maybe<Scalars['String']['output']>;
+};
+
+
+export type SystemProductsBoutiqueArgs = {
+  filter?: InputMaybe<SystemBoutiques_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
@@ -5214,15 +5390,40 @@ export type SystemProductsCategory_IdArgs = {
   sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
+
+export type SystemProductsUser_CreatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemProductsUser_UpdatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
 export type SystemProducts_Filter = {
   _and?: InputMaybe<Array<InputMaybe<SystemProducts_Filter>>>;
   _or?: InputMaybe<Array<InputMaybe<SystemProducts_Filter>>>;
   barcode?: InputMaybe<SystemString_Filter_Operators>;
+  boutique?: InputMaybe<SystemBoutiques_Filter>;
   boutique_id?: InputMaybe<SystemBoutiques_Filter>;
   brand?: InputMaybe<SystemString_Filter_Operators>;
   category_id?: InputMaybe<SystemCategories_Filter>;
   created_at?: InputMaybe<SystemDate_Filter_Operators>;
   created_at_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
+  date_created?: InputMaybe<SystemDate_Filter_Operators>;
+  date_created_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
+  date_updated?: InputMaybe<SystemDate_Filter_Operators>;
+  date_updated_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
   description?: InputMaybe<SystemString_Filter_Operators>;
   id?: InputMaybe<SystemNumber_Filter_Operators>;
   images?: InputMaybe<SystemString_Filter_Operators>;
@@ -5241,6 +5442,8 @@ export type SystemProducts_Filter = {
   total_sales_volume?: InputMaybe<SystemNumber_Filter_Operators>;
   updated_at?: InputMaybe<SystemDate_Filter_Operators>;
   updated_at_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
+  user_created?: InputMaybe<SystemDirectus_Users_Filter>;
+  user_updated?: InputMaybe<SystemDirectus_Users_Filter>;
   video_url?: InputMaybe<SystemString_Filter_Operators>;
 };
 
@@ -5332,6 +5535,44 @@ export type SystemString_Filter_Operators = {
   _nstarts_with?: InputMaybe<Scalars['String']['input']>;
   _null?: InputMaybe<Scalars['Boolean']['input']>;
   _starts_with?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SystemTerminals = {
+  __typename?: 'terminals';
+  date_created?: Maybe<Scalars['Date']['output']>;
+  date_created_func?: Maybe<SystemDatetime_Functions>;
+  date_updated?: Maybe<Scalars['Date']['output']>;
+  date_updated_func?: Maybe<SystemDatetime_Functions>;
+  id: Scalars['ID']['output'];
+  user_created?: Maybe<SystemDirectus_Users>;
+  user_updated?: Maybe<SystemDirectus_Users>;
+};
+
+
+export type SystemTerminalsUser_CreatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemTerminalsUser_UpdatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+export type SystemTerminals_Mutated = {
+  __typename?: 'terminals_mutated';
+  data?: Maybe<SystemTerminals>;
+  event?: Maybe<SystemEventEnum>;
+  key: Scalars['ID']['output'];
 };
 
 export type SystemUpdate_Directus_Access_Input = {
@@ -5649,40 +5890,139 @@ export type SystemUpdate_Directus_Webhooks_Input = {
   was_active_before_deprecation?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type SystemUsers = {
-  __typename?: 'users';
-  created_at?: Maybe<Scalars['Date']['output']>;
-  created_at_func?: Maybe<SystemDatetime_Functions>;
-  email: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  password: Scalars['String']['output'];
-  updated_at?: Maybe<Scalars['Date']['output']>;
-  updated_at_func?: Maybe<SystemDatetime_Functions>;
-};
-
-export type SystemUsers_Filter = {
-  _and?: InputMaybe<Array<InputMaybe<SystemUsers_Filter>>>;
-  _or?: InputMaybe<Array<InputMaybe<SystemUsers_Filter>>>;
-  created_at?: InputMaybe<SystemDate_Filter_Operators>;
-  created_at_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
-  email?: InputMaybe<SystemString_Filter_Operators>;
-  id?: InputMaybe<SystemNumber_Filter_Operators>;
-  name?: InputMaybe<SystemString_Filter_Operators>;
-  password?: InputMaybe<SystemString_Filter_Operators>;
-  updated_at?: InputMaybe<SystemDate_Filter_Operators>;
-  updated_at_func?: InputMaybe<SystemDatetime_Function_Filter_Operators>;
-};
-
 export type SystemUsers_Me_Tfa_Generate_Data = {
   __typename?: 'users_me_tfa_generate_data';
   otpauth_url?: Maybe<Scalars['String']['output']>;
   secret?: Maybe<Scalars['String']['output']>;
 };
 
-export type SystemUsers_Mutated = {
-  __typename?: 'users_mutated';
-  data?: Maybe<SystemUsers>;
+export type SystemViews = {
+  __typename?: 'views';
+  boutique?: Maybe<SystemBoutiques>;
+  customer?: Maybe<SystemCustomers>;
+  date_created?: Maybe<Scalars['Date']['output']>;
+  date_created_func?: Maybe<SystemDatetime_Functions>;
+  date_updated?: Maybe<Scalars['Date']['output']>;
+  date_updated_func?: Maybe<SystemDatetime_Functions>;
+  id: Scalars['ID']['output'];
+  product?: Maybe<SystemProducts>;
+  user_created?: Maybe<SystemDirectus_Users>;
+  user_updated?: Maybe<SystemDirectus_Users>;
+};
+
+
+export type SystemViewsBoutiqueArgs = {
+  filter?: InputMaybe<SystemBoutiques_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemViewsCustomerArgs = {
+  filter?: InputMaybe<SystemCustomers_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemViewsProductArgs = {
+  filter?: InputMaybe<SystemProducts_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemViewsUser_CreatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemViewsUser_UpdatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+export type SystemViews_Mutated = {
+  __typename?: 'views_mutated';
+  data?: Maybe<SystemViews>;
+  event?: Maybe<SystemEventEnum>;
+  key: Scalars['ID']['output'];
+};
+
+export type SystemVisits = {
+  __typename?: 'visits';
+  boutique?: Maybe<SystemBoutiques>;
+  customer?: Maybe<SystemCustomers>;
+  date_created?: Maybe<Scalars['Date']['output']>;
+  date_created_func?: Maybe<SystemDatetime_Functions>;
+  date_updated?: Maybe<Scalars['Date']['output']>;
+  date_updated_func?: Maybe<SystemDatetime_Functions>;
+  id: Scalars['ID']['output'];
+  user_created?: Maybe<SystemDirectus_Users>;
+  user_updated?: Maybe<SystemDirectus_Users>;
+};
+
+
+export type SystemVisitsBoutiqueArgs = {
+  filter?: InputMaybe<SystemBoutiques_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemVisitsCustomerArgs = {
+  filter?: InputMaybe<SystemCustomers_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemVisitsUser_CreatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type SystemVisitsUser_UpdatedArgs = {
+  filter?: InputMaybe<SystemDirectus_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+export type SystemVisits_Mutated = {
+  __typename?: 'visits_mutated';
+  data?: Maybe<SystemVisits>;
   event?: Maybe<SystemEventEnum>;
   key: Scalars['ID']['output'];
 };
@@ -5919,3 +6259,47 @@ export type SystemWrite_Directus_Relations_Schema_Input = {
   on_update: Scalars['String']['input'];
   table: Scalars['String']['input'];
 };
+
+export type SystemSystemPlaceholderQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SystemSystemPlaceholderQuery = { __typename: 'Query' };
+
+
+export const SystemPlaceholderDocument = gql`
+    query SystemPlaceholder {
+  __typename
+}
+    `;
+
+/**
+ * __useSystemPlaceholderQuery__
+ *
+ * To run a query within a React component, call `useSystemPlaceholderQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSystemPlaceholderQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSystemPlaceholderQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSystemPlaceholderQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<SystemSystemPlaceholderQuery, SystemSystemPlaceholderQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<SystemSystemPlaceholderQuery, SystemSystemPlaceholderQueryVariables>(SystemPlaceholderDocument, options);
+      }
+export function useSystemPlaceholderLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<SystemSystemPlaceholderQuery, SystemSystemPlaceholderQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<SystemSystemPlaceholderQuery, SystemSystemPlaceholderQueryVariables>(SystemPlaceholderDocument, options);
+        }
+export function useSystemPlaceholderSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<SystemSystemPlaceholderQuery, SystemSystemPlaceholderQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<SystemSystemPlaceholderQuery, SystemSystemPlaceholderQueryVariables>(SystemPlaceholderDocument, options);
+        }
+export type SystemPlaceholderQueryHookResult = ReturnType<typeof useSystemPlaceholderQuery>;
+export type SystemPlaceholderLazyQueryHookResult = ReturnType<typeof useSystemPlaceholderLazyQuery>;
+export type SystemPlaceholderSuspenseQueryHookResult = ReturnType<typeof useSystemPlaceholderSuspenseQuery>;
+export type SystemPlaceholderQueryResult = ApolloReactCommon.QueryResult<SystemSystemPlaceholderQuery, SystemSystemPlaceholderQueryVariables>;

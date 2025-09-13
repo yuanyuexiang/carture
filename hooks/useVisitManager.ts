@@ -1,18 +1,20 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
 import {
     CREATE_CUSTOMER_SIMPLE,
-    GET_CUSTOMER_BY_OPENID_AND_BOUTIQUE, // 使用简化版本
+    CREATE_CUSTOMER_WITH_BOUTIQUE,
+    GET_CUSTOMER_BY_OPENID_AND_BOUTIQUE,
     UPDATE_CUSTOMER,
 } from '../graphql/business/visits.graphql';
 import { WechatUserInfo } from '../utils/wechat-auth';
 
 /**
- * 访问记录管理 Hook - 方案1（简化版）
- * 实现基础的客户记录管理，暂时跳过boutique关联和访问记录
+ * 访问记录管理 Hook
+ * 现在使用正确的 GraphQL 语法创建客户记录并关联店铺
  */
 export const useVisitManager = () => {
   const [getCustomerByOpenIdAndBoutique] = useLazyQuery(GET_CUSTOMER_BY_OPENID_AND_BOUTIQUE);
   const [createCustomerSimple] = useMutation(CREATE_CUSTOMER_SIMPLE);
+  const [createCustomerWithBoutique] = useMutation(CREATE_CUSTOMER_WITH_BOUTIQUE);
   const [updateCustomer] = useMutation(UPDATE_CUSTOMER);
   // const [createVisit] = useMutation(CREATE_VISIT_SIMPLE);  // 暂时注释
 
@@ -28,13 +30,13 @@ export const useVisitManager = () => {
   };
 
   /**
-   * 记录用户访问店铺（简化版：专注于客户记录管理）
+   * 记录用户访问店铺
    * @param wechatUserInfo 微信用户信息
    * @param boutiqueId 店铺ID
    */
   const recordVisit = async (wechatUserInfo: WechatUserInfo, boutiqueId: string) => {
     try {
-      console.log('=== 开始记录用户访问 - 简化版本 ===');
+      console.log('=== 开始记录用户访问 ===');
       console.log('微信用户:', wechatUserInfo.nickname);
       console.log('店铺ID:', boutiqueId);
 
@@ -81,15 +83,16 @@ export const useVisitManager = () => {
           customerInfo: customer
         };
       } else {
-        // 该用户在这家店铺还没有客户记录，创建新的基础客户记录
-        console.log('该用户在此店铺没有客户记录，创建新的基础客户记录（暂不关联店铺）');
+        // 该用户在这家店铺还没有客户记录，创建新的客户记录并关联店铺
+        console.log('该用户在此店铺没有客户记录，创建新的客户记录并关联店铺');
         
-        const { data: newCustomer } = await createCustomerSimple({
+        const { data: newCustomer } = await createCustomerWithBoutique({
           variables: {
             open_id: wechatUserInfo.openid,
             nick_name: wechatUserInfo.nickname,
             avatar: wechatUserInfo.headimgurl,
-            sex: wechatUserInfo.sex
+            sex: wechatUserInfo.sex,
+            boutiqueId: boutiqueId
           }
         });
 
@@ -98,19 +101,16 @@ export const useVisitManager = () => {
         }
 
         const customerId = newCustomer.create_customers_item.id;
-        console.log('创建新的基础客户记录成功:', customerId);
+        console.log('创建客户记录成功:', customerId);
+        console.log('客户记录已成功关联店铺:', newCustomer.create_customers_item.boutique?.name);
         
-        // TODO: 后续需要关联到店铺
-        console.log('注意：此客户记录尚未关联到店铺，需要后续处理');
-
         return {
           success: true,
           customerId: customerId,
           isNewCustomerForBoutique: true,
           boutiqueId: boutiqueId,
-          message: '创建新的基础客户记录成功（尚未关联店铺）',
-          customerInfo: newCustomer.create_customers_item,
-          needsBoutiqueAssociation: true
+          message: '创建客户记录并成功关联店铺',
+          customerInfo: newCustomer.create_customers_item
         };
       }
 

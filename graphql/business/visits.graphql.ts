@@ -63,6 +63,42 @@ export const CREATE_CUSTOMER_SIMPLE = gql`
   }
 `;
 
+// 创建包含店铺关联的客户 - 根据生成的TypeScript类型实现
+export const CREATE_CUSTOMER_WITH_BOUTIQUE = gql`
+  mutation CreateCustomerWithBoutique(
+    $open_id: String!, 
+    $nick_name: String, 
+    $avatar: String, 
+    $sex: Int,
+    $boutiqueId: ID!
+  ) {
+    create_customers_item(data: {
+      open_id: $open_id,
+      nick_name: $nick_name,
+      avatar: $avatar,
+      sex: $sex,
+      status: "active",
+      boutique: {
+        id: $boutiqueId
+      }
+    }) {
+      id
+      open_id
+      nick_name
+      avatar
+      sex
+      boutique {
+        id
+        name
+        code
+      }
+      date_created
+    }
+  }
+`;
+
+
+
 // 更新客户的boutique关联（暂时注释，解决语法问题）
 /*
 export const UPDATE_CUSTOMER_BOUTIQUE = gql`
