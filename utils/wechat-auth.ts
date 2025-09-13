@@ -183,11 +183,15 @@ export class WechatAuth {
    * 保存用户信息到本地存储
    */
   static saveUserInfo(userInfo: WechatUserInfo): void {
+    console.log('=== 保存用户信息到localStorage ===');
+    console.log('用户信息:', userInfo);
+    
     localStorage.setItem(this.STORAGE_KEY_USER_INFO, JSON.stringify(userInfo));
     localStorage.setItem(this.STORAGE_KEY_OPENID, userInfo.openid);
     
     // 触发自定义事件通知所有监听的组件
     if (typeof window !== 'undefined') {
+      console.log('触发 wechatAuthUpdated 事件');
       window.dispatchEvent(new CustomEvent('wechatAuthUpdated', { 
         detail: { userInfo } 
       }));

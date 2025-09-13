@@ -113,9 +113,14 @@ export const useWechatAuth = (): UseWechatAuthResult => {
     const handleCustomStorageChange = () => {
       console.log('检测到自定义存储变化事件，重新检查用户信息');
       const currentUserInfo = WechatAuth.getUserInfo();
-      if (currentUserInfo && (!userInfo || currentUserInfo.openid !== userInfo.openid)) {
+      if (currentUserInfo) {
         console.log('发现新的用户信息，更新状态');
         setUserInfo(currentUserInfo);
+        setLoading(false);
+        setError(null);
+      } else {
+        console.log('用户信息为空，清理状态');
+        setUserInfo(null);
         setLoading(false);
         setError(null);
       }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     SafeAreaView,
     ScrollView,
@@ -22,6 +22,15 @@ const UserInfoScreen: React.FC = () => {
     forceReauth,
     clearAuth,
   } = useWechatAuth();
+
+  // 添加调试日志和状态监控
+  useEffect(() => {
+    console.log('=== UserInfoScreen 状态变化 ===');
+    console.log('isWechatBrowser:', isWechatBrowser);
+    console.log('isAuthorized:', isAuthorized);
+    console.log('userInfo:', userInfo ? `用户: ${userInfo.nickname}` : 'null');
+    console.log('显示用户信息条件:', isWechatBrowser && isAuthorized && userInfo);
+  }, [isWechatBrowser, isAuthorized, userInfo]);
 
   return (
     <SafeAreaView style={styles.container}>
