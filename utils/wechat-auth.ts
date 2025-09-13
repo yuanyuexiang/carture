@@ -65,7 +65,16 @@ export class WechatAuth {
    * 构建微信授权链接
    */
   static buildAuthURL(): string {
-    const redirectURI = encodeURIComponent(window.location.href.split('?')[0]);
+    // 保留原有的查询参数，特别是boutique_id
+    const currentUrl = new URL(window.location.href);
+    
+    // 移除可能的微信相关参数，但保留business参数如boutique_id
+    currentUrl.searchParams.delete('code');
+    currentUrl.searchParams.delete('state');
+    currentUrl.searchParams.delete('force_wechat');
+    currentUrl.searchParams.delete('force_main');
+    
+    const redirectURI = encodeURIComponent(currentUrl.toString());
     const state = this.generateState();
     
     // 保存state用于验证

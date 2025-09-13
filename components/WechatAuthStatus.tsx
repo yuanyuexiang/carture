@@ -79,8 +79,9 @@ export const WechatAuthStatus: React.FC<WechatAuthStatusProps> = ({
             <TouchableOpacity 
               style={styles.devButton}
               onPress={() => {
-                const newUrl = window.location.href + (window.location.href.includes('?') ? '&' : '?') + 'force_wechat=true';
-                window.location.href = newUrl;
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('force_wechat', 'true');
+                window.location.href = currentUrl.toString();
               }}
             >
               <Text style={styles.devButtonText}>开发模式：模拟微信环境</Text>
@@ -130,11 +131,10 @@ export const WechatAuthStatus: React.FC<WechatAuthStatusProps> = ({
             <TouchableOpacity 
               style={[styles.authButton, { backgroundColor: '#FF6B35', marginTop: 12 }]}
               onPress={() => {
-                // 添加force_main参数并刷新页面
-                const newUrl = window.location.href + 
-                  (window.location.href.includes('?') ? '&' : '?') + 
-                  'force_main=true';
-                window.location.href = newUrl;
+                // 添加force_main参数并保留现有参数
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('force_main', 'true');
+                window.location.href = currentUrl.toString();
               }}
             >
               <Text style={styles.authButtonText}>开发模式：跳过授权</Text>
