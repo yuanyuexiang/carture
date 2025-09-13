@@ -233,6 +233,7 @@ input create_customers_input {
   date_created: Date
   user_updated: create_directus_users_input
   date_updated: Date
+  boutique: create_boutiques_input
 }
 
 input create_directus_access_input {
@@ -414,6 +415,7 @@ input create_views_input {
   date_updated: Date
   customer: create_customers_input
   product: create_products_input
+  boutique: create_boutiques_input
 }
 
 input create_visits_input {
@@ -441,6 +443,7 @@ type customers {
   user_updated(filter: directus_users_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_users
   date_updated: Date
   date_updated_func: datetime_functions
+  boutique(filter: boutiques_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): boutiques
 }
 
 type customers_aggregated {
@@ -469,12 +472,14 @@ type customers_aggregated_count {
   date_created: Int
   user_updated: Int
   date_updated: Int
+  boutique: Int
 }
 
 type customers_aggregated_fields {
   id: Float
   sort: Float
   sex: Float
+  boutique: Float
 }
 
 input customers_filter {
@@ -492,6 +497,7 @@ input customers_filter {
   user_updated: directus_users_filter
   date_updated: date_filter_operators
   date_updated_func: datetime_function_filter_operators
+  boutique: boutiques_filter
   _and: [customers_filter]
   _or: [customers_filter]
 }
@@ -2073,6 +2079,7 @@ input update_customers_input {
   date_created: Date
   user_updated: update_directus_users_input
   date_updated: Date
+  boutique: update_boutiques_input
 }
 
 input update_directus_access_input {
@@ -2254,6 +2261,7 @@ input update_views_input {
   date_updated: Date
   customer: update_customers_input
   product: update_products_input
+  boutique: update_boutiques_input
 }
 
 input update_visits_input {
@@ -2311,6 +2319,7 @@ type version_customers {
   date_created: Date
   user_updated: JSON
   date_updated: Date
+  boutique: JSON
 }
 
 type version_order_items {
@@ -2380,6 +2389,7 @@ type version_views {
   date_updated: Date
   customer: JSON
   product: JSON
+  boutique: JSON
 }
 
 type version_visits {
@@ -2402,6 +2412,7 @@ type views {
   date_updated_func: datetime_functions
   customer(filter: customers_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): customers
   product(filter: products_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): products
+  boutique(filter: boutiques_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): boutiques
 }
 
 type views_aggregated {
@@ -2425,12 +2436,14 @@ type views_aggregated_count {
   date_updated: Int
   customer: Int
   product: Int
+  boutique: Int
 }
 
 type views_aggregated_fields {
   id: Float
   customer: Float
   product: Float
+  boutique: Float
 }
 
 input views_filter {
@@ -2443,6 +2456,7 @@ input views_filter {
   date_updated_func: datetime_function_filter_operators
   customer: customers_filter
   product: products_filter
+  boutique: boutiques_filter
   _and: [views_filter]
   _or: [views_filter]
 }
