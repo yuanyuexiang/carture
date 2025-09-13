@@ -1,17 +1,17 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Dimensions,
-    Image,
-    Modal,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  Modal,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { useGetProductByIdQuery } from '../generated/business-graphql';
 import { useProductViewRecorder } from '../hooks/useProductViewRecorder';
@@ -104,16 +104,7 @@ const ProductDetailScreen: React.FC = () => {
   if (!product) return <Text>未找到商品</Text>;
 
   return (
-    <>
-      {/* 返回按钮 */}
-      <TouchableOpacity 
-        style={styles.backButton} 
-        onPress={() => router.back()}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.backButtonText}>← 返回</Text>
-      </TouchableOpacity>
-      
+    <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
         {mainImageUrl && (
           <View style={styles.imageWrap}>
@@ -215,11 +206,15 @@ const ProductDetailScreen: React.FC = () => {
           </TouchableOpacity>
         </SafeAreaView>
       </Modal>
-    </>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   // 图片预览相关样式
   modalContainer: {
     flex: 1,
@@ -405,18 +400,6 @@ const styles = StyleSheet.create({
     zIndex: 1000,
     backgroundColor: 'transparent',
     paddingTop: 20,
-  },
-  backButton: {
-    margin: 16,
-    padding: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    borderRadius: 8,
-    alignSelf: 'flex-start',
-  },
-  backButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
   },
 });
 

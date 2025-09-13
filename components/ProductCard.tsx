@@ -37,10 +37,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
     const starsArray = [];
     
     for (let i = 0; i < fullStars; i++) {
-      starsArray.push('⭐');
+      starsArray.push('★'); // 使用实心星星 Unicode
     }
     if (hasHalfStar) {
-      starsArray.push('⭐');
+      starsArray.push('★'); // 半星也用实心星星
     }
     
     return (
@@ -202,9 +202,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   stars: {
-    fontSize: 14,
+    fontSize: 16, // 稍微增大字体
     marginRight: 4,
     color: '#FFD700', // 金色星星
+    fontWeight: 'bold', // 加粗确保显示
+    textAlign: 'left', // 明确文本对齐
   },
   starsNumber: {
     fontSize: 12,
