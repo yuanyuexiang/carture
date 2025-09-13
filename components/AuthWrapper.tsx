@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    SafeAreaView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import { useWechatAuth } from '../hooks/useWechatAuth';
 import { WechatAuthStatus } from './WechatAuthStatus';
@@ -93,14 +93,12 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
       <View style={styles.authContainer}>
         {/* 应用标题 */}
         <View style={styles.header}>
-          <Text style={styles.appTitle}>Carture</Text>
+          <Text style={styles.appTitle}>老板衣橱</Text>
           <Text style={styles.appSubtitle}>时尚精品男装</Text>
         </View>
 
         {/* 授权提示 */}
         <View style={styles.authContent}>
-          <Text style={styles.authPrompt}>为了提供个性化服务</Text>
-          <Text style={styles.authSubtext}>需要获取您的微信基本信息</Text>
           
           <WechatAuthStatus
             loading={loading}
@@ -115,7 +113,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
         {/* 底部说明 */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            点击"开始微信授权"按钮即表示您同意我们获取您的基本信息用于个性化服务
+            matrix@2024 版权所有
           </Text>
         </View>
       </View>
