@@ -97,6 +97,29 @@ export const CREATE_CUSTOMER_WITH_BOUTIQUE = gql`
   }
 `;
 
+
+
+// 更新客户的boutique关联（暂时注释，解决语法问题）
+/*
+export const UPDATE_CUSTOMER_BOUTIQUE = gql`
+  mutation UpdateCustomerBoutique($customer_id: ID!, $boutique_id: GraphQLStringOrFloat!) {
+    update_customers_item(
+      id: $customer_id, 
+      data: { 
+        boutique: $boutique_id 
+      }
+    ) {
+      id
+      open_id
+      boutique {
+        id
+        name
+      }
+    }
+  }
+`;
+*/
+
 // 更新客户信息
 export const UPDATE_CUSTOMER = gql`
   mutation UpdateCustomer($id: ID!, $nick_name: String, $avatar: String, $sex: Int) {
@@ -106,16 +129,20 @@ export const UPDATE_CUSTOMER = gql`
       sex: $sex
     }) {
       id
+      open_id
       nick_name
       avatar
       sex
+      boutique {
+        id
+        name
+      }
       date_updated
     }
   }
 `;
 
-// 创建访问记录 - 暂时注释掉，因为Directus GraphQL需要完整的customer对象而不仅仅是ID
-/*
+// 创建访问记录 - 使用正确的Directus GraphQL语法
 export const CREATE_VISIT_SIMPLE = gql`
   mutation CreateVisitSimple($customerId: ID!, $boutiqueId: ID!) {
     create_visits_item(data: {
@@ -124,7 +151,94 @@ export const CREATE_VISIT_SIMPLE = gql`
     }) {
       id
       date_created
+      customer {
+        id
+        nick_name
+      }
+      boutique {
+        id
+        name
+        code
+      }
     }
   }
 `;
-*/
+
+// 查询用户的访问历史
+export const GET_USER_VISITS = gql`
+  query GetUserVisits($customer_id: GraphQLStringOrFloat!, $limit: Int, $offset: Int) {
+    visits(
+      filter: { customer: { id: { _eq: $customer_id } } }
+      sort: ["-date_created"]
+      limit: $limit
+      offset: $offset
+    ) {
+      id
+      date_created
+      boutique {
+        id
+        name
+        address
+        main_image
+      }
+    }
+  }
+`;
+
+// 查询店铺的客户列表（直接查询customers表）
+export const GET_BOUTIQUE_CUSTOMERS = gql`
+  query GetBoutiqueCustomers($boutique_id: GraphQLStringOrFloat!, $limit: Int, $offset: Int) {
+    customers(
+      filter: { boutique: { id: { _eq: $boutique_id } } }
+      sort: ["-date_created"]
+      limit: $limit
+      offset: $offset
+    ) {
+      id
+      open_id
+      nick_name
+      avatar
+      sex
+      date_created
+      boutique {
+        id
+        name
+      }
+    }
+  }
+`;
+
+// 查询店铺的客户数量
+export const GET_BOUTIQUE_CUSTOMER_COUNT = gql`
+  query GetBoutiqueCustomerCount($boutique_id: GraphQLStringOrFloat!) {
+    customers_aggregated(
+      filter: { boutique: { id: { _eq: $boutique_id } } }
+    ) {
+      countAll
+    }
+  }
+`;
+
+// 查询店铺的访问记录（为店主提供访客统计）
+export const GET_BOUTIQUE_VISITS = gql`
+  query GetBoutiqueVisits($boutique_id: GraphQLStringOrFloat!, $limit: Int, $offset: Int) {
+    visits(
+      filter: { boutique: { id: { _eq: $boutique_id } } }
+      sort: ["-date_created"]
+      limit: $limit
+      offset: $offset
+    ) {
+      id
+      date_created
+      customer {
+        id
+        nick_name
+        avatar
+        boutique {
+          id
+          name
+        }
+      }
+    }
+  }
+`;

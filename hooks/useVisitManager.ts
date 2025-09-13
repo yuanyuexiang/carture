@@ -9,14 +9,42 @@ import { WechatUserInfo } from '../utils/wechat-auth';
 
 /**
  * 访问记录管理 Hook
- * 现在使用正确的 GraphQL 语法创建客户记录并关联店铺
+ * 客户记录使用 GraphQL，访问记录使用 REST API（绕过 Directus GraphQL 限制）
  */
 export const useVisitManager = () => {
   const [getCustomerByOpenIdAndBoutique] = useLazyQuery(GET_CUSTOMER_BY_OPENID_AND_BOUTIQUE);
   const [createCustomerSimple] = useMutation(CREATE_CUSTOMER_SIMPLE);
   const [createCustomerWithBoutique] = useMutation(CREATE_CUSTOMER_WITH_BOUTIQUE);
   const [updateCustomer] = useMutation(UPDATE_CUSTOMER);
-  // const [createVisit] = useMutation(CREATE_VISIT_SIMPLE);  // 暂时注释
+
+  /**
+   * 通过 REST API 创建访问记录（绕过 GraphQL 限制）
+   */
+  const createVisitViaREST = async (customerId: string, boutiqueId: string) => {
+    try {
+      const response = await fetch('https://forge.matrix-net.tech/items/visits', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer CCZnVSanwCwzS6edoC8-2ImbzJiZLeAD'
+        },
+        body: JSON.stringify({
+          customer: customerId,
+          boutique: boutiqueId
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return { success: true, visitId: data.data.id };
+    } catch (error) {
+      console.error('REST API 创建访问记录失败:', error);
+      return { success: false, error: error instanceof Error ? error.message : '未知错误' };
+    }
+  };
 
   /**
    * 检查客户信息是否需要更新
@@ -74,13 +102,24 @@ export const useVisitManager = () => {
           console.log('客户信息更新完成');
         }
 
+        // 3. 创建访问记录（使用 REST API）
+        console.log('创建访问记录...');
+        const visitResult = await createVisitViaREST(customerId, boutiqueId);
+        
+        if (!visitResult.success) {
+          console.warn('访问记录创建失败:', visitResult.error);
+        } else {
+          console.log('访问记录创建成功:', visitResult.visitId);
+        }
+
         return {
           success: true,
           customerId: customerId,
           isNewCustomerForBoutique: false,
           boutiqueId: boutiqueId,
-          message: '找到现有店铺专属客户记录',
-          customerInfo: customer
+          message: '找到现有店铺专属客户记录，已记录访问',
+          customerInfo: customer,
+          visitId: visitResult.success ? visitResult.visitId : undefined
         };
       } else {
         // 该用户在这家店铺还没有客户记录，创建新的客户记录并关联店铺
@@ -104,13 +143,24 @@ export const useVisitManager = () => {
         console.log('创建客户记录成功:', customerId);
         console.log('客户记录已成功关联店铺:', newCustomer.create_customers_item.boutique?.name);
         
+        // 3. 创建访问记录（使用 REST API）
+        console.log('创建访问记录...');
+        const visitResult = await createVisitViaREST(customerId, boutiqueId);
+        
+        if (!visitResult.success) {
+          console.warn('访问记录创建失败:', visitResult.error);
+        } else {
+          console.log('访问记录创建成功:', visitResult.visitId);
+        }
+        
         return {
           success: true,
           customerId: customerId,
           isNewCustomerForBoutique: true,
           boutiqueId: boutiqueId,
-          message: '创建客户记录并成功关联店铺',
-          customerInfo: newCustomer.create_customers_item
+          message: '创建客户记录并成功关联店铺，已记录访问',
+          customerInfo: newCustomer.create_customers_item,
+          visitId: visitResult.success ? visitResult.visitId : undefined
         };
       }
 
