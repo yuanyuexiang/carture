@@ -1,8 +1,7 @@
 // Fallback for using text symbols instead of MaterialIcons to avoid font loading issues.
 
-import { SymbolWeight, SymbolViewProps } from 'expo-symbols';
-import { ComponentProps } from 'react';
-import { OpaqueColorValue, type StyleProp, type TextStyle, Text } from 'react-native';
+import { SymbolViewProps, SymbolWeight } from 'expo-symbols';
+import { OpaqueColorValue, Text, type StyleProp, type TextStyle } from 'react-native';
 
 type IconMapping = Record<SymbolViewProps['name'], string>;
 type IconSymbolName = keyof typeof MAPPING;
