@@ -1,36 +1,68 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    View,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import { WechatUserCard } from '../components/WechatUserCard';
-import { useWechatAuth } from '../hooks/useWechatAuth';
+import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
 
 /**
  * 用户信息页面
  * 显示已授权的微信用户信息和操作选项
  */
 const UserInfoScreen: React.FC = () => {
-  const {
-    userInfo,
-    isAuthorized,
-    isWechatBrowser,
-    forceReauth,
-    clearAuth,
-  } = useWechatAuth();
+  const [userInfo, setUserInfo] = useState<WechatUserInfo | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // 添加调试日志和状态监控
+  const isWechatBrowser = WechatAuth.isWechatBrowser();
+
+  // 直接从localStorage读取用户信息
   useEffect(() => {
-    console.log('=== UserInfoScreen 状态变化 ===');
-    console.log('isWechatBrowser:', isWechatBrowser);
-    console.log('isAuthorized:', isAuthorized);
-    console.log('userInfo:', userInfo ? `用户: ${userInfo.nickname}` : 'null');
-    console.log('显示用户信息条件:', isWechatBrowser && isAuthorized && userInfo);
-  }, [isWechatBrowser, isAuthorized, userInfo]);
+    const loadUserInfo = () => {
+      console.log('=== 直接从localStorage读取用户信息 ===');
+      const localUserInfo = WechatAuth.getUserInfo();
+      console.log('读取到的用户信息:', localUserInfo);
+      
+      setUserInfo(localUserInfo);
+      setLoading(false);
+    };
+
+    loadUserInfo();
+
+    // 监听localStorage变化
+    const handleStorageChange = () => {
+      console.log('监听到localStorage变化，重新读取');
+      loadUserInfo();
+    };
+
+    // 监听自定义事件
+    window.addEventListener('wechatAuthUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('wechatAuthUpdated', handleStorageChange);
+    };
+  }, []);
+
+  // 强制重新授权
+  const forceReauth = () => {
+    console.log('强制重新授权');
+    WechatAuth.clearUserInfo();
+    setUserInfo(null);
+    if (isWechatBrowser) {
+      WechatAuth.startAuth();
+    }
+  };
+
+  // 清除授权信息
+  const clearAuth = () => {
+    console.log('清除授权信息');
+    WechatAuth.clearUserInfo();
+    setUserInfo(null);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -68,11 +100,11 @@ const UserInfoScreen: React.FC = () => {
               <Text style={styles.fallbackText}>
                 {!isWechatBrowser 
                   ? '请在微信中打开以获取完整功能' 
-                  : isAuthorized ? '用户信息加载中...' : '请完成微信授权以查看用户信息'}
+                  : loading ? '用户信息加载中...' : '请完成微信授权以查看用户信息'}
               </Text>
-              {!isAuthorized && isWechatBrowser && (
+              {!userInfo && isWechatBrowser && !loading && (
                 <Text style={styles.debugInfo}>
-                  调试信息：isAuthorized={String(isAuthorized)}, userInfo={userInfo ? 'exist' : 'null'}
+                  调试信息：userInfo={userInfo ? 'exist' : 'null'}, loading={String(loading)}
                 </Text>
               )}
             </View>
