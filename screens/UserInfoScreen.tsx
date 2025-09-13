@@ -49,7 +49,8 @@ const UserInfoScreen: React.FC = () => {
 
         {/* 用户信息 */}
         <View style={styles.mainContent}>
-          {isWechatBrowser && isAuthorized && userInfo ? (
+          {/* 简化逻辑：直接根据userInfo显示 */}
+          {userInfo ? (
             <WechatUserCard
               userInfo={userInfo}
               onForceReauth={() => {
@@ -67,14 +68,19 @@ const UserInfoScreen: React.FC = () => {
               <Text style={styles.fallbackText}>
                 {!isWechatBrowser 
                   ? '请在微信中打开以获取完整功能' 
-                  : '用户信息加载中...'}
+                  : isAuthorized ? '用户信息加载中...' : '请完成微信授权以查看用户信息'}
               </Text>
+              {!isAuthorized && isWechatBrowser && (
+                <Text style={styles.debugInfo}>
+                  调试信息：isAuthorized={String(isAuthorized)}, userInfo={userInfo ? 'exist' : 'null'}
+                </Text>
+              )}
             </View>
           )}
         </View>
 
         {/* 附加信息 */}
-        {isWechatBrowser && isAuthorized && userInfo && (
+        {userInfo && (
           <View style={styles.additionalInfo}>
             <Text style={styles.infoTitle}>关于微信授权</Text>
             <Text style={styles.infoText}>
@@ -233,6 +239,13 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'right',
     marginLeft: 16,
+  },
+  debugInfo: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 8,
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
 });
 

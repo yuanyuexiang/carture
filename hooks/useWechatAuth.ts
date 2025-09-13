@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
 
 export interface UseWechatAuthResult {
@@ -28,8 +28,33 @@ export const useWechatAuth = (): UseWechatAuthResult => {
   const [userInfo, setUserInfo] = useState<WechatUserInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [forceUpdate, setForceUpdate] = useState(0);
 
   const isWechatBrowser = WechatAuth.isWechatBrowser();
+
+  // 强制重新渲染的函数
+  const triggerUpdate = useCallback(() => {
+    console.log('触发强制更新');
+    setForceUpdate(prev => prev + 1);
+  }, []);
+
+  // 检查并更新用户信息的函数
+  const checkAndUpdateUserInfo = useCallback(() => {
+    console.log('检查并更新用户信息');
+    const currentUserInfo = WechatAuth.getUserInfo();
+    console.log('从localStorage获取的用户信息:', currentUserInfo);
+    
+    if (currentUserInfo) {
+      console.log('设置新的用户信息到状态');
+      setUserInfo(currentUserInfo);
+      setLoading(false);
+      setError(null);
+    } else {
+      console.log('用户信息为空，清理状态');
+      setUserInfo(null);
+      setError(null);
+    }
+  }, []);
 
   // 初始化授权检查和监听localStorage变化
   useEffect(() => {
@@ -90,40 +115,18 @@ export const useWechatAuth = (): UseWechatAuthResult => {
 
     // 监听localStorage变化以检测微信授权完成
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'wechat_user_info' && e.newValue) {
-        console.log('检测到localStorage中的用户信息变化，重新加载用户信息');
-        try {
-          const newUserInfo = JSON.parse(e.newValue);
-          setUserInfo(newUserInfo);
-          setLoading(false);
-          setError(null);
-        } catch (err) {
-          console.error('解析新的用户信息失败:', err);
-        }
-      } else if (e.key === 'wechat_user_info' && !e.newValue) {
-        // 用户信息被清除
-        console.log('检测到用户信息被清除');
-        setUserInfo(null);
-        setLoading(false);
-        setError(null);
+      console.log('检测到storage变化:', e.key, e.newValue ? '有新值' : '被清除');
+      if (e.key === 'wechat_user_info') {
+        checkAndUpdateUserInfo();
+        triggerUpdate();
       }
     };
 
     // 监听来自同一页面其他组件的用户信息更新
     const handleCustomStorageChange = () => {
       console.log('检测到自定义存储变化事件，重新检查用户信息');
-      const currentUserInfo = WechatAuth.getUserInfo();
-      if (currentUserInfo) {
-        console.log('发现新的用户信息，更新状态');
-        setUserInfo(currentUserInfo);
-        setLoading(false);
-        setError(null);
-      } else {
-        console.log('用户信息为空，清理状态');
-        setUserInfo(null);
-        setLoading(false);
-        setError(null);
-      }
+      checkAndUpdateUserInfo();
+      triggerUpdate();
     };
 
     initializeAuth();
@@ -132,11 +135,21 @@ export const useWechatAuth = (): UseWechatAuthResult => {
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('wechatAuthUpdated', handleCustomStorageChange);
 
+    // 添加轮询机制确保状态同步（每2秒检查一次）
+    const pollInterval = setInterval(() => {
+      const currentUserInfo = WechatAuth.getUserInfo();
+      if (currentUserInfo && !userInfo) {
+        console.log('轮询发现新用户信息，更新状态');
+        checkAndUpdateUserInfo();
+      }
+    }, 2000);
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('wechatAuthUpdated', handleCustomStorageChange);
+      clearInterval(pollInterval);
     };
-  }, [isWechatBrowser]);
+  }, [isWechatBrowser, checkAndUpdateUserInfo, triggerUpdate, userInfo]);
 
   // 开始授权
   const startAuth = () => {
