@@ -31,7 +31,7 @@ export const useWechatAuth = (): UseWechatAuthResult => {
 
   const isWechatBrowser = WechatAuth.isWechatBrowser();
 
-  // 初始化授权检查
+  // 初始化授权检查和监听localStorage变化
   useEffect(() => {
     const initializeAuth = async () => {
       try {
@@ -88,7 +88,49 @@ export const useWechatAuth = (): UseWechatAuthResult => {
       }
     };
 
+    // 监听localStorage变化以检测微信授权完成
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'wechat_user_info' && e.newValue) {
+        console.log('检测到localStorage中的用户信息变化，重新加载用户信息');
+        try {
+          const newUserInfo = JSON.parse(e.newValue);
+          setUserInfo(newUserInfo);
+          setLoading(false);
+          setError(null);
+        } catch (err) {
+          console.error('解析新的用户信息失败:', err);
+        }
+      } else if (e.key === 'wechat_user_info' && !e.newValue) {
+        // 用户信息被清除
+        console.log('检测到用户信息被清除');
+        setUserInfo(null);
+        setLoading(false);
+        setError(null);
+      }
+    };
+
+    // 监听来自同一页面其他组件的用户信息更新
+    const handleCustomStorageChange = () => {
+      console.log('检测到自定义存储变化事件，重新检查用户信息');
+      const currentUserInfo = WechatAuth.getUserInfo();
+      if (currentUserInfo && (!userInfo || currentUserInfo.openid !== userInfo.openid)) {
+        console.log('发现新的用户信息，更新状态');
+        setUserInfo(currentUserInfo);
+        setLoading(false);
+        setError(null);
+      }
+    };
+
     initializeAuth();
+    
+    // 添加事件监听器
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('wechatAuthUpdated', handleCustomStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('wechatAuthUpdated', handleCustomStorageChange);
+    };
   }, [isWechatBrowser]);
 
   // 开始授权

@@ -185,6 +185,13 @@ export class WechatAuth {
   static saveUserInfo(userInfo: WechatUserInfo): void {
     localStorage.setItem(this.STORAGE_KEY_USER_INFO, JSON.stringify(userInfo));
     localStorage.setItem(this.STORAGE_KEY_OPENID, userInfo.openid);
+    
+    // 触发自定义事件通知所有监听的组件
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('wechatAuthUpdated', { 
+        detail: { userInfo } 
+      }));
+    }
   }
 
   /**
@@ -213,6 +220,13 @@ export class WechatAuth {
   static clearUserInfo(): void {
     localStorage.removeItem(this.STORAGE_KEY_USER_INFO);
     localStorage.removeItem(this.STORAGE_KEY_OPENID);
+    
+    // 触发自定义事件通知所有监听的组件
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('wechatAuthUpdated', { 
+        detail: { userInfo: null } 
+      }));
+    }
   }
 
   /**
