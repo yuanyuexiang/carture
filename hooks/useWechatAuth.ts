@@ -14,208 +14,89 @@ export interface UseWechatAuthResult {
   isWechatBrowser: boolean;
   /** 开始授权 */
   startAuth: () => void;
-  /** 强制重新授权 */
-  forceReauth: () => void;
   /** 清除授权信息 */
   clearAuth: () => void;
 }
 
 /**
- * 微信授权 Hook
- * 自动处理微信授权流程，包括初始化检查、状态管理等
+ * 微信授权 Hook - 极简版本
+ * 原则：授权一次，获取用户信息，完成
+ * 不搞复杂的轮询、防抖、多次验证
  */
 export const useWechatAuth = (): UseWechatAuthResult => {
   const [userInfo, setUserInfo] = useState<WechatUserInfo | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [forceUpdate, setForceUpdate] = useState(0);
 
   const isWechatBrowser = WechatAuth.isWechatBrowser();
 
-  // 强制重新渲染的函数
-  const triggerUpdate = useCallback(() => {
-    console.log('触发强制更新');
-    setForceUpdate(prev => prev + 1);
-  }, []);
-
-  // 检查并更新用户信息的函数
-  const checkAndUpdateUserInfo = useCallback(() => {
-    console.log('检查并更新用户信息');
-    const currentUserInfo = WechatAuth.getUserInfo();
-    console.log('从localStorage获取的用户信息:', currentUserInfo);
-    
-    if (currentUserInfo) {
-      console.log('设置新的用户信息到状态');
-      setUserInfo(currentUserInfo);
-      setLoading(false);
-      setError(null);
-    } else {
-      console.log('用户信息为空，清理状态');
-      setUserInfo(null);
-      setError(null);
-    }
-  }, []);
-
-  // 初始化授权检查和监听localStorage变化
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // 如果不在微信浏览器中，跳过授权
-        if (!isWechatBrowser) {
-          console.log('当前不在微信浏览器中，跳过微信授权');
-          setUserInfo(null);
-          return;
-        }
-
-        console.log('开始微信授权初始化...');
-        const result = await WechatAuth.initialize();
-        
-        if (result) {
-          console.log('微信授权成功，用户信息:', result);
-          setUserInfo(result);
-        } else {
-          console.log('未获取到用户信息，需要用户手动授权');
-          
-          // 开发模式：如果URL有force_main参数，创建一个临时用户信息
-          const urlParams = new URLSearchParams(window.location.search);
-          const forceMain = urlParams.get('force_main') === 'true';
-          if (forceMain) {
-            console.log('开发模式：创建临时用户信息以进入主界面');
-            const tempUserInfo = {
-              openid: 'temp_user_' + Date.now(),
-              nickname: '测试用户',
-              headimgurl: '',
-              sex: 1,
-              language: 'zh_CN',
-              country: '中国',
-              province: '北京',
-              city: '北京',
-              privilege: [],
-              login_time: Math.floor(Date.now() / 1000),
-            };
-            setUserInfo(tempUserInfo);
-            return;
-          }
-          
-          // 不再自动开始授权，需要用户手动点击
-        }
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : '授权初始化失败';
-        console.error('微信授权初始化失败:', err);
-        setError(errorMessage);
-        
-        // 不再自动启动授权，让用户手动选择
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    // 监听localStorage变化以检测微信授权完成
-    const handleStorageChange = (e: StorageEvent) => {
-      console.log('检测到storage变化:', e.key, e.newValue ? '有新值' : '被清除');
-      if (e.key === 'wechat_user_info') {
-        checkAndUpdateUserInfo();
-        triggerUpdate();
-      }
-    };
-
-    // 监听来自同一页面其他组件的用户信息更新
-    const handleCustomStorageChange = () => {
-      console.log('检测到自定义存储变化事件，重新检查用户信息');
-      checkAndUpdateUserInfo();
-      triggerUpdate();
-    };
-
-    initializeAuth();
-    
-    // 添加事件监听器
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('wechatAuthUpdated', handleCustomStorageChange);
-
-    // 添加轮询机制确保状态同步（每2秒检查一次）
-    const pollInterval = setInterval(() => {
-      const currentUserInfo = WechatAuth.getUserInfo();
-      if (currentUserInfo && !userInfo) {
-        console.log('轮询发现新用户信息，更新状态');
-        checkAndUpdateUserInfo();
-      }
-    }, 2000);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('wechatAuthUpdated', handleCustomStorageChange);
-      clearInterval(pollInterval);
-    };
-  }, [isWechatBrowser, checkAndUpdateUserInfo, triggerUpdate, userInfo]);
-
-  // 开始授权
-  const startAuth = () => {
-    console.log('=== startAuth 被调用 ===');
-    console.log('isWechatBrowser:', isWechatBrowser);
+  // 简单获取用户信息
+  const loadUserInfo = useCallback(async () => {
+    console.log('🔍 检查用户授权状态...');
     
     if (!isWechatBrowser) {
-      console.log('不在微信浏览器中，设置错误信息');
-      setError('请在微信浏览器中打开');
+      console.log('不在微信浏览器中');
+      setUserInfo(null);
       return;
     }
 
-    try {
-      console.log('调用 WechatAuth.startAuth()...');
-      WechatAuth.startAuth();
-      console.log('WechatAuth.startAuth() 调用完成');
-    } catch (err) {
-      console.error('启动授权失败:', err);
-      const errorMessage = err instanceof Error ? err.message : '启动授权失败';
-      setError(errorMessage);
-    }
-  };
+    setLoading(true);
+    setError(null);
 
-  // 强制重新授权
-  const forceReauth = () => {
-    console.log('开始强制重新授权...');
     try {
-      // 清除本地数据
-      WechatAuth.clearUserInfo();
-      // 立即更新状态
-      setUserInfo(null);
-      setError(null);
-      setLoading(false);
-      
-      // 检查是否在微信浏览器中
-      if (!isWechatBrowser) {
-        setError('请在微信浏览器中打开');
+      // 检查URL中是否有授权回调
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const state = urlParams.get('state');
+
+      if (code && state) {
+        // 处理授权回调
+        console.log('处理微信授权回调...');
+        const result = await WechatAuth.handleAuthCallback(code, state);
+        setUserInfo(result);
         return;
       }
-      
-      // 开始新的授权流程
-      WechatAuth.startAuth();
-    } catch (err) {
-      console.error('强制重新授权失败:', err);
-      const errorMessage = err instanceof Error ? err.message : '重新授权失败';
-      setError(errorMessage);
-    }
-  };
 
-  // 清除授权信息
-  const clearAuth = () => {
-    console.log('清除授权信息...');
-    try {
-      // 清除本地数据
-      WechatAuth.clearUserInfo();
-      // 立即更新状态
-      setUserInfo(null);
-      setError(null);
-      setLoading(false);
-      console.log('授权信息已清除');
+      // 检查本地是否有用户信息
+      const localUserInfo = WechatAuth.getUserInfo();
+      if (localUserInfo && !WechatAuth.isAuthExpired(localUserInfo)) {
+        console.log('使用本地用户信息');
+        setUserInfo(localUserInfo);
+      } else {
+        console.log('需要重新授权');
+        setUserInfo(null);
+      }
+
     } catch (err) {
-      console.error('清除授权失败:', err);
-      const errorMessage = err instanceof Error ? err.message : '清除授权失败';
-      setError(errorMessage);
+      console.error('获取用户信息失败:', err);
+      setError(err instanceof Error ? err.message : '获取用户信息失败');
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [isWechatBrowser]);
+
+  // 开始授权
+  const startAuth = useCallback(() => {
+    if (!isWechatBrowser) {
+      setError('请在微信浏览器中打开');
+      return;
+    }
+    console.log('开始微信授权...');
+    WechatAuth.startAuth();
+  }, [isWechatBrowser]);
+
+  // 清除授权
+  const clearAuth = useCallback(() => {
+    console.log('清除授权信息');
+    WechatAuth.clearUserInfo();
+    setUserInfo(null);
+    setError(null);
+  }, []);
+
+  // 组件挂载时检查一次，就这么简单
+  useEffect(() => {
+    loadUserInfo();
+  }, []); // 只运行一次
 
   return {
     userInfo,
@@ -224,7 +105,6 @@ export const useWechatAuth = (): UseWechatAuthResult => {
     isAuthorized: !!userInfo,
     isWechatBrowser,
     startAuth,
-    forceReauth,
     clearAuth,
   };
 };

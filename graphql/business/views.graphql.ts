@@ -20,7 +20,12 @@ export const CREATE_PRODUCT_VIEW = gql`
         id
         name
       }
-      user_created
+      user_created {
+        id
+        first_name
+        last_name
+        email
+      }
     }
   }
 `;
@@ -28,12 +33,18 @@ export const CREATE_PRODUCT_VIEW = gql`
 // 根据 OpenID 和精品店获取客户信息（重用现有查询）
 export const GET_CUSTOMER_BY_OPENID_AND_BOUTIQUE = gql`
   query GetCustomerByOpenidAndBoutique($open_id: String!, $boutique_id: ID!) {
-    customers(filter: { open_id: { _eq: $open_id }, boutique_id: { _eq: $boutique_id } }) {
+    customers(filter: { 
+      open_id: { _eq: $open_id }, 
+      boutique: { id: { _eq: $boutique_id } }
+    }) {
       id
       open_id
       nick_name
-      avatar_url
-      boutique_id
+      avatar
+      boutique {
+        id
+        name
+      }
       date_created
     }
   }
@@ -43,7 +54,7 @@ export const GET_CUSTOMER_BY_OPENID_AND_BOUTIQUE = gql`
 export const GET_CUSTOMER_PRODUCT_VIEWS = gql`
   query GetCustomerProductViews($customer_id: ID!, $limit: Int, $offset: Int) {
     views(
-      filter: { customer: { _eq: $customer_id } }
+      filter: { customer: { id: { _eq: $customer_id } } }
       sort: ["-date_created"]
       limit: $limit
       offset: $offset
@@ -69,8 +80,8 @@ export const GET_PRODUCT_VIEW_STATS = gql`
   query GetProductViewStats($product_id: ID!, $boutique_id: ID!) {
     views_aggregated(
       filter: { 
-        product: { _eq: $product_id },
-        boutique: { _eq: $boutique_id }
+        product: { id: { _eq: $product_id } },
+        boutique: { id: { _eq: $boutique_id } }
       }
     ) {
       count {
@@ -79,8 +90,8 @@ export const GET_PRODUCT_VIEW_STATS = gql`
     }
     views(
       filter: { 
-        product: { _eq: $product_id },
-        boutique: { _eq: $boutique_id }
+        product: { id: { _eq: $product_id } },
+        boutique: { id: { _eq: $boutique_id } }
       }
       sort: ["-date_created"]
       limit: 10
@@ -101,7 +112,7 @@ export const GET_BOUTIQUE_PRODUCT_VIEW_STATS = gql`
   query GetBoutiqueProductViewStats($boutique_id: ID!, $date_from: String, $date_to: String) {
     views_aggregated(
       filter: { 
-        boutique: { _eq: $boutique_id },
+        boutique: { id: { _eq: $boutique_id } },
         date_created: { _gte: $date_from, _lte: $date_to }
       }
       groupBy: ["product"]
@@ -113,7 +124,7 @@ export const GET_BOUTIQUE_PRODUCT_VIEW_STATS = gql`
     }
     views(
       filter: { 
-        boutique: { _eq: $boutique_id },
+        boutique: { id: { _eq: $boutique_id } },
         date_created: { _gte: $date_from, _lte: $date_to }
       }
       sort: ["-date_created"]

@@ -23,7 +23,6 @@ const UserInfoScreen: React.FC = () => {
     isAuthorized,
     isWechatBrowser,
     startAuth,
-    forceReauth,
     clearAuth,
   } = useWechatAuth();
 
@@ -57,7 +56,7 @@ const UserInfoScreen: React.FC = () => {
             // 显示微信用户信息
             <WechatUserCard
               userInfo={userInfo}
-              onForceReauth={forceReauth}
+              onForceReauth={clearAuth}
               onClearAuth={clearAuth}
             />
           ) : (
