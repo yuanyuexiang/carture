@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useDirectBoutiqueData } from '../hooks/useDirectBoutiqueData';
@@ -53,7 +52,7 @@ const BrandHeader: React.FC = () => {
           <View style={styles.ratingSection}>
             <View style={styles.stars}>
               {[1, 2, 3, 4, 5].map((star) => (
-                <Ionicons key={star} name="star" size={12} color="#e0e0e0" />
+                <Text key={star} style={styles.starText}>☆</Text>
               ))}
             </View>
             <Text style={styles.ratingText}>暂无评分</Text>
@@ -68,12 +67,12 @@ const BrandHeader: React.FC = () => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
-        <Ionicons 
+        <Text 
           key={i} 
-          name="star" 
-          size={12} 
-          color={i <= rating ? "#ff6b35" : "#e0e0e0"} 
-        />
+          style={[styles.starText, { color: i <= rating ? "#ff6b35" : "#e0e0e0" }]}
+        >
+          ★
+        </Text>
       );
     }
     return stars;
@@ -137,6 +136,10 @@ const styles = StyleSheet.create({
   stars: {
     flexDirection: 'row',
     marginRight: 8,
+  },
+  starText: {
+    fontSize: 12,
+    marginRight: 1,
   },
   ratingText: {
     fontSize: 12,
