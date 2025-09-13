@@ -46,18 +46,21 @@ export const useViewManager = () => {
       });
 
       // 构建商品浏览记录数据（需要使用完整对象，和 visits 一样）
+      // 将微信用户信息转换为客户信息格式
       const viewData = {
         customer: {
           open_id: openId,
           ...(nickName && { nick_name: nickName }),
           ...(avatar && { avatar: avatar }),
+          type: 'wechat', // 写死为 wechat 类型
+          status: 'active', // 默认状态
           boutique: {
             id: boutiqueId
           }
         },
         product: {
           id: productId,
-          name: '未知商品', // 临时填充必需字段
+          name: '商品浏览记录', // 临时填充必需字段
           price: 0.0 // 临时填充必需字段
         },
         boutique: {
@@ -65,7 +68,14 @@ export const useViewManager = () => {
         }
       };
 
-      console.log('准备创建商品浏览记录，数据:', viewData);
+      console.log('准备创建商品浏览记录，微信用户信息转换为客户格式:', {
+        原始openId: openId,
+        转换后open_id: viewData.customer.open_id,
+        原始nickname: nickName,
+        转换后nick_name: viewData.customer.nick_name,
+        客户类型: viewData.customer.type,
+        数据: viewData
+      });
 
       // 创建商品浏览记录
       const result = await createProductView({

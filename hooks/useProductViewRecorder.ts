@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { WechatUserInfo } from '../utils/wechat-auth';
+import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
 import { useViewManager } from './useViewManager';
 
 /**
@@ -33,48 +33,29 @@ export const useProductViewRecorder = (productId?: string) => {
         return { success: false, message: '缺少 boutique_id 参数' };
       }
 
-      // 获取用户信息
+      // 获取用户信息 - 使用真实的微信用户信息
       let currentUserInfo = userInfo;
       if (!currentUserInfo) {
-        // 在 React Native 中使用 AsyncStorage，在 web 中使用 localStorage
-        if (typeof window !== 'undefined' && window.localStorage) {
-          // Web 环境
-          const cachedUserInfo = localStorage.getItem('wechat_user_info');
-          if (cachedUserInfo) {
-            try {
-              currentUserInfo = JSON.parse(cachedUserInfo);
-            } catch (e) {
-              console.error('解析缓存的用户信息失败:', e);
-            }
-          }
-        } else {
-          // React Native 环境，使用测试用户信息
-          console.log('React Native 环境，使用测试用户信息');
-          currentUserInfo = {
-            openid: 'test_rn_user_' + Date.now(),
-            nickname: 'RN测试用户',
-            headimgurl: 'https://example.com/avatar.jpg',
-            sex: 1,
-            language: 'zh_CN',
-            country: 'CN',
-            province: 'Beijing',
-            city: 'Beijing',
-            privilege: [],
-            login_time: Date.now()
-          };
+        // 优先使用 WechatAuth.getUserInfo() 获取真实微信用户信息
+        currentUserInfo = WechatAuth.getUserInfo();
+        
+        if (!currentUserInfo) {
+          console.warn('⚠️ 无法获取微信用户信息，跳过商品浏览记录');
+          return { success: false, message: '缺少微信用户信息，请先进行微信授权' };
         }
       }
 
       if (!currentUserInfo?.openid) {
-        console.warn('⚠️ 无法获取用户信息，跳过商品浏览记录');
-        return { success: false, message: '缺少用户信息' };
+        console.warn('⚠️ 微信用户信息中缺少 openid，跳过商品浏览记录');
+        return { success: false, message: '缺少用户 openid' };
       }
 
       console.log('准备记录商品浏览:', {
         productId,
         boutiqueId,
         openId: currentUserInfo.openid,
-        nickName: currentUserInfo.nickname
+        nickName: currentUserInfo.nickname,
+        realWechatUser: true
       });
 
       const result = await recordProductView({
@@ -131,17 +112,16 @@ export const useProductViewRecorder = (productId?: string) => {
       }, 1000);
     };
 
-    // 检查是否已经有用户信息
-    if (typeof window !== 'undefined' && window.localStorage) {
-      // Web 环境
-      console.log('🌐 检测到 Web 环境');
-      const cachedUserInfo = localStorage.getItem('wechat_user_info');
-      if (cachedUserInfo) {
-        console.log('📦 找到缓存的用户信息，直接记录');
-        handleAutoRecord();
-      } else {
-        console.log('❌ 没有找到缓存的用户信息，监听微信授权事件');
-        // 监听微信授权成功事件
+    // 检查是否已经有微信用户信息
+    const existingUserInfo = WechatAuth.getUserInfo();
+    if (existingUserInfo) {
+      console.log('� 发现已有微信用户信息，直接记录商品浏览');
+      handleAutoRecord();
+    } else {
+      console.log('📱 未发现微信用户信息，监听授权成功事件');
+      
+      // 监听微信授权成功事件
+      if (typeof window !== 'undefined') {
         const handleWechatAuthSuccess = (event: CustomEvent<WechatUserInfo>) => {
           console.log('检测到微信授权成功，准备记录商品浏览');
           recordView(productId, event.detail);
@@ -152,11 +132,9 @@ export const useProductViewRecorder = (productId?: string) => {
         return () => {
           window.removeEventListener('wechatAuthSuccess', handleWechatAuthSuccess as EventListener);
         };
+      } else {
+        console.log('📱 React Native 环境，无法监听授权事件');
       }
-    } else {
-      // React Native 环境，直接尝试记录（假设用户信息已经可用）
-      console.log('📱 检测到 React Native 环境，直接尝试记录商品浏览');
-      handleAutoRecord();
     }
   }, [productId]);
 
