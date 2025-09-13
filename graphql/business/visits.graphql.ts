@@ -116,15 +116,39 @@ export const UPDATE_CUSTOMER = gql`
 
 // 创建访问记录 - 暂时注释掉，因为Directus GraphQL需要完整的customer对象而不仅仅是ID
 /*
+【后端任务】需要在 Directus 后端实现以下功能之一：
+
+方案1: 修改 Directus 配置，允许在 visits 创建时使用 customer ID 而不是完整对象：
 export const CREATE_VISIT_SIMPLE = gql`
   mutation CreateVisitSimple($customerId: ID!, $boutiqueId: ID!) {
     create_visits_item(data: {
-      customer: { id: $customerId },
-      boutique: { id: $boutiqueId }
+      customer: $customerId,
+      boutique: $boutiqueId
     }) {
+      id
+      date_created
+      customer {
+        id
+        nick_name
+      }
+      boutique {
+        id
+        name
+      }
+    }
+  }
+`;
+
+方案2: 或者提供一个自定义 GraphQL 端点来创建 visits：
+export const CREATE_VISIT_CUSTOM = gql`
+  mutation CreateVisitCustom($customerId: ID!, $boutiqueId: ID!) {
+    createVisit(customerId: $customerId, boutiqueId: $boutiqueId) {
       id
       date_created
     }
   }
 `;
+
+当前问题: Directus GraphQL 要求 customer: BusinessCreate_Customers_Input，
+这需要完整的客户数据（包括 open_id 等必需字段），但我们只有 customer ID。
 */
