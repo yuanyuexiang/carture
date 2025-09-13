@@ -84,24 +84,20 @@ export const useVisitManager = () => {
         // 3. 创建访问记录
         const visitResult = await createVisit({
           variables: {
-            customer: {
+            customerData: {
               id: customer.id,
-              wechat_openid: customer.wechat_openid,
-              wechat_unionid: customer.wechat_unionid,
-              wechat_avatar: customer.wechat_avatar,
-              wechat_nickname: customer.wechat_nickname,
-              phone: customer.phone,
-              created_time: customer.created_time,
-              boutique: customer.boutique ? {
-                id: customer.boutique.id,
-                name: customer.boutique.name,
-                auth_config: customer.boutique.auth_config
-              } : null
+              open_id: customer.open_id,
+              nick_name: customer.nick_name,
+              avatar: customer.avatar,
+              sex: customer.sex,
+              boutique: {
+                id: customer.boutique.id
+              }
             },
-            boutique: {
+            boutiqueData: {
               id: boutiqueId,
               name: customer.boutique?.name || '未知店铺',
-              auth_config: customer.boutique?.auth_config || {}
+              status: customer.boutique?.status || 'open'
             }
           }
         });
@@ -150,24 +146,20 @@ export const useVisitManager = () => {
         const customer = newCustomer.create_customers_item;
         const visitResult = await createVisit({
           variables: {
-            customer: {
+            customerData: {
               id: customer.id,
-              wechat_openid: customer.wechat_openid,
-              wechat_unionid: customer.wechat_unionid,
-              wechat_avatar: customer.wechat_avatar,
-              wechat_nickname: customer.wechat_nickname,
-              phone: customer.phone,
-              created_time: customer.created_time,
-              boutique: customer.boutique ? {
-                id: customer.boutique.id,
-                name: customer.boutique.name,
-                auth_config: customer.boutique.auth_config
-              } : null
+              open_id: customer.open_id,
+              nick_name: customer.nick_name,
+              avatar: customer.avatar,
+              sex: customer.sex,
+              boutique: {
+                id: customer.boutique.id
+              }
             },
-            boutique: {
+            boutiqueData: {
               id: boutiqueId,
               name: customer.boutique?.name || '未知店铺',
-              auth_config: customer.boutique?.auth_config || {}
+              status: customer.boutique?.status || 'open'
             }
           }
         });
