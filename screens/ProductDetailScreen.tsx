@@ -15,9 +15,13 @@ import {
 } from 'react-native';
 import { useGetProductByIdQuery } from '../generated/business-graphql';
 import { getDirectusThumbnailUrl } from '../utils/directus';
+import { useProductViewRecorder } from '../hooks/useProductViewRecorder';
 
 const ProductDetailScreen: React.FC = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
+  
+  // 添加商品浏览记录功能
+  useProductViewRecorder(id);
   const router = useRouter();
   const { data, loading, error } = useGetProductByIdQuery({ variables: { id: id as string } });
   const product = data?.products_by_id;

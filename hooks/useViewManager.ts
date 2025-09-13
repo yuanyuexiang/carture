@@ -14,6 +14,8 @@ import {
 export const useViewManager = () => {
   const [createProductView] = useMutation(CREATE_PRODUCT_VIEW);
   
+  console.log('🔧 useViewManager 已初始化');
+  
   /**
    * 记录商品浏览
    * @param openId 微信用户的 openId
