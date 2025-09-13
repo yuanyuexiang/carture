@@ -97,7 +97,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
               {product.subtitle}
             </Text>
           )}
-          {renderStars(product.rating_avg)}
           <Text style={[styles.price, { color: '#ff6b35', textShadowColor: 'transparent' }]}>
             ￥{product.price !== undefined ? product.price : '价格'}
           </Text>
@@ -205,6 +204,7 @@ const styles = StyleSheet.create({
   stars: {
     fontSize: 14,
     marginRight: 4,
+    color: '#FFD700', // 金色星星
   },
   starsNumber: {
     fontSize: 12,
