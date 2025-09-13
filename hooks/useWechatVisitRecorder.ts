@@ -1,6 +1,6 @@
-import { useVisitManager } from '@/hooks/useVisitManager';
 import { useEffect } from 'react';
 import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
+import { useVisitManager } from './useVisitManager';
 
 /**
  * 微信授权访问记录 Hook
