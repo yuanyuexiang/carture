@@ -1,7 +1,6 @@
 import React from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import WardrobeApolloProvider from '../../components/WardrobeApolloProvider';
-import NetworkTestScreen from '../../screens/NetworkTestScreen';
 import { WechatAuth } from '../../utils/wechat-auth';
 
 export default function DebugScreen() {
@@ -54,7 +53,9 @@ export default function DebugScreen() {
           </TouchableOpacity>
         </View>
         
-        <NetworkTestScreen />
+        <View style={styles.placeholder}>
+          <Text>网络测试功能已移除以优化性能</Text>
+        </View>
       </View>
     </WardrobeApolloProvider>
   );
@@ -96,5 +97,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 14,
+  },
+  placeholder: {
+    padding: 20,
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
+    margin: 16,
+    borderRadius: 8,
   },
 });

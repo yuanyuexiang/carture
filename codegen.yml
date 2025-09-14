@@ -14,21 +14,3 @@ generates:
       apolloReactCommonImportFrom: "@apollo/client"
       reactApolloVersion: 3
       typesPrefix: Business
-  
-  # 系统schema的类型生成 (系统端点 /graphql/system)  
-  generated/system-graphql.ts:
-    schema: 
-      - https://forge.matrix-net.tech/graphql/system:
-          headers:
-            Authorization: Bearer CCZnVSanwCwzS6edoC8-2ImbzJiZLeAD
-    documents: "graphql/system/**/*.graphql.ts"
-    plugins:
-      - typescript
-      - typescript-operations
-      - typescript-react-apollo
-    config:
-      withHooks: true
-      apolloReactHooksImportFrom: "@apollo/client"
-      apolloReactCommonImportFrom: "@apollo/client"
-      reactApolloVersion: 3
-      typesPrefix: System

@@ -4410,26 +4410,14 @@ export type BusinessGetBoutiqueByIdQueryVariables = Exact<{
 }>;
 
 
-export type BusinessGetBoutiqueByIdQuery = { __typename?: 'Query', boutiques: Array<{ __typename?: 'boutiques', id: string, name?: string | null, address?: string | null, main_image?: string | null, images?: any | null, stars?: number | null, status?: string | null, date_created?: any | null, date_updated?: any | null }> };
+export type BusinessGetBoutiqueByIdQuery = { __typename?: 'Query', boutiques: Array<{ __typename?: 'boutiques', id: string, name?: string | null, address?: string | null, main_image?: string | null, images?: any | null, stars?: number | null, status?: string | null, date_created?: any | null }> };
 
 export type BusinessGetCategoriesByBoutiqueQueryVariables = Exact<{
   boutiqueFilter?: InputMaybe<BusinessCategories_Filter>;
 }>;
 
 
-export type BusinessGetCategoriesByBoutiqueQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'categories', id: string, name: string, description?: string | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
-
-export type BusinessGetCategoriesWithFilterQueryVariables = Exact<{
-  filter?: InputMaybe<BusinessCategories_Filter>;
-}>;
-
-
-export type BusinessGetCategoriesWithFilterQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'categories', id: string, name: string, description?: string | null }> };
-
-export type BusinessGetCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type BusinessGetCategoriesQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'categories', id: string, name: string, description?: string | null }> };
+export type BusinessGetCategoriesByBoutiqueQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'categories', id: string, name: string, description?: string | null }> };
 
 export type BusinessGetProductsQueryVariables = Exact<{
   filter?: InputMaybe<BusinessProducts_Filter>;
@@ -4439,33 +4427,57 @@ export type BusinessGetProductsQueryVariables = Exact<{
 }>;
 
 
-export type BusinessGetProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'products', id: string, name: string, subtitle?: string | null, description?: string | null, price: number, main_image?: string | null, images?: any | null, rating_avg?: number | null, category_id?: { __typename?: 'categories', id: string, name: string, description?: string | null } | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
+export type BusinessGetProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'products', id: string, name: string, subtitle?: string | null, description?: string | null, price: number, main_image?: string | null, category_id?: { __typename?: 'categories', id: string, name: string } | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
 
 export type BusinessGetProductByIdQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type BusinessGetProductByIdQuery = { __typename?: 'Query', products_by_id?: { __typename?: 'products', id: string, name: string, subtitle?: string | null, description?: string | null, price: number, main_image?: string | null, images?: any | null, category_id?: { __typename?: 'categories', id: string, name: string, description?: string | null } | null } | null };
+export type BusinessGetProductByIdQuery = { __typename?: 'Query', products_by_id?: { __typename?: 'products', id: string, name: string, subtitle?: string | null, description?: string | null, price: number, main_image?: string | null, images?: any | null, category_id?: { __typename?: 'categories', id: string, name: string } | null } | null };
 
 export type BusinessGetUserBoutiqueQueryVariables = Exact<{
   userId: Scalars['ID']['input'];
 }>;
 
 
-export type BusinessGetUserBoutiqueQuery = { __typename?: 'Query', boutiques: Array<{ __typename?: 'boutiques', id: string, name?: string | null, address?: string | null, main_image?: string | null, images?: any | null, stars?: number | null, status?: string | null, date_created?: any | null, date_updated?: any | null }> };
+export type BusinessGetUserBoutiqueQuery = { __typename?: 'Query', boutiques: Array<{ __typename?: 'boutiques', id: string, name?: string | null, address?: string | null, main_image?: string | null, stars?: number | null, status?: string | null }> };
 
-export type BusinessGetAllProductsWithBoutiqueQueryVariables = Exact<{
-  limit?: InputMaybe<Scalars['Int']['input']>;
+export type BusinessCreateProductViewMutationVariables = Exact<{
+  data: BusinessCreate_Views_Input;
 }>;
 
 
-export type BusinessGetAllProductsWithBoutiqueQuery = { __typename?: 'Query', products: Array<{ __typename?: 'products', id: string, name: string, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
+export type BusinessCreateProductViewMutation = { __typename?: 'Mutation', create_views_item?: { __typename?: 'views', id: string, date_created?: any | null } | null };
 
-export type BusinessGetAllBoutiquesQueryVariables = Exact<{ [key: string]: never; }>;
+export type BusinessGetCustomerByOpenidAndBoutiqueQueryVariables = Exact<{
+  open_id: Scalars['String']['input'];
+  boutique_id: Scalars['GraphQLStringOrFloat']['input'];
+}>;
 
 
-export type BusinessGetAllBoutiquesQuery = { __typename?: 'Query', boutiques: Array<{ __typename?: 'boutiques', id: string, name?: string | null, status?: string | null }> };
+export type BusinessGetCustomerByOpenidAndBoutiqueQuery = { __typename?: 'Query', customers: Array<{ __typename?: 'customers', id: string, open_id: string, nick_name?: string | null }> };
+
+export type BusinessGetCustomerProductViewsQueryVariables = Exact<{
+  customer_id: Scalars['GraphQLStringOrFloat']['input'];
+}>;
+
+
+export type BusinessGetCustomerProductViewsQuery = { __typename?: 'Query', views: Array<{ __typename?: 'views', id: string, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string } | null }> };
+
+export type BusinessGetProductViewStatsQueryVariables = Exact<{
+  product_id: Scalars['GraphQLStringOrFloat']['input'];
+}>;
+
+
+export type BusinessGetProductViewStatsQuery = { __typename?: 'Query', views_aggregated: Array<{ __typename?: 'views_aggregated', count?: { __typename?: 'views_aggregated_count', id?: number | null } | null }> };
+
+export type BusinessGetBoutiqueProductViewStatsQueryVariables = Exact<{
+  boutique_id: Scalars['GraphQLStringOrFloat']['input'];
+}>;
+
+
+export type BusinessGetBoutiqueProductViewStatsQuery = { __typename?: 'Query', views_aggregated: Array<{ __typename?: 'views_aggregated', count?: { __typename?: 'views_aggregated_count', id?: number | null } | null }> };
 
 export type BusinessGetCustomerByOpenIdAndBoutiqueQueryVariables = Exact<{
   open_id: Scalars['String']['input'];
@@ -4533,7 +4545,6 @@ export const GetBoutiqueByIdDocument = gql`
     stars
     status
     date_created
-    date_updated
   }
 }
     `;
@@ -4576,10 +4587,6 @@ export const GetCategoriesByBoutiqueDocument = gql`
     id
     name
     description
-    boutique_id {
-      id
-      name
-    }
   }
 }
     `;
@@ -4616,89 +4623,6 @@ export type GetCategoriesByBoutiqueQueryHookResult = ReturnType<typeof useGetCat
 export type GetCategoriesByBoutiqueLazyQueryHookResult = ReturnType<typeof useGetCategoriesByBoutiqueLazyQuery>;
 export type GetCategoriesByBoutiqueSuspenseQueryHookResult = ReturnType<typeof useGetCategoriesByBoutiqueSuspenseQuery>;
 export type GetCategoriesByBoutiqueQueryResult = ApolloReactCommon.QueryResult<BusinessGetCategoriesByBoutiqueQuery, BusinessGetCategoriesByBoutiqueQueryVariables>;
-export const GetCategoriesWithFilterDocument = gql`
-    query GetCategoriesWithFilter($filter: categories_filter) {
-  categories(filter: $filter) {
-    id
-    name
-    description
-  }
-}
-    `;
-
-/**
- * __useGetCategoriesWithFilterQuery__
- *
- * To run a query within a React component, call `useGetCategoriesWithFilterQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCategoriesWithFilterQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetCategoriesWithFilterQuery({
- *   variables: {
- *      filter: // value for 'filter'
- *   },
- * });
- */
-export function useGetCategoriesWithFilterQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<BusinessGetCategoriesWithFilterQuery, BusinessGetCategoriesWithFilterQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<BusinessGetCategoriesWithFilterQuery, BusinessGetCategoriesWithFilterQueryVariables>(GetCategoriesWithFilterDocument, options);
-      }
-export function useGetCategoriesWithFilterLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetCategoriesWithFilterQuery, BusinessGetCategoriesWithFilterQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<BusinessGetCategoriesWithFilterQuery, BusinessGetCategoriesWithFilterQueryVariables>(GetCategoriesWithFilterDocument, options);
-        }
-export function useGetCategoriesWithFilterSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetCategoriesWithFilterQuery, BusinessGetCategoriesWithFilterQueryVariables>) {
-          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<BusinessGetCategoriesWithFilterQuery, BusinessGetCategoriesWithFilterQueryVariables>(GetCategoriesWithFilterDocument, options);
-        }
-export type GetCategoriesWithFilterQueryHookResult = ReturnType<typeof useGetCategoriesWithFilterQuery>;
-export type GetCategoriesWithFilterLazyQueryHookResult = ReturnType<typeof useGetCategoriesWithFilterLazyQuery>;
-export type GetCategoriesWithFilterSuspenseQueryHookResult = ReturnType<typeof useGetCategoriesWithFilterSuspenseQuery>;
-export type GetCategoriesWithFilterQueryResult = ApolloReactCommon.QueryResult<BusinessGetCategoriesWithFilterQuery, BusinessGetCategoriesWithFilterQueryVariables>;
-export const GetCategoriesDocument = gql`
-    query GetCategories {
-  categories {
-    id
-    name
-    description
-  }
-}
-    `;
-
-/**
- * __useGetCategoriesQuery__
- *
- * To run a query within a React component, call `useGetCategoriesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCategoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetCategoriesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetCategoriesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<BusinessGetCategoriesQuery, BusinessGetCategoriesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<BusinessGetCategoriesQuery, BusinessGetCategoriesQueryVariables>(GetCategoriesDocument, options);
-      }
-export function useGetCategoriesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetCategoriesQuery, BusinessGetCategoriesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<BusinessGetCategoriesQuery, BusinessGetCategoriesQueryVariables>(GetCategoriesDocument, options);
-        }
-export function useGetCategoriesSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetCategoriesQuery, BusinessGetCategoriesQueryVariables>) {
-          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<BusinessGetCategoriesQuery, BusinessGetCategoriesQueryVariables>(GetCategoriesDocument, options);
-        }
-export type GetCategoriesQueryHookResult = ReturnType<typeof useGetCategoriesQuery>;
-export type GetCategoriesLazyQueryHookResult = ReturnType<typeof useGetCategoriesLazyQuery>;
-export type GetCategoriesSuspenseQueryHookResult = ReturnType<typeof useGetCategoriesSuspenseQuery>;
-export type GetCategoriesQueryResult = ApolloReactCommon.QueryResult<BusinessGetCategoriesQuery, BusinessGetCategoriesQueryVariables>;
 export const GetProductsDocument = gql`
     query GetProducts($filter: products_filter, $limit: Int, $offset: Int, $sort: [String]) {
   products(filter: $filter, limit: $limit, offset: $offset, sort: $sort) {
@@ -4708,12 +4632,9 @@ export const GetProductsDocument = gql`
     description
     price
     main_image
-    images
-    rating_avg
     category_id {
       id
       name
-      description
     }
     boutique_id {
       id
@@ -4771,7 +4692,6 @@ export const GetProductByIdDocument = gql`
     category_id {
       id
       name
-      description
     }
   }
 }
@@ -4816,11 +4736,8 @@ export const GetUserBoutiqueDocument = gql`
     name
     address
     main_image
-    images
     stars
     status
-    date_created
-    date_updated
   }
 }
     `;
@@ -4857,12 +4774,91 @@ export type GetUserBoutiqueQueryHookResult = ReturnType<typeof useGetUserBoutiqu
 export type GetUserBoutiqueLazyQueryHookResult = ReturnType<typeof useGetUserBoutiqueLazyQuery>;
 export type GetUserBoutiqueSuspenseQueryHookResult = ReturnType<typeof useGetUserBoutiqueSuspenseQuery>;
 export type GetUserBoutiqueQueryResult = ApolloReactCommon.QueryResult<BusinessGetUserBoutiqueQuery, BusinessGetUserBoutiqueQueryVariables>;
-export const GetAllProductsWithBoutiqueDocument = gql`
-    query GetAllProductsWithBoutique($limit: Int) {
-  products(limit: $limit) {
+export const CreateProductViewDocument = gql`
+    mutation CreateProductView($data: create_views_input!) {
+  create_views_item(data: $data) {
     id
-    name
-    boutique_id {
+    date_created
+  }
+}
+    `;
+export type BusinessCreateProductViewMutationFn = ApolloReactCommon.MutationFunction<BusinessCreateProductViewMutation, BusinessCreateProductViewMutationVariables>;
+
+/**
+ * __useCreateProductViewMutation__
+ *
+ * To run a mutation, you first call `useCreateProductViewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateProductViewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createProductViewMutation, { data, loading, error }] = useCreateProductViewMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateProductViewMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessCreateProductViewMutation, BusinessCreateProductViewMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<BusinessCreateProductViewMutation, BusinessCreateProductViewMutationVariables>(CreateProductViewDocument, options);
+      }
+export type CreateProductViewMutationHookResult = ReturnType<typeof useCreateProductViewMutation>;
+export type CreateProductViewMutationResult = ApolloReactCommon.MutationResult<BusinessCreateProductViewMutation>;
+export type CreateProductViewMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessCreateProductViewMutation, BusinessCreateProductViewMutationVariables>;
+export const GetCustomerByOpenidAndBoutiqueDocument = gql`
+    query GetCustomerByOpenidAndBoutique($open_id: String!, $boutique_id: GraphQLStringOrFloat!) {
+  customers(
+    filter: {open_id: {_eq: $open_id}, boutique: {id: {_eq: $boutique_id}}}
+  ) {
+    id
+    open_id
+    nick_name
+  }
+}
+    `;
+
+/**
+ * __useGetCustomerByOpenidAndBoutiqueQuery__
+ *
+ * To run a query within a React component, call `useGetCustomerByOpenidAndBoutiqueQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCustomerByOpenidAndBoutiqueQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCustomerByOpenidAndBoutiqueQuery({
+ *   variables: {
+ *      open_id: // value for 'open_id'
+ *      boutique_id: // value for 'boutique_id'
+ *   },
+ * });
+ */
+export function useGetCustomerByOpenidAndBoutiqueQuery(baseOptions: ApolloReactHooks.QueryHookOptions<BusinessGetCustomerByOpenidAndBoutiqueQuery, BusinessGetCustomerByOpenidAndBoutiqueQueryVariables> & ({ variables: BusinessGetCustomerByOpenidAndBoutiqueQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<BusinessGetCustomerByOpenidAndBoutiqueQuery, BusinessGetCustomerByOpenidAndBoutiqueQueryVariables>(GetCustomerByOpenidAndBoutiqueDocument, options);
+      }
+export function useGetCustomerByOpenidAndBoutiqueLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetCustomerByOpenidAndBoutiqueQuery, BusinessGetCustomerByOpenidAndBoutiqueQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<BusinessGetCustomerByOpenidAndBoutiqueQuery, BusinessGetCustomerByOpenidAndBoutiqueQueryVariables>(GetCustomerByOpenidAndBoutiqueDocument, options);
+        }
+export function useGetCustomerByOpenidAndBoutiqueSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetCustomerByOpenidAndBoutiqueQuery, BusinessGetCustomerByOpenidAndBoutiqueQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<BusinessGetCustomerByOpenidAndBoutiqueQuery, BusinessGetCustomerByOpenidAndBoutiqueQueryVariables>(GetCustomerByOpenidAndBoutiqueDocument, options);
+        }
+export type GetCustomerByOpenidAndBoutiqueQueryHookResult = ReturnType<typeof useGetCustomerByOpenidAndBoutiqueQuery>;
+export type GetCustomerByOpenidAndBoutiqueLazyQueryHookResult = ReturnType<typeof useGetCustomerByOpenidAndBoutiqueLazyQuery>;
+export type GetCustomerByOpenidAndBoutiqueSuspenseQueryHookResult = ReturnType<typeof useGetCustomerByOpenidAndBoutiqueSuspenseQuery>;
+export type GetCustomerByOpenidAndBoutiqueQueryResult = ApolloReactCommon.QueryResult<BusinessGetCustomerByOpenidAndBoutiqueQuery, BusinessGetCustomerByOpenidAndBoutiqueQueryVariables>;
+export const GetCustomerProductViewsDocument = gql`
+    query GetCustomerProductViews($customer_id: GraphQLStringOrFloat!) {
+  views(filter: {customer: {id: {_eq: $customer_id}}}) {
+    id
+    date_created
+    product {
       id
       name
     }
@@ -4871,78 +4867,121 @@ export const GetAllProductsWithBoutiqueDocument = gql`
     `;
 
 /**
- * __useGetAllProductsWithBoutiqueQuery__
+ * __useGetCustomerProductViewsQuery__
  *
- * To run a query within a React component, call `useGetAllProductsWithBoutiqueQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllProductsWithBoutiqueQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetCustomerProductViewsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCustomerProductViewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetAllProductsWithBoutiqueQuery({
+ * const { data, loading, error } = useGetCustomerProductViewsQuery({
  *   variables: {
- *      limit: // value for 'limit'
+ *      customer_id: // value for 'customer_id'
  *   },
  * });
  */
-export function useGetAllProductsWithBoutiqueQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<BusinessGetAllProductsWithBoutiqueQuery, BusinessGetAllProductsWithBoutiqueQueryVariables>) {
+export function useGetCustomerProductViewsQuery(baseOptions: ApolloReactHooks.QueryHookOptions<BusinessGetCustomerProductViewsQuery, BusinessGetCustomerProductViewsQueryVariables> & ({ variables: BusinessGetCustomerProductViewsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<BusinessGetAllProductsWithBoutiqueQuery, BusinessGetAllProductsWithBoutiqueQueryVariables>(GetAllProductsWithBoutiqueDocument, options);
+        return ApolloReactHooks.useQuery<BusinessGetCustomerProductViewsQuery, BusinessGetCustomerProductViewsQueryVariables>(GetCustomerProductViewsDocument, options);
       }
-export function useGetAllProductsWithBoutiqueLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetAllProductsWithBoutiqueQuery, BusinessGetAllProductsWithBoutiqueQueryVariables>) {
+export function useGetCustomerProductViewsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetCustomerProductViewsQuery, BusinessGetCustomerProductViewsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<BusinessGetAllProductsWithBoutiqueQuery, BusinessGetAllProductsWithBoutiqueQueryVariables>(GetAllProductsWithBoutiqueDocument, options);
+          return ApolloReactHooks.useLazyQuery<BusinessGetCustomerProductViewsQuery, BusinessGetCustomerProductViewsQueryVariables>(GetCustomerProductViewsDocument, options);
         }
-export function useGetAllProductsWithBoutiqueSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetAllProductsWithBoutiqueQuery, BusinessGetAllProductsWithBoutiqueQueryVariables>) {
+export function useGetCustomerProductViewsSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetCustomerProductViewsQuery, BusinessGetCustomerProductViewsQueryVariables>) {
           const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<BusinessGetAllProductsWithBoutiqueQuery, BusinessGetAllProductsWithBoutiqueQueryVariables>(GetAllProductsWithBoutiqueDocument, options);
+          return ApolloReactHooks.useSuspenseQuery<BusinessGetCustomerProductViewsQuery, BusinessGetCustomerProductViewsQueryVariables>(GetCustomerProductViewsDocument, options);
         }
-export type GetAllProductsWithBoutiqueQueryHookResult = ReturnType<typeof useGetAllProductsWithBoutiqueQuery>;
-export type GetAllProductsWithBoutiqueLazyQueryHookResult = ReturnType<typeof useGetAllProductsWithBoutiqueLazyQuery>;
-export type GetAllProductsWithBoutiqueSuspenseQueryHookResult = ReturnType<typeof useGetAllProductsWithBoutiqueSuspenseQuery>;
-export type GetAllProductsWithBoutiqueQueryResult = ApolloReactCommon.QueryResult<BusinessGetAllProductsWithBoutiqueQuery, BusinessGetAllProductsWithBoutiqueQueryVariables>;
-export const GetAllBoutiquesDocument = gql`
-    query GetAllBoutiques {
-  boutiques {
-    id
-    name
-    status
+export type GetCustomerProductViewsQueryHookResult = ReturnType<typeof useGetCustomerProductViewsQuery>;
+export type GetCustomerProductViewsLazyQueryHookResult = ReturnType<typeof useGetCustomerProductViewsLazyQuery>;
+export type GetCustomerProductViewsSuspenseQueryHookResult = ReturnType<typeof useGetCustomerProductViewsSuspenseQuery>;
+export type GetCustomerProductViewsQueryResult = ApolloReactCommon.QueryResult<BusinessGetCustomerProductViewsQuery, BusinessGetCustomerProductViewsQueryVariables>;
+export const GetProductViewStatsDocument = gql`
+    query GetProductViewStats($product_id: GraphQLStringOrFloat!) {
+  views_aggregated(filter: {product: {id: {_eq: $product_id}}}) {
+    count {
+      id
+    }
   }
 }
     `;
 
 /**
- * __useGetAllBoutiquesQuery__
+ * __useGetProductViewStatsQuery__
  *
- * To run a query within a React component, call `useGetAllBoutiquesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllBoutiquesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetProductViewStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProductViewStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetAllBoutiquesQuery({
+ * const { data, loading, error } = useGetProductViewStatsQuery({
  *   variables: {
+ *      product_id: // value for 'product_id'
  *   },
  * });
  */
-export function useGetAllBoutiquesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<BusinessGetAllBoutiquesQuery, BusinessGetAllBoutiquesQueryVariables>) {
+export function useGetProductViewStatsQuery(baseOptions: ApolloReactHooks.QueryHookOptions<BusinessGetProductViewStatsQuery, BusinessGetProductViewStatsQueryVariables> & ({ variables: BusinessGetProductViewStatsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<BusinessGetAllBoutiquesQuery, BusinessGetAllBoutiquesQueryVariables>(GetAllBoutiquesDocument, options);
+        return ApolloReactHooks.useQuery<BusinessGetProductViewStatsQuery, BusinessGetProductViewStatsQueryVariables>(GetProductViewStatsDocument, options);
       }
-export function useGetAllBoutiquesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetAllBoutiquesQuery, BusinessGetAllBoutiquesQueryVariables>) {
+export function useGetProductViewStatsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetProductViewStatsQuery, BusinessGetProductViewStatsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<BusinessGetAllBoutiquesQuery, BusinessGetAllBoutiquesQueryVariables>(GetAllBoutiquesDocument, options);
+          return ApolloReactHooks.useLazyQuery<BusinessGetProductViewStatsQuery, BusinessGetProductViewStatsQueryVariables>(GetProductViewStatsDocument, options);
         }
-export function useGetAllBoutiquesSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetAllBoutiquesQuery, BusinessGetAllBoutiquesQueryVariables>) {
+export function useGetProductViewStatsSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetProductViewStatsQuery, BusinessGetProductViewStatsQueryVariables>) {
           const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<BusinessGetAllBoutiquesQuery, BusinessGetAllBoutiquesQueryVariables>(GetAllBoutiquesDocument, options);
+          return ApolloReactHooks.useSuspenseQuery<BusinessGetProductViewStatsQuery, BusinessGetProductViewStatsQueryVariables>(GetProductViewStatsDocument, options);
         }
-export type GetAllBoutiquesQueryHookResult = ReturnType<typeof useGetAllBoutiquesQuery>;
-export type GetAllBoutiquesLazyQueryHookResult = ReturnType<typeof useGetAllBoutiquesLazyQuery>;
-export type GetAllBoutiquesSuspenseQueryHookResult = ReturnType<typeof useGetAllBoutiquesSuspenseQuery>;
-export type GetAllBoutiquesQueryResult = ApolloReactCommon.QueryResult<BusinessGetAllBoutiquesQuery, BusinessGetAllBoutiquesQueryVariables>;
+export type GetProductViewStatsQueryHookResult = ReturnType<typeof useGetProductViewStatsQuery>;
+export type GetProductViewStatsLazyQueryHookResult = ReturnType<typeof useGetProductViewStatsLazyQuery>;
+export type GetProductViewStatsSuspenseQueryHookResult = ReturnType<typeof useGetProductViewStatsSuspenseQuery>;
+export type GetProductViewStatsQueryResult = ApolloReactCommon.QueryResult<BusinessGetProductViewStatsQuery, BusinessGetProductViewStatsQueryVariables>;
+export const GetBoutiqueProductViewStatsDocument = gql`
+    query GetBoutiqueProductViewStats($boutique_id: GraphQLStringOrFloat!) {
+  views_aggregated(filter: {boutique: {id: {_eq: $boutique_id}}}) {
+    count {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetBoutiqueProductViewStatsQuery__
+ *
+ * To run a query within a React component, call `useGetBoutiqueProductViewStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBoutiqueProductViewStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBoutiqueProductViewStatsQuery({
+ *   variables: {
+ *      boutique_id: // value for 'boutique_id'
+ *   },
+ * });
+ */
+export function useGetBoutiqueProductViewStatsQuery(baseOptions: ApolloReactHooks.QueryHookOptions<BusinessGetBoutiqueProductViewStatsQuery, BusinessGetBoutiqueProductViewStatsQueryVariables> & ({ variables: BusinessGetBoutiqueProductViewStatsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<BusinessGetBoutiqueProductViewStatsQuery, BusinessGetBoutiqueProductViewStatsQueryVariables>(GetBoutiqueProductViewStatsDocument, options);
+      }
+export function useGetBoutiqueProductViewStatsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetBoutiqueProductViewStatsQuery, BusinessGetBoutiqueProductViewStatsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<BusinessGetBoutiqueProductViewStatsQuery, BusinessGetBoutiqueProductViewStatsQueryVariables>(GetBoutiqueProductViewStatsDocument, options);
+        }
+export function useGetBoutiqueProductViewStatsSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetBoutiqueProductViewStatsQuery, BusinessGetBoutiqueProductViewStatsQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<BusinessGetBoutiqueProductViewStatsQuery, BusinessGetBoutiqueProductViewStatsQueryVariables>(GetBoutiqueProductViewStatsDocument, options);
+        }
+export type GetBoutiqueProductViewStatsQueryHookResult = ReturnType<typeof useGetBoutiqueProductViewStatsQuery>;
+export type GetBoutiqueProductViewStatsLazyQueryHookResult = ReturnType<typeof useGetBoutiqueProductViewStatsLazyQuery>;
+export type GetBoutiqueProductViewStatsSuspenseQueryHookResult = ReturnType<typeof useGetBoutiqueProductViewStatsSuspenseQuery>;
+export type GetBoutiqueProductViewStatsQueryResult = ApolloReactCommon.QueryResult<BusinessGetBoutiqueProductViewStatsQuery, BusinessGetBoutiqueProductViewStatsQueryVariables>;
 export const GetCustomerByOpenIdAndBoutiqueDocument = gql`
     query GetCustomerByOpenIdAndBoutique($open_id: String!, $boutique_id: GraphQLStringOrFloat!) {
   customers(

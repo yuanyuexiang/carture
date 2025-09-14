@@ -12,7 +12,6 @@ export const GET_BOUTIQUE_BY_ID = gql`
       stars
       status
       date_created
-      date_updated
     }
   }
 `;
@@ -24,37 +23,11 @@ export const GET_CATEGORIES_BY_BOUTIQUE = gql`
       id
       name
       description
-      boutique_id {
-        id
-        name
-      }
     }
   }
 `;
 
-// 获取分类查询（支持店铺过滤）- 保持兼容性
-export const GET_CATEGORIES_WITH_FILTER = gql`
-  query GetCategoriesWithFilter($filter: categories_filter) {
-    categories(filter: $filter) {
-      id
-      name
-      description
-    }
-  }
-`;
-
-// 获取所有分类查询（不过滤）
-export const GET_CATEGORIES = gql`
-  query GetCategories {
-    categories {
-      id
-      name
-      description
-    }
-  }
-`;
-
-// 获取产品查询（已存在，保持一致性）
+// 获取产品查询
 export const GET_PRODUCTS = gql`
   query GetProducts($filter: products_filter, $limit: Int, $offset: Int, $sort: [String]) {
     products(filter: $filter, limit: $limit, offset: $offset, sort: $sort) {
@@ -64,12 +37,9 @@ export const GET_PRODUCTS = gql`
       description
       price
       main_image
-      images
-      rating_avg
       category_id {
         id
         name
-        description
       }
       boutique_id {
         id
@@ -93,13 +63,12 @@ export const GET_PRODUCT_BY_ID = gql`
       category_id {
         id
         name
-        description
       }
     }
   }
 `;
 
-// 保留用户店铺查询以便兼容性（如果仍需要）
+// 用户店铺查询
 export const GET_USER_BOUTIQUE = gql`
   query GetUserBoutique($userId: ID!) {
     boutiques(filter: { user_created: { id: { _eq: $userId } } }, limit: 1) {
@@ -107,11 +76,8 @@ export const GET_USER_BOUTIQUE = gql`
       name
       address
       main_image
-      images
       stars
       status
-      date_created
-      date_updated
     }
   }
 `;
