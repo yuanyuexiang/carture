@@ -14,18 +14,25 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { useBoutiqueContext } from '../contexts/BoutiqueContext';
 import { useGetProductByIdQuery } from '../generated/business-graphql';
 import { useProductViewRecorder } from '../hooks/useProductViewRecorder';
+import { useSimpleOrder } from '../hooks/useSimpleOrder';
 import { getDirectusThumbnailUrl } from '../utils/directus';
+import { WechatAuth } from '../utils/wechat-auth';
 
 const ProductDetailScreen: React.FC = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { boutiqueId } = useBoutiqueContext();
   
   // 添加商品浏览记录功能
   useProductViewRecorder(id);
   const router = useRouter();
   const { data, loading, error } = useGetProductByIdQuery({ variables: { id: id as string } });
   const product = data?.products_by_id;
+  
+  // 订单相关
+  const { createSimpleOrder, loading: orderLoading } = useSimpleOrder();
   
   // 图片预览状态
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -85,43 +92,132 @@ const ProductDetailScreen: React.FC = () => {
   };
   
   // 处理下单
-  const handleOrder = () => {
+  const handleOrder = async () => {
     if (!product) {
       Alert.alert('错误', '商品信息不完整');
       return;
     }
 
-    // TODO: 这里将来会集成真实的下单逻辑
-    console.log('准备下单商品:', {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      main_image: product.main_image
+    // 详细的用户授权状态检查
+    const isWechatBrowser = WechatAuth.isWechatBrowser();
+    const userInfo = WechatAuth.getUserInfo();
+    
+    console.log('下单前检查:', {
+      isWechatBrowser,
+      hasUserInfo: !!userInfo,
+      userOpenid: userInfo?.openid
+    });
+
+    // 1. 检查是否在微信浏览器中
+    if (!isWechatBrowser) {
+      Alert.alert(
+        '环境不支持',
+        '请在微信中打开此页面以完成下单操作',
+        [{ text: '知道了' }]
+      );
+      return;
+    }
+
+    // 2. 检查用户是否已授权
+    if (!userInfo || !userInfo.openid) {
+      Alert.alert(
+        '需要登录',
+        '下单需要微信授权登录，请先完成授权',
+        [
+          { text: '取消', style: 'cancel' },
+          {
+            text: '立即授权',
+            onPress: () => {
+              console.log('开始微信授权...');
+              WechatAuth.startAuth();
+            }
+          }
+        ]
+      );
+      return;
+    }
+
+    // 3. 检查用户授权是否过期
+    if (WechatAuth.isAuthExpired(userInfo)) {
+      Alert.alert(
+        '授权已过期',
+        '您的登录状态已过期，请重新授权',
+        [
+          { text: '取消', style: 'cancel' },
+          {
+            text: '重新授权',
+            onPress: () => {
+              console.log('清除过期授权，重新开始授权...');
+              WechatAuth.clearUserInfo();
+              WechatAuth.startAuth();
+            }
+          }
+        ]
+      );
+      return;
+    }
+
+    // 4. 确认用户信息完整性
+    console.log('用户授权验证通过:', {
+      openid: userInfo.openid,
+      nickname: userInfo.nickname,
+      headimgurl: userInfo.headimgurl
     });
 
     // 显示下单选项
     Alert.alert(
-      '立即下单',
-      `商品：${product.name}\n价格：￥${product.price}`,
+      '确认下单',
+      `商品：${product.name}\n价格：￥${product.price}\n\n登录用户：${userInfo.nickname || '微信用户'}`,
       [
         {
           text: '取消',
           style: 'cancel'
         },
         {
-          text: '加入购物车',
-          onPress: () => {
-            // TODO: 实现加入购物车功能
-            console.log('加入购物车');
-            Alert.alert('提示', '已加入购物车！（功能开发中）');
-          }
-        },
-        {
-          text: '立即购买',
-          onPress: () => {
-            // TODO: 实现立即购买功能
-            console.log('立即购买');
-            Alert.alert('提示', '正在跳转到支付页面...（功能开发中）');
+          text: '确认下单',
+          onPress: async () => {
+            try {
+              console.log('开始创建订单:', {
+                productId: product.id,
+                productName: product.name,
+                productPrice: product.price,
+                customerId: userInfo.openid,
+                boutiqueId: boutiqueId
+              });
+              
+              const orderResult = await createSimpleOrder({
+                productId: product.id,
+                productName: product.name || '未知商品',
+                productPrice: product.price || 0,
+                quantity: 1,
+                customerId: userInfo.openid,
+                boutiqueId: boutiqueId ? parseInt(boutiqueId) : undefined
+              });
+
+              if (orderResult.success) {
+                Alert.alert(
+                  '下单成功！',
+                  `订单号: ${orderResult.orderId}\n商品: ${product.name}\n金额: ￥${product.price}\n\n您可以在"我的"页面查看订单详情`,
+                  [
+                    { text: '继续购物', style: 'cancel' },
+                    {
+                      text: '查看订单',
+                      onPress: () => {
+                        router.push('/(tabs)/profile');
+                      }
+                    }
+                  ]
+                );
+              } else {
+                Alert.alert('下单失败', orderResult.message || '未知错误');
+              }
+            } catch (err) {
+              console.error('下单异常:', err);
+              Alert.alert(
+                '下单失败',
+                '系统暂时繁忙，请稍后重试\n\n如果问题持续出现，请联系客服'
+              );
+            }
           }
         }
       ]
@@ -226,11 +322,16 @@ const ProductDetailScreen: React.FC = () => {
         {/* 下单按钮 */}
         <View style={styles.orderSection}>
           <TouchableOpacity 
-            style={styles.orderButton}
-            onPress={() => handleOrder()}
+            style={[styles.orderButton, orderLoading && styles.orderButtonDisabled]}
+            onPress={handleOrder}
             activeOpacity={0.8}
+            disabled={orderLoading}
           >
-            <Text style={styles.orderButtonText}>立即下单</Text>
+            {orderLoading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text style={styles.orderButtonText}>立即下单</Text>
+            )}
           </TouchableOpacity>
         </View>
         
@@ -490,6 +591,10 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  orderButtonDisabled: {
+    backgroundColor: '#ccc',
+    opacity: 0.6,
   },
   header: {
     position: 'absolute',

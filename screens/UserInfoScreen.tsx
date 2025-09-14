@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
+import { OrderManager } from '../components/OrderManager';
 import { WechatUserCard } from '../components/WechatUserCard';
 import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
 
@@ -111,6 +112,13 @@ const UserInfoScreen: React.FC = () => {
           )}
         </View>
 
+        {/* 订单管理 */}
+        {userInfo && (
+          <View style={styles.orderSection}>
+            <OrderManager userInfo={userInfo} />
+          </View>
+        )}
+
         {/* 附加信息 */}
         {userInfo && (
           <View style={styles.additionalInfo}>
@@ -185,6 +193,18 @@ const styles = StyleSheet.create({
   mainContent: {
     paddingHorizontal: 16,
     paddingTop: 16,
+  },
+  orderSection: {
+    marginHorizontal: 16,
+    marginTop: 16,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   fallbackContainer: {
     backgroundColor: '#fff',
