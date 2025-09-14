@@ -30,6 +30,10 @@ const ProductDetailScreen: React.FC = () => {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [currentImageUrl, setCurrentImageUrl] = useState<string>('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // 滑动手势状态
+  const [touchStartX, setTouchStartX] = useState<number>(0);
+  const [touchEndX, setTouchEndX] = useState<number>(0);
 
   // 主图转为 Directus 图片 URL
   const mainImageUrl = product?.main_image ? getDirectusThumbnailUrl(product.main_image, 400) : null;
@@ -79,7 +83,7 @@ const ProductDetailScreen: React.FC = () => {
     }
   };
   
-  // 键盘事件处理
+  // 键盘和触摸事件处理
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (!previewVisible) return;
@@ -101,9 +105,53 @@ const ProductDetailScreen: React.FC = () => {
       }
     };
 
+    // 触摸事件处理
+    let startX = 0;
+    
+    const handleTouchStartNative = (event: TouchEvent) => {
+      if (!previewVisible) return;
+      startX = event.touches[0].clientX;
+      console.log('原生触摸开始:', startX);
+    };
+    
+    const handleTouchEndNative = (event: TouchEvent) => {
+      if (!previewVisible || !startX) return;
+      const endX = event.changedTouches[0].clientX;
+      const distance = startX - endX;
+      const minSwipeDistance = 50;
+      
+      console.log('原生触摸结束:', endX, '距离:', distance);
+      
+      if (Math.abs(distance) < minSwipeDistance) return;
+      
+      if (distance > 0) {
+        // 向左滑动，显示下一张
+        console.log('原生向左滑动，下一张');
+        if (currentImageIndex < allImages.length - 1) {
+          const nextIndex = currentImageIndex + 1;
+          setCurrentImageIndex(nextIndex);
+          setCurrentImageUrl(allImages[nextIndex]);
+        }
+      } else {
+        // 向右滑动，显示上一张
+        console.log('原生向右滑动，上一张');
+        if (currentImageIndex > 0) {
+          const prevIndex = currentImageIndex - 1;
+          setCurrentImageIndex(prevIndex);
+          setCurrentImageUrl(allImages[prevIndex]);
+        }
+      }
+    };
+
     if (typeof window !== 'undefined') {
       window.addEventListener('keydown', handleKeyPress);
-      return () => window.removeEventListener('keydown', handleKeyPress);
+      window.addEventListener('touchstart', handleTouchStartNative);
+      window.addEventListener('touchend', handleTouchEndNative);
+      return () => {
+        window.removeEventListener('keydown', handleKeyPress);
+        window.removeEventListener('touchstart', handleTouchStartNative);
+        window.removeEventListener('touchend', handleTouchEndNative);
+      };
     }
   }, [previewVisible, currentImageIndex, allImages]);
 
@@ -173,28 +221,6 @@ const ProductDetailScreen: React.FC = () => {
                 resizeMode="contain"
               />
               
-              {/* 左右切换按钮 */}
-              {allImages.length > 1 && (
-                <>
-                  {currentImageIndex > 0 && (
-                    <TouchableOpacity 
-                      style={styles.prevButton}
-                      onPress={goToPrevImage}
-                    >
-                      <Text style={styles.arrowText}>‹</Text>
-                    </TouchableOpacity>
-                  )}
-                  {currentImageIndex < allImages.length - 1 && (
-                    <TouchableOpacity 
-                      style={styles.nextButton}
-                      onPress={goToNextImage}
-                    >
-                      <Text style={styles.arrowText}>›</Text>
-                    </TouchableOpacity>
-                  )}
-                </>
-              )}
-              
               {/* 图片指示器 */}
               <View style={styles.imageIndicator}>
                 <Text style={styles.indicatorText}>
@@ -210,10 +236,10 @@ const ProductDetailScreen: React.FC = () => {
                 <Text style={styles.closeButtonText}>×</Text>
               </TouchableOpacity>
               
-              {/* 键盘提示 */}
+              {/* 简化的滑动提示 */}
               {allImages.length > 1 && (
-                <View style={styles.keyboardHint}>
-                  <Text style={styles.keyboardHintText}>使用 ← → 键或点击按钮切换图片</Text>
+                <View style={styles.swipeHint}>
+                  <Text style={styles.swipeHintText}>左右滑动切换图片</Text>
                 </View>
               )}
             </View>
@@ -280,46 +306,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
-  // 左右切换按钮样式
-  prevButton: {
-    position: 'absolute',
-    left: 20,
-    top: '50%',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: -25,
-  },
-  nextButton: {
-    position: 'absolute',
-    right: 20,
-    top: '50%',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: -25,
-  },
-  arrowText: {
-    color: 'white',
-    fontSize: 30,
-    fontWeight: 'bold',
-    lineHeight: 30,
-  },
-  // 键盘提示样式
-  keyboardHint: {
+  // 滑动提示样式
+  swipeHint: {
     position: 'absolute',
     bottom: 50,
     left: 0,
     right: 0,
     alignItems: 'center',
   },
-  keyboardHintText: {
+  swipeHintText: {
     color: 'white',
     fontSize: 12,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
