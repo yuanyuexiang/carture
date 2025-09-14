@@ -37,6 +37,15 @@ const ProductDetailScreen: React.FC = () => {
   const imagesArr = Array.isArray(product?.images) ? product.images : [];
   const imagesUrls = imagesArr.map((imgId: string) => getDirectusThumbnailUrl(imgId, 300));
   
+  // 调试信息
+  console.log('商品图片信息:', {
+    mainImage: product?.main_image,
+    imagesArray: product?.images,
+    imagesArrLength: imagesArr.length,
+    imagesUrlsLength: imagesUrls.length,
+    imagesUrls
+  });
+  
   // 合并所有图片URL (主图 + 轮播图)
   const allImages = mainImageUrl ? [mainImageUrl, ...imagesUrls] : imagesUrls;
   
@@ -123,8 +132,13 @@ const ProductDetailScreen: React.FC = () => {
         {/* 商品图片轮播 */}
         {imagesUrls.length > 0 && (
           <View style={styles.imagesWrap}>
-            <Text style={styles.sectionTitle}>商品图片</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imagesScroll}>
+            <Text style={styles.sectionTitle}>商品图片 ({imagesUrls.length}张)</Text>
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false} 
+              style={styles.imagesScroll}
+              contentContainerStyle={styles.imagesScrollContent}
+            >
               {imagesUrls.map((imgUrl: string, idx: number) => (
                 <TouchableOpacity 
                   key={idx} 
@@ -325,14 +339,21 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   imagesScroll: {
+    minHeight: 100, // 最小高度，适应不同屏幕
+  },
+  imagesScrollContent: {
     flexDirection: 'row',
+    paddingHorizontal: 16, // 左右间距
+    gap: 12, // 图片间距使用gap属性
+    alignItems: 'center',
   },
   imagesItem: {
-    width: 120,
-    height: 120,
+    flex: 0, // 不自动伸缩
+    width: 100, // 稍微减小宽度，适应移动端
+    height: 100,
     borderRadius: 8,
-    marginRight: 12,
     backgroundColor: '#eee',
+    objectFit: 'cover',
   },
   marketPrice: {
     fontSize: 14,
@@ -372,7 +393,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: 12,
     backgroundColor: '#eee',
-    resizeMode: 'contain',
+    objectFit: 'contain',
   },
   name: {
     fontSize: 22,
