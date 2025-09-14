@@ -18,17 +18,6 @@ const ITEM_SEPARATOR = 12; // 卡片间距
 const VISIBLE_CARDS = 2.2; // 显示2.2个卡片，创造滑动效果
 const cardWidth = (screenWidth - HORIZONTAL_PADDING - ITEM_SEPARATOR * (VISIBLE_CARDS - 1)) / VISIBLE_CARDS;
 
-/**
- * 获取商品显示名称
- * 如果商品名称是错误的"商品浏览记录"，则使用副标题作为显示名称
- */
-const getDisplayName = (product: Product): string => {
-  if (product.name === '商品浏览记录' && product.subtitle) {
-    return product.subtitle;
-  }
-  return product.name || '商品名称';
-};
-
 const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
   const router = useRouter();
 
@@ -56,7 +45,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
             {/* 下半部分：文字区域 - 简洁布局 */}
             <View style={styles.textArea}>
               <Text style={styles.name} numberOfLines={2}>
-                {getDisplayName(product)}
+                {product.name || '商品名称'}
               </Text>
               
               {/* 子标题显示 */}
