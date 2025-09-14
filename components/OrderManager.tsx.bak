@@ -1,0 +1,275 @@
+import React, { useState } from 'react';
+import {
+    ActivityIndicator,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
+import { useCustomerOrders, useOrderItems } from '../hooks/useSimpleOrder';
+import { WechatAuth } from '../utils/wechat-auth';
+interface OrderItemProps {
+  order: {
+    id: string;
+    total_price?: number | null;
+    status?: string | null;
+    date_created?: string | null;
+    boutique_id?: {
+      id: string;
+      name?: string | null;
+    } | null;
+  };
+  onPress: () => void;
+}
+
+const OrderItem: React.FC<OrderItemProps> = ({ order, onPress }) => {
+  const getStatusText = (status: string | null | undefined) => {
+    switch (status) {
+      case 'pending': return '待支付';
+      case 'paid': return '已支付';
+      case 'shipped': return '已发货';
+      case 'delivered': return '已送达';
+      case 'cancelled': return '已取消';
+      default: return '未知';
+    }
+  };
+
+  const getStatusColor = (status: string | null | undefined) => {
+    switch (status) {
+      case 'pending': return '#ff9800';
+      case 'paid': return '#4caf50';
+      case 'shipped': return '#2196f3';
+      case 'delivered': return '#4caf50';
+      case 'cancelled': return '#f44336';
+      default: return '#666';
+    }
+  };
+
+  return (
+    <TouchableOpacity style={styles.orderItem} onPress={onPress} activeOpacity={0.7}>
+      <View style={styles.orderHeader}>
+        <Text style={styles.orderId}>订单号: {order.id.slice(-8)}</Text>
+        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status) }]}>
+          <Text style={styles.statusText}>{getStatusText(order.status)}</Text>
+        </View>
+      </View>
+      
+      <View style={styles.orderInfo}>
+        {order.boutique_id?.name && (
+          <Text style={styles.boutiqueName}>店铺: {order.boutique_id.name}</Text>
+        )}
+        <Text style={styles.orderPrice}>金额: ￥{order.total_price || 0}</Text>
+        {order.date_created && (
+          <Text style={styles.orderDate}>
+            下单时间: {new Date(order.date_created).toLocaleDateString('zh-CN')}
+          </Text>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+interface OrderManagerProps {
+  userInfo: any; // WechatUserInfo类型
+}
+
+export default function OrderManager() {
+  const { user } = useUserStore();
+  const { orders, loading, error, refetch } = useCustomerOrders(user?.openId || null);
+  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    padding: 16,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#666',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#666',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#f44336',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  retryButton: {
+    backgroundColor: '#ff6b35',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 6,
+  },
+  retryButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    color: '#666',
+  },
+  ordersList: {
+    flex: 1,
+  },
+  orderItem: {
+    backgroundColor: 'white',
+    margin: 12,
+    borderRadius: 8,
+    padding: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  orderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  orderId: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  statusText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  orderInfo: {
+    gap: 4,
+  },
+  boutiqueName: {
+    fontSize: 12,
+    color: '#666',
+  },
+  orderPrice: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#ff6b35',
+  },
+  orderDate: {
+    fontSize: 12,
+    color: '#999',
+  },
+  orderDetails: {
+    backgroundColor: '#f8f8f8',
+    marginHorizontal: 12,
+    marginBottom: 12,
+    borderRadius: 8,
+    padding: 16,
+  },
+  detailsTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  itemsList: {
+    gap: 8,
+  },
+  noItemsText: {
+    fontSize: 12,
+    color: '#999',
+    textAlign: 'center',
+    padding: 16,
+  },
+  orderItemDetail: {
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  itemName: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: 4,
+  },
+  itemInfo: {
+    fontSize: 12,
+    color: '#666',
+  },
+  notLoggedIn: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    margin: 32,
+  },
+  notLoggedInTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  notLoggedInSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 20,
+    lineHeight: 20,
+  },
+  loginButton: {
+    backgroundColor: '#ff6b35',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginTop: 8,
+  },
+  loginButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+});

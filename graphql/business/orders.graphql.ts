@@ -33,10 +33,10 @@ export const CREATE_ORDER_ITEM = gql`
   }
 `;
 
-// 获取用户订单列表 (通过customers关系)
+// 获取用户订单列表 (通过customers的open_id关系)
 export const GET_USER_ORDERS = gql`
-  query GetUserOrders($customerId: GraphQLStringOrFloat!) {
-    orders(filter: { customers_id: { id: { _eq: $customerId } } }, sort: ["-date_created"]) {
+  query GetUserOrders($openId: String!) {
+    orders(filter: { customers_id: { open_id: { _eq: $openId } } }, sort: ["-date_created"]) {
       id
       total_price
       status

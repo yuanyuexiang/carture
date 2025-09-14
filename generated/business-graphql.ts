@@ -4420,7 +4420,7 @@ export type BusinessCreateOrderItemMutationVariables = Exact<{
 export type BusinessCreateOrderItemMutation = { __typename?: 'Mutation', create_order_items_item?: { __typename?: 'order_items', id: string, quantity?: number | null, price?: number | null, product_id?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null } | null } | null };
 
 export type BusinessGetUserOrdersQueryVariables = Exact<{
-  customerId: Scalars['GraphQLStringOrFloat']['input'];
+  openId: Scalars['String']['input'];
 }>;
 
 
@@ -4651,9 +4651,9 @@ export type CreateOrderItemMutationHookResult = ReturnType<typeof useCreateOrder
 export type CreateOrderItemMutationResult = ApolloReactCommon.MutationResult<BusinessCreateOrderItemMutation>;
 export type CreateOrderItemMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessCreateOrderItemMutation, BusinessCreateOrderItemMutationVariables>;
 export const GetUserOrdersDocument = gql`
-    query GetUserOrders($customerId: GraphQLStringOrFloat!) {
+    query GetUserOrders($openId: String!) {
   orders(
-    filter: {customers_id: {id: {_eq: $customerId}}}
+    filter: {customers_id: {open_id: {_eq: $openId}}}
     sort: ["-date_created"]
   ) {
     id
@@ -4680,7 +4680,7 @@ export const GetUserOrdersDocument = gql`
  * @example
  * const { data, loading, error } = useGetUserOrdersQuery({
  *   variables: {
- *      customerId: // value for 'customerId'
+ *      openId: // value for 'openId'
  *   },
  * });
  */
