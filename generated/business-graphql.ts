@@ -4405,6 +4405,41 @@ export type BusinessVisits_Mutated = {
   key: Scalars['ID']['output'];
 };
 
+export type BusinessCreateOrderMutationVariables = Exact<{
+  orderData: BusinessCreate_Orders_Input;
+}>;
+
+
+export type BusinessCreateOrderMutation = { __typename?: 'Mutation', create_orders_item?: { __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null } | null };
+
+export type BusinessCreateOrderItemMutationVariables = Exact<{
+  orderItemData: BusinessCreate_Order_Items_Input;
+}>;
+
+
+export type BusinessCreateOrderItemMutation = { __typename?: 'Mutation', create_order_items_item?: { __typename?: 'order_items', id: string, quantity?: number | null, price?: number | null, product_id?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null } | null } | null };
+
+export type BusinessGetUserOrdersQueryVariables = Exact<{
+  customerId: Scalars['GraphQLStringOrFloat']['input'];
+}>;
+
+
+export type BusinessGetUserOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
+
+export type BusinessGetOrderByIdQueryVariables = Exact<{
+  orderId: Scalars['GraphQLStringOrFloat']['input'];
+}>;
+
+
+export type BusinessGetOrderByIdQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
+
+export type BusinessGetOrderItemsQueryVariables = Exact<{
+  orderId: Scalars['GraphQLStringOrFloat']['input'];
+}>;
+
+
+export type BusinessGetOrderItemsQuery = { __typename?: 'Query', order_items: Array<{ __typename?: 'order_items', id: string, quantity?: number | null, price?: number | null, product_id?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null, description?: string | null } | null }> };
+
 export type BusinessGetBoutiqueByIdQueryVariables = Exact<{
   boutiqueId: Scalars['GraphQLStringOrFloat']['input'];
 }>;
@@ -4534,6 +4569,233 @@ export type BusinessCreateVisitWithFullDataMutationVariables = Exact<{
 export type BusinessCreateVisitWithFullDataMutation = { __typename?: 'Mutation', create_visits_item?: { __typename?: 'visits', id: string, date_created?: any | null, customer?: { __typename?: 'customers', id: string, nick_name?: string | null } | null, boutique?: { __typename?: 'boutiques', id: string, name?: string | null } | null } | null };
 
 
+export const CreateOrderDocument = gql`
+    mutation CreateOrder($orderData: create_orders_input!) {
+  create_orders_item(data: $orderData) {
+    id
+    total_price
+    status
+    date_created
+    boutique_id {
+      id
+      name
+    }
+  }
+}
+    `;
+export type BusinessCreateOrderMutationFn = ApolloReactCommon.MutationFunction<BusinessCreateOrderMutation, BusinessCreateOrderMutationVariables>;
+
+/**
+ * __useCreateOrderMutation__
+ *
+ * To run a mutation, you first call `useCreateOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOrderMutation, { data, loading, error }] = useCreateOrderMutation({
+ *   variables: {
+ *      orderData: // value for 'orderData'
+ *   },
+ * });
+ */
+export function useCreateOrderMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessCreateOrderMutation, BusinessCreateOrderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<BusinessCreateOrderMutation, BusinessCreateOrderMutationVariables>(CreateOrderDocument, options);
+      }
+export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMutation>;
+export type CreateOrderMutationResult = ApolloReactCommon.MutationResult<BusinessCreateOrderMutation>;
+export type CreateOrderMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessCreateOrderMutation, BusinessCreateOrderMutationVariables>;
+export const CreateOrderItemDocument = gql`
+    mutation CreateOrderItem($orderItemData: create_order_items_input!) {
+  create_order_items_item(data: $orderItemData) {
+    id
+    product_id {
+      id
+      name
+      price
+      main_image
+    }
+    quantity
+    price
+  }
+}
+    `;
+export type BusinessCreateOrderItemMutationFn = ApolloReactCommon.MutationFunction<BusinessCreateOrderItemMutation, BusinessCreateOrderItemMutationVariables>;
+
+/**
+ * __useCreateOrderItemMutation__
+ *
+ * To run a mutation, you first call `useCreateOrderItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrderItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOrderItemMutation, { data, loading, error }] = useCreateOrderItemMutation({
+ *   variables: {
+ *      orderItemData: // value for 'orderItemData'
+ *   },
+ * });
+ */
+export function useCreateOrderItemMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessCreateOrderItemMutation, BusinessCreateOrderItemMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<BusinessCreateOrderItemMutation, BusinessCreateOrderItemMutationVariables>(CreateOrderItemDocument, options);
+      }
+export type CreateOrderItemMutationHookResult = ReturnType<typeof useCreateOrderItemMutation>;
+export type CreateOrderItemMutationResult = ApolloReactCommon.MutationResult<BusinessCreateOrderItemMutation>;
+export type CreateOrderItemMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessCreateOrderItemMutation, BusinessCreateOrderItemMutationVariables>;
+export const GetUserOrdersDocument = gql`
+    query GetUserOrders($customerId: GraphQLStringOrFloat!) {
+  orders(
+    filter: {customers_id: {id: {_eq: $customerId}}}
+    sort: ["-date_created"]
+  ) {
+    id
+    total_price
+    status
+    date_created
+    boutique_id {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUserOrdersQuery__
+ *
+ * To run a query within a React component, call `useGetUserOrdersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserOrdersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserOrdersQuery({
+ *   variables: {
+ *      customerId: // value for 'customerId'
+ *   },
+ * });
+ */
+export function useGetUserOrdersQuery(baseOptions: ApolloReactHooks.QueryHookOptions<BusinessGetUserOrdersQuery, BusinessGetUserOrdersQueryVariables> & ({ variables: BusinessGetUserOrdersQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<BusinessGetUserOrdersQuery, BusinessGetUserOrdersQueryVariables>(GetUserOrdersDocument, options);
+      }
+export function useGetUserOrdersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetUserOrdersQuery, BusinessGetUserOrdersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<BusinessGetUserOrdersQuery, BusinessGetUserOrdersQueryVariables>(GetUserOrdersDocument, options);
+        }
+export function useGetUserOrdersSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetUserOrdersQuery, BusinessGetUserOrdersQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<BusinessGetUserOrdersQuery, BusinessGetUserOrdersQueryVariables>(GetUserOrdersDocument, options);
+        }
+export type GetUserOrdersQueryHookResult = ReturnType<typeof useGetUserOrdersQuery>;
+export type GetUserOrdersLazyQueryHookResult = ReturnType<typeof useGetUserOrdersLazyQuery>;
+export type GetUserOrdersSuspenseQueryHookResult = ReturnType<typeof useGetUserOrdersSuspenseQuery>;
+export type GetUserOrdersQueryResult = ApolloReactCommon.QueryResult<BusinessGetUserOrdersQuery, BusinessGetUserOrdersQueryVariables>;
+export const GetOrderByIdDocument = gql`
+    query GetOrderById($orderId: GraphQLStringOrFloat!) {
+  orders(filter: {id: {_eq: $orderId}}, limit: 1) {
+    id
+    total_price
+    status
+    date_created
+    boutique_id {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOrderByIdQuery__
+ *
+ * To run a query within a React component, call `useGetOrderByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrderByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrderByIdQuery({
+ *   variables: {
+ *      orderId: // value for 'orderId'
+ *   },
+ * });
+ */
+export function useGetOrderByIdQuery(baseOptions: ApolloReactHooks.QueryHookOptions<BusinessGetOrderByIdQuery, BusinessGetOrderByIdQueryVariables> & ({ variables: BusinessGetOrderByIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<BusinessGetOrderByIdQuery, BusinessGetOrderByIdQueryVariables>(GetOrderByIdDocument, options);
+      }
+export function useGetOrderByIdLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetOrderByIdQuery, BusinessGetOrderByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<BusinessGetOrderByIdQuery, BusinessGetOrderByIdQueryVariables>(GetOrderByIdDocument, options);
+        }
+export function useGetOrderByIdSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetOrderByIdQuery, BusinessGetOrderByIdQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<BusinessGetOrderByIdQuery, BusinessGetOrderByIdQueryVariables>(GetOrderByIdDocument, options);
+        }
+export type GetOrderByIdQueryHookResult = ReturnType<typeof useGetOrderByIdQuery>;
+export type GetOrderByIdLazyQueryHookResult = ReturnType<typeof useGetOrderByIdLazyQuery>;
+export type GetOrderByIdSuspenseQueryHookResult = ReturnType<typeof useGetOrderByIdSuspenseQuery>;
+export type GetOrderByIdQueryResult = ApolloReactCommon.QueryResult<BusinessGetOrderByIdQuery, BusinessGetOrderByIdQueryVariables>;
+export const GetOrderItemsDocument = gql`
+    query GetOrderItems($orderId: GraphQLStringOrFloat!) {
+  order_items(filter: {order_id: {id: {_eq: $orderId}}}) {
+    id
+    quantity
+    price
+    product_id {
+      id
+      name
+      price
+      main_image
+      description
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOrderItemsQuery__
+ *
+ * To run a query within a React component, call `useGetOrderItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrderItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrderItemsQuery({
+ *   variables: {
+ *      orderId: // value for 'orderId'
+ *   },
+ * });
+ */
+export function useGetOrderItemsQuery(baseOptions: ApolloReactHooks.QueryHookOptions<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables> & ({ variables: BusinessGetOrderItemsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables>(GetOrderItemsDocument, options);
+      }
+export function useGetOrderItemsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables>(GetOrderItemsDocument, options);
+        }
+export function useGetOrderItemsSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables>(GetOrderItemsDocument, options);
+        }
+export type GetOrderItemsQueryHookResult = ReturnType<typeof useGetOrderItemsQuery>;
+export type GetOrderItemsLazyQueryHookResult = ReturnType<typeof useGetOrderItemsLazyQuery>;
+export type GetOrderItemsSuspenseQueryHookResult = ReturnType<typeof useGetOrderItemsSuspenseQuery>;
+export type GetOrderItemsQueryResult = ApolloReactCommon.QueryResult<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables>;
 export const GetBoutiqueByIdDocument = gql`
     query GetBoutiqueById($boutiqueId: GraphQLStringOrFloat!) {
   boutiques(filter: {id: {_eq: $boutiqueId}}, limit: 1) {

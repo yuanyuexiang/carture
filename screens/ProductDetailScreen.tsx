@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   Image,
   Modal,
@@ -81,6 +82,50 @@ const ProductDetailScreen: React.FC = () => {
       setCurrentImageIndex(nextIndex);
       setCurrentImageUrl(allImages[nextIndex]);
     }
+  };
+  
+  // 处理下单
+  const handleOrder = () => {
+    if (!product) {
+      Alert.alert('错误', '商品信息不完整');
+      return;
+    }
+
+    // TODO: 这里将来会集成真实的下单逻辑
+    console.log('准备下单商品:', {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      main_image: product.main_image
+    });
+
+    // 显示下单选项
+    Alert.alert(
+      '立即下单',
+      `商品：${product.name}\n价格：￥${product.price}`,
+      [
+        {
+          text: '取消',
+          style: 'cancel'
+        },
+        {
+          text: '加入购物车',
+          onPress: () => {
+            // TODO: 实现加入购物车功能
+            console.log('加入购物车');
+            Alert.alert('提示', '已加入购物车！（功能开发中）');
+          }
+        },
+        {
+          text: '立即购买',
+          onPress: () => {
+            // TODO: 实现立即购买功能
+            console.log('立即购买');
+            Alert.alert('提示', '正在跳转到支付页面...（功能开发中）');
+          }
+        }
+      ]
+    );
   };
   
   // 键盘和触摸事件处理
@@ -177,6 +222,18 @@ const ProductDetailScreen: React.FC = () => {
           <Text style={styles.category}>分类：{product.category_id.name}</Text>
         )}
         {product.description && <Text style={styles.desc}>{product.description}</Text>}
+        
+        {/* 下单按钮 */}
+        <View style={styles.orderSection}>
+          <TouchableOpacity 
+            style={styles.orderButton}
+            onPress={() => handleOrder()}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.orderButtonText}>立即下单</Text>
+          </TouchableOpacity>
+        </View>
+        
         {/* 商品图片轮播 */}
         {imagesUrls.length > 0 && (
           <View style={styles.imagesWrap}>
@@ -407,6 +464,32 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'left',
     marginBottom: 4,
+  },
+  // 下单相关样式
+  orderSection: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  orderButton: {
+    backgroundColor: '#e91e63',
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  orderButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   header: {
     position: 'absolute',
