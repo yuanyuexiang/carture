@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   textArea: {
     flex: 2.5, // 保持合适的文字区域空间
-    backgroundColor: 'rgba(0, 0, 0, 0.75)', // 保持背景不透明度，确保文字可读
+    backgroundColor: 'rgba(0, 0, 0, 0.35)', // 保持背景不透明度，确保文字可读
     padding: 12,
     justifyContent: 'flex-end', // 改为底部对齐，让重要信息在底部显示
     minHeight: 120,
