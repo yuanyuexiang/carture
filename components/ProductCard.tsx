@@ -18,6 +18,17 @@ const ITEM_SEPARATOR = 12; // 卡片间距
 const VISIBLE_CARDS = 2.2; // 显示2.2个卡片，创造滑动效果
 const cardWidth = (screenWidth - HORIZONTAL_PADDING - ITEM_SEPARATOR * (VISIBLE_CARDS - 1)) / VISIBLE_CARDS;
 
+/**
+ * 获取商品显示名称
+ * 如果商品名称是错误的"商品浏览记录"，则使用副标题作为显示名称
+ */
+const getDisplayName = (product: Product): string => {
+  if (product.name === '商品浏览记录' && product.subtitle) {
+    return product.subtitle;
+  }
+  return product.name || '商品名称';
+};
+
 const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
   const router = useRouter();
 
@@ -27,41 +38,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
 
   // 获取优化后的图片 URL
   const imageUrl = product.main_image ? getDirectusThumbnailUrl(product.main_image, 320) : null;
-
-  // 渲染星级评分
-  const renderStars = (stars: number | null | undefined) => {
-    if (!stars) return null;
-    
-    const fullStars = Math.floor(stars);
-    const hasHalfStar = stars % 1 !== 0;
-    
-    // 使用多种fallback确保兼容性
-    const renderStar = (index: number) => (
-      <Text key={index} style={styles.singleStar}>
-        ⭐
-      </Text>
-    );
-    
-    const starElements = [];
-    for (let i = 0; i < fullStars; i++) {
-      starElements.push(renderStar(i));
-    }
-    
-    if (hasHalfStar) {
-      starElements.push(renderStar(fullStars));
-    }
-    
-    return (
-      <View style={styles.starsContainer}>
-        <View style={styles.starsWrapper}>
-          {starElements}
-        </View>
-        <Text style={styles.starsNumber}>
-          ({stars.toFixed(1)})
-        </Text>
-      </View>
-    );
-  };
 
   return (
     <TouchableOpacity style={[styles.card, vertical && styles.verticalCard]} onPress={handlePress} activeOpacity={0.85}>
@@ -77,17 +53,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
             <View style={styles.imageArea}>
             </View>
             
-            {/* 下半部分：文字区域 */}
+            {/* 下半部分：文字区域 - 简洁布局 */}
             <View style={styles.textArea}>
               <Text style={styles.name} numberOfLines={2}>
-                {product.name || '商品名称'}
+                {getDisplayName(product)}
               </Text>
+              
+              {/* 子标题显示 */}
               {product.subtitle && (
                 <Text style={styles.desc} numberOfLines={1}>
                   {product.subtitle}
                 </Text>
               )}
-              {renderStars(product.rating_avg)}
+              
+              {/* 价格信息 */}
               <Text style={styles.price}>
                 ￥{product.price !== undefined ? product.price : '价格'}
               </Text>
@@ -97,17 +76,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, vertical }) => {
       ) : (
         <View style={styles.placeholderCard}>
           <Text style={styles.placeholderText}>暂无图片</Text>
-          <Text style={[styles.name, { color: '#333', textShadowColor: 'transparent' }]} numberOfLines={2}>
-            {product.name || '商品名称'}
-          </Text>
-          {product.subtitle && (
-            <Text style={[styles.desc, { color: '#666', textShadowColor: 'transparent' }]} numberOfLines={1}>
-              {product.subtitle}
+          
+          {/* 保持与背景图片版本相同的信息层次 */}
+          <View style={styles.placeholderTextArea}>
+            <Text style={[styles.name, styles.placeholderName]} numberOfLines={2}>
+              {product.name || '商品名称'}
             </Text>
-          )}
-          <Text style={[styles.price, { color: '#ff6b35', textShadowColor: 'transparent' }]}>
-            ￥{product.price !== undefined ? product.price : '价格'}
-          </Text>
+            
+            {product.subtitle && (
+              <Text style={[styles.desc, styles.placeholderDesc]} numberOfLines={1}>
+                {product.subtitle}
+              </Text>
+            )}
+            
+            <Text style={[styles.price, styles.placeholderPrice]}>
+              ￥{product.price !== undefined ? product.price : '价格'}
+            </Text>
+          </View>
         </View>
       )}
     </TouchableOpacity>
@@ -155,16 +140,16 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   imageArea: {
-    flex: 3, // 增加到3，给图片更多空间
+    flex: 2.5, // 稍微减少图片空间
     justifyContent: 'center',
     alignItems: 'center',
   },
   textArea: {
-    flex: 2, // 增加到2，给文字更多空间
-    backgroundColor: 'rgba(0, 0, 0, 0.3)', // 增加不透明度
-    padding: 16,
-    justifyContent: 'flex-start', // 改为从顶部开始排列
-    minHeight: 100, // 添加最小高度确保可见
+    flex: 2.5, // 保持合适的文字区域空间
+    backgroundColor: 'rgba(0, 0, 0, 0.75)', // 保持背景不透明度，确保文字可读
+    padding: 12,
+    justifyContent: 'flex-end', // 改为底部对齐，让重要信息在底部显示
+    minHeight: 120,
   },
   placeholderCard: {
     width: '100%',
@@ -185,6 +170,23 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
+  placeholderTextArea: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: 16,
+  },
+  placeholderName: {
+    color: '#333',
+    textShadowColor: 'transparent',
+  },
+  placeholderDesc: {
+    color: '#666',
+    textShadowColor: 'transparent',
+  },
+  placeholderPrice: {
+    color: '#ff6b35',
+    textShadowColor: 'transparent',
+  },
   name: {
     fontSize: 20, // 增加到20px，确保移动端可见
     fontWeight: 'bold',
@@ -203,35 +205,6 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 1)',
     textShadowOffset: { width: 2, height: 2 }, // 增强阴影
     textShadowRadius: 4, // 增强阴影
-  },
-  starsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  starsWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  singleStar: {
-    fontSize: 16,
-    lineHeight: 18,
-    marginRight: 2, // 适中间距
-  },
-  stars: {
-    fontSize: 18, // 进一步增大字体确保可见
-    marginRight: 4,
-    color: '#FFD700', // 金色星星
-    fontWeight: 'bold', // 加粗确保显示
-    lineHeight: 20, // 添加行高
-    fontFamily: 'system', // 使用系统字体确保兼容性
-  },
-  starsNumber: {
-    fontSize: 12,
-    color: '#f5f5f5',
-    textShadowColor: 'rgba(0, 0, 0, 1)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
   },
   price: {
     fontSize: 24, // 增加到24px，确保价格醒目

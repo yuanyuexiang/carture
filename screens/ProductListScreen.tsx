@@ -101,29 +101,6 @@ const ProductListScreen: React.FC = () => {
     variables: buildQueryVariables(),
   });
 
-  // 调试信息
-  React.useEffect(() => {
-    console.log('🏪 ProductListScreen 调试信息:');
-    console.log('  - boutiqueId:', boutiqueId);
-    console.log('  - boutiqueDataLoading:', boutiqueDataLoading);
-    console.log('  - selectedCategory:', selectedCategory);
-    console.log('  - 查询变量:', buildQueryVariables());
-    console.log('  - 店铺信息:', boutique);
-    console.log('  - 分类信息:', categories);
-    
-    if (boutiqueDataError) {
-      console.log('  - 数据加载错误:', boutiqueDataError);
-    }
-    if (productError) {
-      console.log('  - 商品加载错误:', productError);
-    }
-    
-    if (productData?.products) {
-      console.log('  - 商品数量:', productData.products.length);
-      console.log('  - 商品列表:', productData.products.map(p => ({ id: p.id, name: p.name })));
-    }
-  }, [boutiqueId, boutiqueDataLoading, selectedCategory, boutiqueDataError, productError, productData, boutique, categories]);
-
   const handleRefresh = async () => {
     setRefreshing(true);
     setCurrentIndex(0);

@@ -59,9 +59,7 @@ export const useViewManager = () => {
           }
         },
         product: {
-          id: productId,
-          name: '商品浏览记录', // 临时填充必需字段
-          price: 0.0 // 临时填充必需字段
+          id: productId
         },
         boutique: {
           id: boutiqueId
