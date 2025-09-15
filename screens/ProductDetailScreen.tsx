@@ -203,6 +203,7 @@ const ProductDetailScreen: React.FC = () => {
           text: '确认下单',
           onPress: async () => {
             try {
+              console.log('🔥 用户确认下单，准备调用 createSimpleOrder');
               console.log('开始创建订单:', {
                 productId: product.id,
                 productName: product.name,
@@ -210,6 +211,7 @@ const ProductDetailScreen: React.FC = () => {
                 boutiqueId: boutiqueId
               });
               
+              console.log('🚀 即将调用 createSimpleOrder...');
               const orderResult = await createSimpleOrder({
                 productId: product.id,
                 productName: product.name || '未知商品',
@@ -217,6 +219,8 @@ const ProductDetailScreen: React.FC = () => {
                 quantity: 1,
                 boutiqueId: boutiqueId || undefined
               });
+
+              console.log('✅ createSimpleOrder 返回结果:', orderResult);
 
               if (orderResult.success) {
                 // 保存下单状态到本地存储

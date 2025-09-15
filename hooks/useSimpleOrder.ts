@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import {
   BusinessCreate_Order_Items_Input,
-  BusinessCreate_Orders_Input,
   useCreateOrderItemMutation,
   useCreateOrderMutation,
   useGetOrderItemsQuery,
@@ -34,27 +33,29 @@ export const useSimpleOrder = () => {
   /**
    * 创建简单订单（仿照 recordProductView 的逻辑）
    */
-  const createSimpleOrder = useCallback(async (orderData: SimpleOrderData) => {
+  const createSimpleOrder = useCallback(async (inputData: SimpleOrderData) => {
+    console.log('🚀 createSimpleOrder 被调用');
     setLoading(true);
     setError(null);
 
     try {
       console.log('=== 开始创建简单订单 ===');
-      console.log('订单数据:', orderData);
+      console.log('订单数据:', inputData);
 
       // 1. 获取微信用户信息（就像 visit view 一样简单）
       const wechatUserInfo = WechatAuth.getUserInfo();
       console.log('微信用户信息:', wechatUserInfo);
       
       if (!wechatUserInfo?.openid) {
+        console.error('❌ 没有微信用户信息');
         throw new Error('请先进行微信登录');
       }
 
-      const quantity = orderData.quantity || 1;
-      const totalPrice = orderData.productPrice * quantity;
+      const quantity = inputData.quantity || 1;
+      const totalPrice = inputData.productPrice * quantity;
 
-      // 2. 构建订单数据（仿照 viewData 的结构，让后台自动处理客户信息）
-      const orderInput: BusinessCreate_Orders_Input = {
+      // 2. 构建订单数据（完全仿照 viewData 的结构）
+      const orderData = {
         total_price: totalPrice,
         status: 'pending',
         customers_id: {
@@ -64,19 +65,22 @@ export const useSimpleOrder = () => {
           type: 'wechat',
           status: 'active'
         },
-        ...(orderData.boutiqueId && {
+        ...(inputData.boutiqueId && {
           boutique_id: {
-            id: orderData.boutiqueId
+            id: inputData.boutiqueId
           }
         })
       };
 
-      console.log('发送订单创建请求:', orderInput);
+      console.log('准备发送的订单数据 (仿照viewData结构):', JSON.stringify(orderData, null, 2));
 
-      // 3. 创建订单（后台会自动查询/创建 customer）
+      // 3. 创建订单 - 完全仿照 createProductView 的调用方式
+      console.log('🔥 即将调用 createOrderMutation (仿照 createProductView)');
       const orderResult = await createOrderMutation({
-        variables: { orderData: orderInput }
+        variables: { orderData: orderData }
       });
+
+      console.log('🎉 订单创建响应:', orderResult);
 
       const order = orderResult.data?.create_orders_item;
       if (!order?.id) {
@@ -88,14 +92,14 @@ export const useSimpleOrder = () => {
       // 4. 创建订单项
       const orderItemInput: BusinessCreate_Order_Items_Input = {
         quantity,
-        price: orderData.productPrice,
+        price: inputData.productPrice,
         order_id: {
           id: order.id
         },
         product_id: {
-          id: orderData.productId,
-          name: orderData.productName,
-          price: orderData.productPrice
+          id: inputData.productId,
+          name: inputData.productName,
+          price: inputData.productPrice
         }
       };
 
