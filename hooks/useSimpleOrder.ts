@@ -158,10 +158,8 @@ export const useCustomerOrders = (openid: string | null) => {
     onCompleted: (data) => {
       console.log('✅ useCustomerOrders: 查询成功, 数据:', data);
       console.log('✅ 订单数量:', data?.orders?.length || 0);
-    },
-    onLoading: () => {
-      console.log('⏳ useCustomerOrders: 查询中...');
     }
+    // 移除了无效的 onLoading 选项，Apollo Client 会自动管理 loading 状态
   });
 
   const orders = data?.orders || [];

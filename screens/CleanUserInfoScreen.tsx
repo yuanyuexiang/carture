@@ -7,8 +7,9 @@ import {
     Text,
     View,
 } from 'react-native';
-// import { OrderManager } from '../components/OrderManager'; // 暂时注释掉，这是导致问题的原因
-import { MinimalOrderManager } from '../components/MinimalOrderManager';
+// import { OrderManager } from '../components/OrderManager'; // 现在应该可以正常工作了
+import { OrderManager } from '../components/OrderManager';
+// import { MinimalOrderManager } from '../components/MinimalOrderManager'; // 调试用，现在使用原版
 import { WechatUserCard } from '../components/WechatUserCard';
 import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
 
@@ -91,11 +92,11 @@ const UserInfoScreen: React.FC = () => {
           )}
         </View>
 
-        {/* 订单管理 - 使用简化版本测试 */}
+        {/* 订单管理 - 使用修复后的原版 */}
         {userInfo && (
           <View style={styles.orderSection}>
             <Text style={styles.sectionTitle}>我的订单</Text>
-            <MinimalOrderManager />
+            <OrderManager />
           </View>
         )}
       </ScrollView>
