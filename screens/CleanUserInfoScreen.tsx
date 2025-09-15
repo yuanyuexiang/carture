@@ -7,9 +7,8 @@ import {
     Text,
     View,
 } from 'react-native';
-// import { OrderManager } from '../components/OrderManager'; // 现在应该可以正常工作了
-import { OrderManager } from '../components/OrderManager';
-// import { MinimalOrderManager } from '../components/MinimalOrderManager'; // 调试用，现在使用原版
+// import { OrderManager } from '../components/OrderManager'; // 原版还有问题，先用调试版
+import { SimpleOrderManager } from '../components/SimpleOrderManager'; // 测试不带SwipeableOrderCard的版本
 import { WechatUserCard } from '../components/WechatUserCard';
 import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
 
@@ -92,11 +91,11 @@ const UserInfoScreen: React.FC = () => {
           )}
         </View>
 
-        {/* 订单管理 - 使用修复后的原版 */}
+        {/* 订单管理 - 测试SimpleOrderManager */}
         {userInfo && (
           <View style={styles.orderSection}>
             <Text style={styles.sectionTitle}>我的订单</Text>
-            <OrderManager />
+            <SimpleOrderManager />
           </View>
         )}
       </ScrollView>
