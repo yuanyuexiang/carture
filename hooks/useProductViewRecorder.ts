@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { WechatAuth } from '../utils/wechat-auth';
 import { useViewManager } from './useViewManager';
 
