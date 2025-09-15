@@ -22,6 +22,22 @@ export const MinimalOrderManager: React.FC = () => {
   
   const [userInfo, setUserInfo] = useState<WechatUserInfo | null>(null);
   const [debugInfo, setDebugInfo] = useState<string>('初始化中...');
+  const [hookStatus, setHookStatus] = useState<string>('未调用');
+
+  // 步骤3: 尝试调用useCustomerOrders hook
+  let orders, loading, error;
+  try {
+    console.log('🔍 MinimalOrderManager: 准备调用useCustomerOrders hook');
+    const hookResult = useCustomerOrders(userInfo?.openid || null);
+    orders = hookResult.orders;
+    loading = hookResult.loading;
+    error = hookResult.error;
+    console.log('🔍 MinimalOrderManager: useCustomerOrders调用成功');
+    setHookStatus('调用成功');
+  } catch (hookError) {
+    console.error('🚨 MinimalOrderManager: useCustomerOrders调用失败:', hookError);
+    setHookStatus(`调用失败: ${hookError instanceof Error ? hookError.message : String(hookError)}`);
+  }
 
   useEffect(() => {
     try {
@@ -40,11 +56,14 @@ export const MinimalOrderManager: React.FC = () => {
   try {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>订单管理 (步骤2.5: 真实GraphQL导入)</Text>
+        <Text style={styles.title}>订单管理 (步骤3: Hook调用测试)</Text>
         <Text style={styles.message}>这是简化版本的订单管理组件</Text>
         <Text style={styles.debug}>调试: {debugInfo}</Text>
+        <Text style={styles.debug}>Hook状态: {hookStatus}</Text>
         <Text style={styles.debug}>OpenID: {userInfo?.openid || '未获取到'}</Text>
-        <Text style={styles.debug}>如果看到这个，说明GraphQL导入没问题</Text>
+        <Text style={styles.debug}>订单数量: {orders?.length || '未获取'}</Text>
+        <Text style={styles.debug}>加载中: {String(loading)}</Text>
+        <Text style={styles.debug}>如果看到这个，说明Hook调用没问题</Text>
       </View>
     );
   } catch (error) {
