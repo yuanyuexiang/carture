@@ -1,6 +1,9 @@
-import { ApolloClient, ApolloProvider, createHttpLink, from, InMemoryCache } from '@apollo/client';
+import { ApolloClient, InMemoryCache } from '@apollo/client/core';
 import { setContext } from '@apollo/client/link/context';
+import { from } from '@apollo/client/link/core';
 import { onError } from '@apollo/client/link/error';
+import { createHttpLink } from '@apollo/client/link/http';
+import { ApolloProvider } from '@apollo/client/react';
 import React from 'react';
 
 // 选择API端点

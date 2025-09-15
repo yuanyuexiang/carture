@@ -10,7 +10,7 @@ COPY package.json package-lock.json* ./
 RUN npm ci
 
 COPY . .
-RUN npx expo export --platform web
+RUN NODE_ENV=production EXPO_PLATFORM=web npm run build:web
 
 # ===========================
 # Stage 2: Nginx Serve

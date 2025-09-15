@@ -4,7 +4,7 @@ import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
-import 'react-native-reanimated';
+// import 'react-native-reanimated'; // 移除未使用的 reanimated 导入
 import { AuthWrapper } from '../components/AuthWrapper';
 import DataInitializer from '../components/DataInitializer';
 import WardrobeApolloProvider from '../components/WardrobeApolloProvider';
