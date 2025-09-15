@@ -4,15 +4,27 @@ import { useViewManager } from './useViewManager';
 
 export const useProductViewRecorder = () => {
   const { recordProductView } = useViewManager();
-  const recordedRef = useRef<Set<string>>(new Set());
+  // 改为存储时间戳的 Map，key 为 productId，value 为最后记录时间
+  const recordedTimeRef = useRef<Map<string, number>>(new Map());
   
-  console.log('🚀 useProductViewRecorder Hook 调用，已记录商品:', Array.from(recordedRef.current));
+  console.log('🚀 useProductViewRecorder Hook 调用，已记录商品:', Array.from(recordedTimeRef.current.keys()));
 
   const recordView = useCallback(async (productId: string, productInfo?: { name?: string; price?: number }) => {
     try {
-      if (!productId || recordedRef.current.has(productId)) {
-        console.log('⚠️ 商品已记录或ID为空，跳过:', productId);
-        return { success: false, message: '商品已记录或ID为空' };
+      if (!productId) {
+        console.log('⚠️ 商品ID为空，跳过');
+        return { success: false, message: '商品ID为空' };
+      }
+
+      // 检查是否在10分钟内已经记录过
+      const now = Date.now();
+      const lastRecordTime = recordedTimeRef.current.get(productId);
+      const tenMinutes = 10 * 60 * 1000; // 10分钟毫秒数
+
+      if (lastRecordTime && (now - lastRecordTime) < tenMinutes) {
+        const remainingTime = Math.ceil((tenMinutes - (now - lastRecordTime)) / 1000);
+        console.log(`⚠️ 商品 ${productId} 在10分钟内已记录过，跳过。剩余时间: ${remainingTime}秒`);
+        return { success: false, message: `商品在10分钟内已记录过，剩余${remainingTime}秒` };
       }
 
       console.log('📝 开始记录商品浏览:', productId);
@@ -35,8 +47,9 @@ export const useProductViewRecorder = () => {
           productPrice: productInfo?.price
         });
         
-        recordedRef.current.add(productId);
-        console.log('✅ 微信用户商品浏览记录成功:', productId);
+        // 记录成功后更新时间戳
+        recordedTimeRef.current.set(productId, now);
+        console.log('✅ 微信用户商品浏览记录成功:', productId, '时间:', new Date(now).toLocaleString());
         return { success: true, view: result };
       } else {
         console.log('⚠️ 未获取到微信用户信息，跳过浏览记录');
