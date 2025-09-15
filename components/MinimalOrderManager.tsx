@@ -2,6 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
 
+// 步骤2: 添加GraphQL相关导入 - 测试这是否导致崩溃
+try {
+  console.log('🔍 MinimalOrderManager: 尝试导入GraphQL相关模块');
+  // import { useCustomerOrders } from '../hooks/useSimpleOrder';
+  console.log('🔍 MinimalOrderManager: GraphQL导入成功(仅测试)');
+} catch (error) {
+  console.error('🚨 MinimalOrderManager: GraphQL导入失败:', error);
+}
+
+// 步骤2.5: 真正导入GraphQL hook
+
 /**
  * 简化的OrderManager - 用于调试
  * 不使用任何GraphQL查询，只显示基本信息
@@ -29,11 +40,11 @@ export const MinimalOrderManager: React.FC = () => {
   try {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>订单管理 (步骤1: 用户信息)</Text>
+        <Text style={styles.title}>订单管理 (步骤2.5: 真实GraphQL导入)</Text>
         <Text style={styles.message}>这是简化版本的订单管理组件</Text>
         <Text style={styles.debug}>调试: {debugInfo}</Text>
         <Text style={styles.debug}>OpenID: {userInfo?.openid || '未获取到'}</Text>
-        <Text style={styles.debug}>如果你看到这个，说明基础渲染没问题</Text>
+        <Text style={styles.debug}>如果看到这个，说明GraphQL导入没问题</Text>
       </View>
     );
   } catch (error) {
