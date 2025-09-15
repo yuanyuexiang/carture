@@ -14,7 +14,7 @@ export const CREATE_ORDER = gql`
         price
         main_image
       }
-      boutique_id {
+      boutique {
         id
         name
       }
@@ -25,7 +25,7 @@ export const CREATE_ORDER = gql`
 // 获取用户订单列表 (通过customers的open_id关系)
 export const GET_USER_ORDERS = gql`
   query GetUserOrders($openId: String!) {
-    orders(filter: { customers_id: { open_id: { _eq: $openId } } }, sort: ["-date_created"]) {
+    orders(filter: { customer: { open_id: { _eq: $openId } } }, sort: ["-date_created"]) {
       id
       total_price
       status
@@ -36,7 +36,7 @@ export const GET_USER_ORDERS = gql`
         price
         main_image
       }
-      boutique_id {
+      boutique {
         id
         name
       }
@@ -59,7 +59,7 @@ export const GET_ORDER_BY_ID = gql`
         main_image
         description
       }
-      boutique_id {
+      boutique {
         id
         name
       }

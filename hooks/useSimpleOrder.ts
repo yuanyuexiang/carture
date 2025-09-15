@@ -1,4 +1,5 @@
 import { useApolloClient, useMutation, useQuery } from '@apollo/client';
+import { useState } from 'react';
 import { Alert, Platform } from 'react-native';
 import { CREATE_ORDER, DELETE_ORDER, GET_USER_ORDERS } from '../graphql/business/orders.graphql';
 import { GET_CUSTOMER_BY_OPENID } from '../graphql/business/visits.graphql';
@@ -7,8 +8,15 @@ export const useSimpleOrder = () => {
   const [createOrderMutation] = useMutation(CREATE_ORDER);
   const [deleteOrderMutation] = useMutation(DELETE_ORDER);
   const apolloClient = useApolloClient();
+  const [loading, setLoading] = useState(false);
 
-  const createSimpleOrder = async (productId: string, userOpenId: string) => {
+  const createSimpleOrder = async (
+    productId: string, 
+    userOpenId: string, 
+    productInfo?: { name: string, price: number },
+    boutiqueId?: string
+  ) => {
+    setLoading(true);
     try {
       if (!userOpenId) {
         const message = '请先登录';
@@ -20,7 +28,7 @@ export const useSimpleOrder = () => {
         return;
       }
 
-      console.log('🚀 开始创建订单，参数:', { productId, userOpenId });
+      console.log('🚀 开始创建订单，参数:', { productId, userOpenId, productInfo, boutiqueId });
 
       // 1. 先根据openid获取customer ID
       const { data: customerData } = await apolloClient.query({
@@ -36,17 +44,34 @@ export const useSimpleOrder = () => {
 
       console.log('✅ 找到客户记录:', customer);
 
-      // 2. 使用customer ID创建订单
+      // 2. 使用customer信息创建订单
+      const orderData: any = {
+        customer: {
+          id: customer.id,
+          open_id: customer.open_id,
+          nick_name: customer.nick_name || '',
+          avatar: customer.avatar || '',
+          sex: customer.sex || 0,
+        },
+        product: {
+          id: productId,
+          name: productInfo?.name || '商品',
+          price: productInfo?.price || 0
+        },
+        status: 'pending',
+        date_created: new Date().toISOString(),
+      };
+
+      // 如果有boutiqueId，添加boutique信息
+      if (boutiqueId) {
+        orderData.boutique = {
+          id: boutiqueId
+        };
+      }
+
       const response = await createOrderMutation({
         variables: {
-          orderData: {
-            customers_id: customer.id,  // 使用真实的customer ID
-            product: {
-              id: productId
-            },
-            status: 'pending',
-            date_created: new Date().toISOString(),
-          }
+          orderData
         }
       });
 
@@ -67,6 +92,8 @@ export const useSimpleOrder = () => {
       if (error.graphQLErrors) {
         console.error('GraphQL错误:', error.graphQLErrors);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,6 +119,7 @@ export const useSimpleOrder = () => {
   return {
     createSimpleOrder,
     deleteOrder,
+    loading,
   };
 };
 

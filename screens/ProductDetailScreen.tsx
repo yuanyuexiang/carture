@@ -163,7 +163,12 @@ const ProductDetailScreen: React.FC = () => {
       console.log('🚀 即将调用 createSimpleOrder...');
       const orderResult = await createSimpleOrder(
         product.id,
-        userInfo.openid
+        userInfo.openid,
+        {
+          name: product.name || '商品',
+          price: product.price || 0
+        },
+        boutiqueId || undefined
       );
 
       console.log('✅ createSimpleOrder 返回结果:', orderResult);

@@ -1434,8 +1434,7 @@ export type BusinessCreate_Directus_Users_Input = {
 
 export type BusinessCreate_Orders_Input = {
   boutique?: InputMaybe<BusinessCreate_Boutiques_Input>;
-  boutique_id?: InputMaybe<BusinessCreate_Boutiques_Input>;
-  customers_id?: InputMaybe<BusinessCreate_Customers_Input>;
+  customer?: InputMaybe<BusinessCreate_Customers_Input>;
   date_created?: InputMaybe<Scalars['Date']['input']>;
   date_updated?: InputMaybe<Scalars['Date']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
@@ -3203,8 +3202,7 @@ export type BusinessNumber_Filter_Operators = {
 export type BusinessOrders = {
   __typename?: 'orders';
   boutique?: Maybe<BusinessBoutiques>;
-  boutique_id?: Maybe<BusinessBoutiques>;
-  customers_id?: Maybe<BusinessCustomers>;
+  customer?: Maybe<BusinessCustomers>;
   date_created?: Maybe<Scalars['Date']['output']>;
   date_created_func?: Maybe<BusinessDatetime_Functions>;
   date_updated?: Maybe<Scalars['Date']['output']>;
@@ -3228,17 +3226,7 @@ export type BusinessOrdersBoutiqueArgs = {
 };
 
 
-export type BusinessOrdersBoutique_IdArgs = {
-  filter?: InputMaybe<BusinessBoutiques_Filter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-
-export type BusinessOrdersCustomers_IdArgs = {
+export type BusinessOrdersCustomerArgs = {
   filter?: InputMaybe<BusinessCustomers_Filter>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -3293,8 +3281,8 @@ export type BusinessOrders_Aggregated = {
 
 export type BusinessOrders_Aggregated_Count = {
   __typename?: 'orders_aggregated_count';
-  boutique_id?: Maybe<Scalars['Int']['output']>;
-  customers_id?: Maybe<Scalars['Int']['output']>;
+  boutique?: Maybe<Scalars['Int']['output']>;
+  customer?: Maybe<Scalars['Int']['output']>;
   date_created?: Maybe<Scalars['Int']['output']>;
   date_updated?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
@@ -3307,8 +3295,8 @@ export type BusinessOrders_Aggregated_Count = {
 
 export type BusinessOrders_Aggregated_Fields = {
   __typename?: 'orders_aggregated_fields';
-  boutique_id?: Maybe<Scalars['Float']['output']>;
-  customers_id?: Maybe<Scalars['Float']['output']>;
+  boutique?: Maybe<Scalars['Float']['output']>;
+  customer?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   product?: Maybe<Scalars['Float']['output']>;
   total_price?: Maybe<Scalars['Float']['output']>;
@@ -3318,8 +3306,7 @@ export type BusinessOrders_Filter = {
   _and?: InputMaybe<Array<InputMaybe<BusinessOrders_Filter>>>;
   _or?: InputMaybe<Array<InputMaybe<BusinessOrders_Filter>>>;
   boutique?: InputMaybe<BusinessBoutiques_Filter>;
-  boutique_id?: InputMaybe<BusinessBoutiques_Filter>;
-  customers_id?: InputMaybe<BusinessCustomers_Filter>;
+  customer?: InputMaybe<BusinessCustomers_Filter>;
   date_created?: InputMaybe<BusinessDate_Filter_Operators>;
   date_created_func?: InputMaybe<BusinessDatetime_Function_Filter_Operators>;
   date_updated?: InputMaybe<BusinessDate_Filter_Operators>;
@@ -3788,8 +3775,7 @@ export type BusinessUpdate_Directus_Users_Input = {
 
 export type BusinessUpdate_Orders_Input = {
   boutique?: InputMaybe<BusinessUpdate_Boutiques_Input>;
-  boutique_id?: InputMaybe<BusinessUpdate_Boutiques_Input>;
-  customers_id?: InputMaybe<BusinessUpdate_Customers_Input>;
+  customer?: InputMaybe<BusinessUpdate_Customers_Input>;
   date_created?: InputMaybe<Scalars['Date']['input']>;
   date_updated?: InputMaybe<Scalars['Date']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
@@ -3913,8 +3899,7 @@ export type BusinessVersion_Customers = {
 export type BusinessVersion_Orders = {
   __typename?: 'version_orders';
   boutique?: Maybe<Scalars['JSON']['output']>;
-  boutique_id?: Maybe<Scalars['JSON']['output']>;
-  customers_id?: Maybe<Scalars['JSON']['output']>;
+  customer?: Maybe<Scalars['JSON']['output']>;
   date_created?: Maybe<Scalars['Date']['output']>;
   date_updated?: Maybe<Scalars['Date']['output']>;
   id?: Maybe<Scalars['ID']['output']>;
@@ -4219,21 +4204,21 @@ export type BusinessCreateOrderMutationVariables = Exact<{
 }>;
 
 
-export type BusinessCreateOrderMutation = { __typename?: 'Mutation', create_orders_item?: { __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null } | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null } | null };
+export type BusinessCreateOrderMutation = { __typename?: 'Mutation', create_orders_item?: { __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null } | null, boutique?: { __typename?: 'boutiques', id: string, name?: string | null } | null } | null };
 
 export type BusinessGetUserOrdersQueryVariables = Exact<{
   openId: Scalars['String']['input'];
 }>;
 
 
-export type BusinessGetUserOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null } | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
+export type BusinessGetUserOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null } | null, boutique?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
 
 export type BusinessGetOrderByIdQueryVariables = Exact<{
   orderId: Scalars['GraphQLStringOrFloat']['input'];
 }>;
 
 
-export type BusinessGetOrderByIdQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null, description?: string | null } | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
+export type BusinessGetOrderByIdQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null, description?: string | null } | null, boutique?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
 
 export type BusinessDeleteOrderMutationVariables = Exact<{
   orderId: Scalars['ID']['input'];
@@ -4384,7 +4369,7 @@ export const CreateOrderDocument = gql`
       price
       main_image
     }
-    boutique_id {
+    boutique {
       id
       name
     }
@@ -4419,10 +4404,7 @@ export type CreateOrderMutationResult = ApolloReactCommon.MutationResult<Busines
 export type CreateOrderMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessCreateOrderMutation, BusinessCreateOrderMutationVariables>;
 export const GetUserOrdersDocument = gql`
     query GetUserOrders($openId: String!) {
-  orders(
-    filter: {customers_id: {open_id: {_eq: $openId}}}
-    sort: ["-date_created"]
-  ) {
+  orders(filter: {customer: {open_id: {_eq: $openId}}}, sort: ["-date_created"]) {
     id
     total_price
     status
@@ -4433,7 +4415,7 @@ export const GetUserOrdersDocument = gql`
       price
       main_image
     }
-    boutique_id {
+    boutique {
       id
       name
     }
@@ -4487,7 +4469,7 @@ export const GetOrderByIdDocument = gql`
       main_image
       description
     }
-    boutique_id {
+    boutique {
       id
       name
     }

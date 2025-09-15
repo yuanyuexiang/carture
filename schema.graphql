@@ -352,13 +352,12 @@ input create_orders_input {
   id: ID
   total_price: Float
   status: String
-  boutique_id: create_boutiques_input
   user_created: create_directus_users_input
   date_created: Date
   user_updated: create_directus_users_input
   date_updated: Date
-  customers_id: create_customers_input
   product: create_products_input
+  customer: create_customers_input
   boutique: create_boutiques_input
 }
 
@@ -1621,15 +1620,14 @@ type orders {
   id: ID!
   total_price: Float
   status: String
-  boutique_id(filter: boutiques_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): boutiques
   user_created(filter: directus_users_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_users
   date_created: Date
   date_created_func: datetime_functions
   user_updated(filter: directus_users_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_users
   date_updated: Date
   date_updated_func: datetime_functions
-  customers_id(filter: customers_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): customers
   product(filter: products_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): products
+  customer(filter: customers_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): customers
   boutique(filter: boutiques_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): boutiques
 }
 
@@ -1650,39 +1648,38 @@ type orders_aggregated_count {
   id: Int
   total_price: Int
   status: Int
-  boutique_id: Int
   user_created: Int
   date_created: Int
   user_updated: Int
   date_updated: Int
-  customers_id: Int
   product: Int
+  customer: Int
+  boutique: Int
 }
 
 type orders_aggregated_fields {
   id: Float
   total_price: Float
-  boutique_id: Float
-  customers_id: Float
   product: Float
+  customer: Float
+  boutique: Float
 }
 
 input orders_filter {
   id: number_filter_operators
   total_price: number_filter_operators
   status: string_filter_operators
-  boutique_id: boutiques_filter
   user_created: directus_users_filter
   date_created: date_filter_operators
   date_created_func: datetime_function_filter_operators
   user_updated: directus_users_filter
   date_updated: date_filter_operators
   date_updated_func: datetime_function_filter_operators
-  customers_id: customers_filter
   product: products_filter
+  customer: customers_filter
+  boutique: boutiques_filter
   _and: [orders_filter]
   _or: [orders_filter]
-  boutique: boutiques_filter
 }
 
 type orders_mutated {
@@ -2130,13 +2127,12 @@ input update_orders_input {
   id: ID
   total_price: Float
   status: String
-  boutique_id: update_boutiques_input
   user_created: update_directus_users_input
   date_created: Date
   user_updated: update_directus_users_input
   date_updated: Date
-  customers_id: update_customers_input
   product: update_products_input
+  customer: update_customers_input
   boutique: update_boutiques_input
 }
 
@@ -2251,13 +2247,12 @@ type version_orders {
   id: ID
   total_price: Float
   status: String
-  boutique_id: JSON
   user_created: JSON
   date_created: Date
   user_updated: JSON
   date_updated: Date
-  customers_id: JSON
   product: JSON
+  customer: JSON
   boutique: JSON
 }
 
