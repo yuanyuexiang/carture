@@ -34,7 +34,7 @@ export const useVisitManager = () => {
   const [createVisit] = useMutation(CREATE_VISIT_WITH_FULL_DATA);
 
   /**
-   * 记录访问
+   * 记录访问 - 只创建visit记录，假设customer已经存在
    * @param wechatUserInfo 微信用户信息
    * @param boutiqueId 店铺ID
    * @returns 记录结果
@@ -48,7 +48,7 @@ export const useVisitManager = () => {
       console.log('微信用户:', wechatUserInfo.nickname);
       console.log('店铺ID:', boutiqueId);
 
-      // 1. 查询该用户在这家店铺是否已有客户记录（基于 open_id + boutique）
+      // 1. 查询该用户在这家店铺的客户记录（必须已存在）
       const { data: existingCustomer } = await getCustomerByOpenIdAndBoutique({
         variables: { 
           open_id: wechatUserInfo.openid,
@@ -57,132 +57,71 @@ export const useVisitManager = () => {
         fetchPolicy: 'network-only'
       });
 
-      if (existingCustomer?.customers?.length > 0) {
-        // 该用户在这家店铺已有客户记录
-        const customer = existingCustomer.customers[0];
-        const customerId = customer.id;
-        console.log('找到现有店铺专属客户记录:', customerId);
-        console.log('客户信息:', {
-          id: customer.id,
-          nickname: customer.nick_name,
-          boutique: customer.boutique?.name
-        });
-
-        // 检查是否需要更新客户信息
-        if (shouldUpdateCustomer(customer, wechatUserInfo)) {
-          console.log('客户信息有变化，更新客户记录...');
-          await updateCustomer({
-            variables: {
-              id: customerId,
-              nick_name: wechatUserInfo.nickname,
-              avatar: wechatUserInfo.headimgurl,
-            }
-          });
-          console.log('客户信息更新完成');
-        }
-
-        // 3. 创建访问记录
-        const visitResult = await createVisit({
-          variables: {
-            customerData: {
-              id: customer.id,
-              open_id: customer.open_id,
-              nick_name: customer.nick_name,
-              avatar: customer.avatar,
-              sex: customer.sex,
-              boutique: {
-                id: customer.boutique.id
-              }
-            },
-            boutiqueData: {
-              id: boutiqueId,
-              name: customer.boutique?.name || '未知店铺',
-              status: customer.boutique?.status || 'open'
-            }
-          }
-        });
-
-        if (visitResult.errors) {
-          console.error('创建访问记录失败:', visitResult.errors);
-          throw new Error('创建访问记录失败');
-        }
-
-        const visit = visitResult.data?.create_visits_item;
-        console.log('✅ 成功创建访问记录:', visit);
-
+      if (!existingCustomer?.customers?.length) {
+        console.log('❌ 该用户在此店铺还没有客户记录，无法创建访问记录');
         return {
-          success: true,
-          customerId: customer.id,
-          visitId: visit?.id,
-          visitInfo: visit,
-          isNewCustomerForBoutique: false,
-          boutiqueId: boutiqueId,
-          message: '客户记录已存在，成功创建访问记录',
-          customerInfo: customer
-        };
-      } else {
-        // 该用户在这家店铺还没有客户记录，创建新的客户记录并关联店铺
-        console.log('该用户在此店铺没有客户记录，创建新的客户记录并关联店铺');
-        
-        const { data: newCustomer } = await createCustomerWithBoutique({
-          variables: {
-            open_id: wechatUserInfo.openid,
-            nick_name: wechatUserInfo.nickname,
-            avatar: wechatUserInfo.headimgurl,
-            sex: wechatUserInfo.sex,
-            boutiqueId: boutiqueId
-          }
-        });
-
-        if (!newCustomer?.create_customers_item?.id) {
-          throw new Error('创建客户记录失败');
-        }
-
-        const customerId = newCustomer.create_customers_item.id;
-        console.log('创建客户记录成功:', customerId);
-        console.log('客户记录已成功关联店铺:', newCustomer.create_customers_item.boutique?.name);
-        
-        // 3. 创建访问记录
-        const customer = newCustomer.create_customers_item;
-        const visitResult = await createVisit({
-          variables: {
-            customerData: {
-              id: customer.id,
-              open_id: customer.open_id,
-              nick_name: customer.nick_name,
-              avatar: customer.avatar,
-              sex: customer.sex,
-              boutique: {
-                id: customer.boutique.id
-              }
-            },
-            boutiqueData: {
-              id: boutiqueId,
-              name: customer.boutique?.name || '未知店铺',
-              status: customer.boutique?.status || 'open'
-            }
-          }
-        });
-
-        if (visitResult.errors) {
-          console.error('创建访问记录失败:', visitResult.errors);
-          throw new Error('创建访问记录失败');
-        }
-
-        const visit = visitResult.data?.create_visits_item;
-        console.log('✅ 成功创建访问记录:', visit);
-        
-        return {
-          success: true,
-          customerId: customerId,
-          visitId: visit?.id,
-          visitInfo: visit,
-          isNewCustomerForBoutique: true,
-          boutiqueId: boutiqueId,
-          message: '创建客户记录并成功关联店铺，成功创建访问记录',
-          customerInfo: customer
+          success: false,
+          error: 'Customer not found',
+          message: '用户还不是该店铺的客户，需要先进入店铺'
         };
       }
+
+      // 2. 使用现有客户记录创建访问记录
+      const customer = existingCustomer.customers[0];
+      console.log('找到现有店铺专属客户记录:', customer.id);
+      
+      // 检查是否需要更新客户信息
+      if (shouldUpdateCustomer(customer, wechatUserInfo)) {
+        console.log('客户信息有变化，更新客户记录...');
+        await updateCustomer({
+          variables: {
+            id: customer.id,
+            nick_name: wechatUserInfo.nickname,
+            avatar: wechatUserInfo.headimgurl,
+          }
+        });
+        console.log('客户信息更新完成');
+      }
+
+      // 3. 创建访问记录
+      const visitResult = await createVisit({
+        variables: {
+          customerData: {
+            id: customer.id,
+            open_id: customer.open_id,
+            nick_name: customer.nick_name,
+            avatar: customer.avatar,
+            sex: customer.sex,
+            boutique: {
+              id: customer.boutique.id
+            }
+          },
+          boutiqueData: {
+            id: boutiqueId,
+            name: customer.boutique?.name || '未知店铺',
+            status: customer.boutique?.status || 'open'
+          }
+        }
+      });
+
+      if (visitResult.errors) {
+        console.error('创建访问记录失败:', visitResult.errors);
+        throw new Error('创建访问记录失败');
+      }
+
+      const visit = visitResult.data?.create_visits_item;
+      console.log('✅ 成功创建访问记录:', visit);
+
+      return {
+        success: true,
+        customerId: customer.id,
+        visitId: visit?.id,
+        visitInfo: visit,
+        isNewCustomerForBoutique: false,
+        boutiqueId: boutiqueId,
+        message: '基于现有客户记录成功创建访问记录',
+        customerInfo: customer
+      };
 
     } catch (error) {
       console.error('记录访问失败:', error);

@@ -1,12 +1,15 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { useState } from 'react';
+import {
+  useGetCustomerByOpenIdAndBoutiqueLazyQuery
+} from '../generated/business-graphql';
 import { CREATE_ORDER, DELETE_ORDER, GET_USER_ORDERS } from '../graphql/business/orders.graphql';
-import { useCustomerManager } from './useCustomerManager';
+import { WechatAuth } from '../utils/wechat-auth';
 
 export const useSimpleOrder = () => {
   const [createOrderMutation] = useMutation(CREATE_ORDER);
   const [deleteOrderMutation] = useMutation(DELETE_ORDER);
-  const { ensureCustomer } = useCustomerManager();
+  const [getCustomerByOpenIdAndBoutique] = useGetCustomerByOpenIdAndBoutiqueLazyQuery();
   const [loading, setLoading] = useState(false);
 
   const createSimpleOrder = async (
@@ -18,16 +21,37 @@ export const useSimpleOrder = () => {
     try {
       console.log('🚀 开始创建订单，参数:', { productId, productInfo, boutiqueId });
 
-      // 1. 确保customer存在（使用现有的customerManager）
-      const customer = await ensureCustomer(boutiqueId);
-      if (!customer?.id) {
-        console.error('❌ 无法获取或创建客户记录');
+      // 1. 获取微信用户信息
+      const wechatUserInfo = WechatAuth.getUserInfo();
+      if (!wechatUserInfo?.openid) {
+        console.error('❌ 未找到微信用户信息，请先登录');
         return;
       }
 
-      console.log('✅ 客户记录已准备:', customer);
+      // 2. 查找已存在的客户记录（不创建新的）
+      let customer = null;
+      if (boutiqueId) {
+        // 查询指定店铺的客户记录
+        const { data } = await getCustomerByOpenIdAndBoutique({
+          variables: {
+            open_id: wechatUserInfo.openid,
+            boutique_id: boutiqueId
+          }
+        });
+        
+        if (data?.customers && data.customers.length > 0) {
+          customer = data.customers[0];
+          console.log('✅ 找到店铺客户记录:', customer.id);
+        } else {
+          console.error('❌ 用户还不是该店铺的客户，请先进入店铺');
+          return;
+        }
+      } else {
+        console.error('❌ 缺少店铺ID，无法创建订单');
+        return;
+      }
 
-      // 2. 使用customer信息创建订单
+      // 3. 使用现有customer信息创建订单
       const orderData: any = {
         customer: {
           id: customer.id,
