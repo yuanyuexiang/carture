@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    View,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import { OrderManager } from '../components/OrderManager';
 import { WechatUserCard } from '../components/WechatUserCard';
@@ -115,7 +115,7 @@ const UserInfoScreen: React.FC = () => {
         {/* 订单管理 */}
         {userInfo && (
           <View style={styles.orderSection}>
-            <OrderManager userInfo={userInfo} />
+            <OrderManager />
           </View>
         )}
 

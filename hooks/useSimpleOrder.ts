@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import {
-    BusinessCreate_Order_Items_Input,
-    BusinessCreate_Orders_Input,
-    useCreateOrderItemMutation,
-    useCreateOrderMutation,
-    useGetOrderItemsQuery,
-    useGetUserOrdersQuery
+  BusinessCreate_Order_Items_Input,
+  BusinessCreate_Orders_Input,
+  useCreateOrderItemMutation,
+  useCreateOrderMutation,
+  useGetOrderItemsQuery,
+  useGetUserOrdersQuery
 } from '../generated/business-graphql';
 import { WechatAuth } from '../utils/wechat-auth';
 import { useBoutiqueCustomer } from './useBoutiqueCustomer';
@@ -89,10 +89,12 @@ export const useSimpleOrder = () => {
       const orderInput: BusinessCreate_Orders_Input = {
         total_price: totalPrice,
         status: 'pending',
-        // 注意：这里不能直接关联，需要传递完整的客户对象
-        // customers_id: {
-        //   id: customerInfo.id
-        // },
+        customers_id: {
+          id: customer.id,
+          open_id: customer.open_id,
+          nick_name: customer.nick_name || '',
+          avatar: customer.avatar || ''
+        },
         ...(orderData.boutiqueId && {
           boutique_id: {
             id: orderData.boutiqueId
@@ -116,13 +118,14 @@ export const useSimpleOrder = () => {
       const orderItemInput: BusinessCreate_Order_Items_Input = {
         quantity,
         price: orderData.productPrice,
-        // 注意：这里也不能直接关联，需要传递完整的对象
-        // orders_id: {
-        //   id: order.id
-        // },
-        // product_id: {
-        //   id: orderData.productId
-        // }
+        order_id: {
+          id: order.id
+        },
+        product_id: {
+          id: orderData.productId,
+          name: orderData.productName,
+          price: orderData.productPrice
+        }
       };
 
       const itemResult = await createOrderItemMutation({

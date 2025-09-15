@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useCustomerOrders } from '../hooks/useSimpleOrder';
+import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
 
 interface OrderManagerProps {
   customerId?: string;
 }
 
 export const OrderManager: React.FC<OrderManagerProps> = () => {
-  const [wechatUserInfo, setWechatUserInfo] = useState<any>(null);
+  const [wechatUserInfo, setWechatUserInfo] = useState<WechatUserInfo | null>(null);
 
   useEffect(() => {
-    // 这里应该从WechatAuth获取用户信息
-    // const userInfo = WechatAuth.getUserInfo();
-    // if (userInfo) {
-    //   setWechatUserInfo(userInfo);
-    // }
+    const userInfo = WechatAuth.getUserInfo();
+    if (userInfo) {
+      setWechatUserInfo(userInfo);
+    }
   }, []);
 
   const { orders, loading, error } = useCustomerOrders(
