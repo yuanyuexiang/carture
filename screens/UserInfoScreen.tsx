@@ -34,18 +34,23 @@ const UserInfoScreen: React.FC = () => {
 
     loadUserInfo();
 
-    // 监听localStorage变化
+    // 监听localStorage变化 (仅在Web环境中)
     const handleStorageChange = () => {
       console.log('监听到localStorage变化，重新读取');
       loadUserInfo();
     };
 
-    // 监听自定义事件
-    window.addEventListener('wechatAuthUpdated', handleStorageChange);
+    // 只在Web环境中添加事件监听器
+    if (typeof window !== 'undefined' && window.addEventListener) {
+      window.addEventListener('wechatAuthUpdated', handleStorageChange);
+      
+      return () => {
+        window.removeEventListener('wechatAuthUpdated', handleStorageChange);
+      };
+    }
     
-    return () => {
-      window.removeEventListener('wechatAuthUpdated', handleStorageChange);
-    };
+    // React Native环境中直接返回空的cleanup函数
+    return () => {};
   }, []);
 
   // 强制重新授权

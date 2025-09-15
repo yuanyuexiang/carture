@@ -216,6 +216,27 @@ export class WechatAuth {
    */
   static getUserInfo(): WechatUserInfo | null {
     try {
+      // React Native 兼容性检查
+      if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+        console.log('localStorage不可用（React Native环境）');
+        // 在React Native开发环境中返回模拟数据
+        if (process.env.NODE_ENV === 'development') {
+          return {
+            openid: 'rn_mock_openid_123456',
+            nickname: 'RN测试用户',
+            headimgurl: 'https://via.placeholder.com/150',
+            sex: 1,
+            language: 'zh_CN',
+            country: '中国',
+            province: '北京',
+            city: '北京',
+            privilege: [],
+            login_time: Date.now()
+          };
+        }
+        return null;
+      }
+
       const userInfoStr = localStorage.getItem(this.STORAGE_KEY_USER_INFO);
       const localUserInfo = userInfoStr ? JSON.parse(userInfoStr) : null;
       
