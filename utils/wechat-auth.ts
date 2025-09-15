@@ -45,12 +45,16 @@ export class WechatAuth {
     const urlParams = new URLSearchParams(window.location.search);
     const forceWechat = urlParams.get('force_wechat') === 'true';
     
+    // 开发环境默认返回 true
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
     console.log('=== 检查微信浏览器环境 ===');
     console.log('User Agent:', userAgent);
     console.log('是否包含 micromessenger:', isWechat);
     console.log('强制微信模式:', forceWechat);
+    console.log('开发环境:', isDevelopment);
     
-    return isWechat || forceWechat;
+    return isDevelopment || isWechat || forceWechat;
   }
 
   /**
@@ -213,7 +217,35 @@ export class WechatAuth {
   static getUserInfo(): WechatUserInfo | null {
     try {
       const userInfoStr = localStorage.getItem(this.STORAGE_KEY_USER_INFO);
-      return userInfoStr ? JSON.parse(userInfoStr) : null;
+      const localUserInfo = userInfoStr ? JSON.parse(userInfoStr) : null;
+      
+      // 如果有本地用户信息，直接返回
+      if (localUserInfo) {
+        return localUserInfo;
+      }
+      
+      // 开发环境：创建模拟用户信息
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔧 开发环境：创建模拟用户信息');
+        const mockUserInfo: WechatUserInfo = {
+          openid: 'dev_openid_123456',
+          nickname: '开发用户',
+          headimgurl: 'https://via.placeholder.com/64x64.png?text=Dev',
+          sex: 1,
+          language: 'zh_CN',
+          country: '中国',
+          province: '北京',
+          city: '北京',
+          privilege: [],
+          login_time: Math.floor(Date.now() / 1000)
+        };
+        
+        // 保存模拟用户信息到本地存储
+        localStorage.setItem(this.STORAGE_KEY_USER_INFO, JSON.stringify(mockUserInfo));
+        return mockUserInfo;
+      }
+      
+      return null;
     } catch (error) {
       console.error('获取本地用户信息失败:', error);
       return null;

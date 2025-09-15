@@ -42,17 +42,26 @@ export const useSimpleOrder = () => {
     setError(null);
 
     try {
+      console.log('=== 开始创建简单订单 ===');
+      console.log('订单数据:', orderData);
+
       // 1. 检查微信用户登录状态
       const wechatUserInfo = WechatAuth.getUserInfo();
+      console.log('微信用户信息:', wechatUserInfo);
+      
       if (!wechatUserInfo?.openid) {
         throw new Error('请先进行微信登录');
       }
 
       // 2. 如果有店铺ID，确保客户记录存在（这里会自动处理进入店铺的完整流程）
       let customer = customerInfo;
+      console.log('当前客户信息:', customer);
+      
       if (orderData.boutiqueId && !customer) {
-        console.log('进入店铺并确保客户记录存在...');
+        console.log('进入店铺并确保客户记录存在..., boutiqueId:', orderData.boutiqueId);
         customer = await enterBoutique(orderData.boutiqueId);
+        console.log('进入店铺后的客户信息:', customer);
+        
         if (!customer) {
           throw new Error('无法获取或创建客户信息');
         }

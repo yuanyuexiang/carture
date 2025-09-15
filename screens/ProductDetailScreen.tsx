@@ -150,58 +150,32 @@ const ProductDetailScreen: React.FC = () => {
       return;
     }
 
-    // 详细的用户授权状态检查
-    const isWechatBrowser = WechatAuth.isWechatBrowser();
+    // 获取用户信息（开发环境会自动创建模拟用户）
     const userInfo = WechatAuth.getUserInfo();
     
     console.log('下单前检查:', {
-      isWechatBrowser,
       hasUserInfo: !!userInfo,
       userOpenid: userInfo?.openid
     });
 
-    // 1. 检查是否在微信浏览器中
-    if (!isWechatBrowser) {
-      Alert.alert(
-        '环境不支持',
-        '请在微信中打开此页面以完成下单操作',
-        [{ text: '知道了' }]
-      );
-      return;
-    }
-
-    // 2. 检查用户是否已授权
+    // 检查用户信息是否存在
     if (!userInfo || !userInfo.openid) {
       Alert.alert(
-        '需要登录',
-        '下单需要微信授权登录，请先完成授权',
+        '获取用户信息',
+        '系统需要用户身份信息来创建订单记录',
         [
           { text: '取消', style: 'cancel' },
           {
-            text: '立即授权',
+            text: '继续',
             onPress: () => {
-              console.log('开始微信授权...');
-              WechatAuth.startAuth();
-            }
-          }
-        ]
-      );
-      return;
-    }
-
-    // 3. 检查用户授权是否过期
-    if (WechatAuth.isAuthExpired(userInfo)) {
-      Alert.alert(
-        '授权已过期',
-        '您的登录状态已过期，请重新授权',
-        [
-          { text: '取消', style: 'cancel' },
-          {
-            text: '重新授权',
-            onPress: () => {
-              console.log('清除过期授权，重新开始授权...');
-              WechatAuth.clearUserInfo();
-              WechatAuth.startAuth();
+              // 重新尝试获取用户信息（开发环境会自动创建）
+              const retryUserInfo = WechatAuth.getUserInfo();
+              if (retryUserInfo?.openid) {
+                // 递归调用，重新开始下单流程
+                handleOrder();
+              } else {
+                Alert.alert('错误', '无法获取用户信息，请刷新页面重试');
+              }
             }
           }
         ]
