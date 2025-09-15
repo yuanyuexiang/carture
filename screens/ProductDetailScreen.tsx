@@ -34,10 +34,6 @@ const ProductDetailScreen: React.FC = () => {
   // 订单相关
   const { createSimpleOrder, loading: orderLoading } = useSimpleOrder();
   
-  // 下单状态管理
-  const [hasOrdered, setHasOrdered] = useState(false);
-  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
-  
   // 图片预览状态
   const [previewVisible, setPreviewVisible] = useState(false);
   const [currentImageUrl, setCurrentImageUrl] = useState<string>('');
@@ -46,17 +42,6 @@ const ProductDetailScreen: React.FC = () => {
   // 滑动手势状态
   const [touchStartX, setTouchStartX] = useState<number>(0);
   const [touchEndX, setTouchEndX] = useState<number>(0);
-
-  // 检查本地下单状态
-  useEffect(() => {
-    if (product?.id) {
-      const orderInfo = checkOrderStatus(product.id);
-      if (orderInfo) {
-        setHasOrdered(true);
-        setLastOrderId(orderInfo.orderId);
-      }
-    }
-  }, [product?.id]);
 
   // 记录商品浏览
   useEffect(() => {
@@ -86,32 +71,6 @@ const ProductDetailScreen: React.FC = () => {
   
   // 合并所有图片URL (主图 + 轮播图)
   const allImages = mainImageUrl ? [mainImageUrl, ...imagesUrls] : imagesUrls;
-  
-  // 检查商品是否已下单
-  const checkOrderStatus = (productId: string) => {
-    const orderKey = `product_ordered_${productId}`;
-    const orderInfo = localStorage.getItem(orderKey);
-    if (!orderInfo) return null;
-    
-    try {
-      const parsedInfo = JSON.parse(orderInfo);
-      const orderTime = new Date(parsedInfo.timestamp);
-      const now = new Date();
-      // 如果下单时间在24小时内，则认为已下单
-      const hours24 = 24 * 60 * 60 * 1000;
-      if (now.getTime() - orderTime.getTime() < hours24) {
-        return parsedInfo;
-      } else {
-        // 超过24小时，清除记录
-        localStorage.removeItem(orderKey);
-        return null;
-      }
-    } catch (error) {
-      console.error('解析下单状态失败:', error);
-      localStorage.removeItem(orderKey);
-      return null;
-    }
-  };
   
   // 打开图片预览
   const openImagePreview = (imageUrl: string, index: number) => {
@@ -190,81 +149,52 @@ const ProductDetailScreen: React.FC = () => {
       headimgurl: userInfo.headimgurl
     });
 
-    // 显示下单选项
-    Alert.alert(
-      '确认下单',
-      `商品：${product.name}\n价格：￥${product.price}\n\n登录用户：${userInfo.nickname || '微信用户'}`,
-      [
-        {
-          text: '取消',
-          style: 'cancel'
-        },
-        {
-          text: '确认下单',
-          onPress: async () => {
-            try {
-              console.log('🔥 用户确认下单，准备调用 createSimpleOrder');
-              console.log('开始创建订单:', {
-                productId: product.id,
-                productName: product.name,
-                productPrice: product.price,
-                boutiqueId: boutiqueId
-              });
-              
-              console.log('🚀 即将调用 createSimpleOrder...');
-              const orderResult = await createSimpleOrder({
-                productId: product.id,
-                productName: product.name || '未知商品',
-                productPrice: product.price || 0,
-                quantity: 1,
-                boutiqueId: boutiqueId || undefined
-              });
+    console.log('🔥 直接开始下单（跳过Alert确认，避免web兼容性问题）');
+    
+    try {
+      console.log('🔥 用户确认下单，准备调用 createSimpleOrder');
+      console.log('开始创建订单:', {
+        productId: product.id,
+        productName: product.name,
+        productPrice: product.price,
+        boutiqueId: boutiqueId
+      });
+      
+      console.log('🚀 即将调用 createSimpleOrder...');
+      const orderResult = await createSimpleOrder({
+        productId: product.id,
+        productName: product.name || '未知商品',
+        productPrice: product.price || 0,
+        quantity: 1,
+        boutiqueId: boutiqueId || undefined
+      });
 
-              console.log('✅ createSimpleOrder 返回结果:', orderResult);
+      console.log('✅ createSimpleOrder 返回结果:', orderResult);
 
-              if (orderResult.success) {
-                // 保存下单状态到本地存储
-                const orderKey = `product_ordered_${product.id}`;
-                const orderInfo = {
-                  orderId: orderResult.orderId,
-                  productId: product.id,
-                  productName: product.name,
-                  timestamp: new Date().toISOString(),
-                  userOpenid: userInfo.openid
-                };
-                localStorage.setItem(orderKey, JSON.stringify(orderInfo));
-                
-                // 更新组件状态
-                setHasOrdered(true);
-                setLastOrderId(orderResult.orderId || null);
-                
-                Alert.alert(
-                  '下单成功！',
-                  `订单号: ${orderResult.orderId}\n商品: ${product.name}\n金额: ￥${product.price}\n\n您可以在"我的"页面查看订单详情`,
-                  [
-                    { text: '继续购物', style: 'cancel' },
-                    {
-                      text: '查看订单',
-                      onPress: () => {
-                        router.push('/(tabs)/profile');
-                      }
-                    }
-                  ]
-                );
-              } else {
-                Alert.alert('下单失败', orderResult.message || '未知错误');
+      if (orderResult.success) {
+        Alert.alert(
+          '下单成功！',
+          `订单号: ${orderResult.orderId}\n商品: ${product.name}\n金额: ￥${product.price}\n\n您可以在"我的"页面查看订单详情`,
+          [
+            { text: '继续购物', style: 'cancel' },
+            {
+              text: '查看订单',
+              onPress: () => {
+                router.push('/(tabs)/profile');
               }
-            } catch (err) {
-              console.error('下单异常:', err);
-              Alert.alert(
-                '下单失败',
-                '系统暂时繁忙，请稍后重试\n\n如果问题持续出现，请联系客服'
-              );
             }
-          }
-        }
-      ]
-    );
+          ]
+        );
+      } else {
+        Alert.alert('下单失败', orderResult.message || '未知错误');
+      }
+    } catch (err) {
+      console.error('下单异常:', err);
+      Alert.alert(
+        '下单失败',
+        '系统暂时繁忙，请稍后重试\n\n如果问题持续出现，请联系客服'
+      );
+    }
   };
   
   // 键盘和触摸事件处理
@@ -367,53 +297,18 @@ const ProductDetailScreen: React.FC = () => {
           <TouchableOpacity 
             style={[
               styles.orderButton, 
-              (orderLoading || hasOrdered) && styles.orderButtonDisabled,
-              hasOrdered && styles.orderButtonOrdered
+              orderLoading && styles.orderButtonDisabled
             ]}
-            onPress={hasOrdered ? undefined : handleOrder}
-            activeOpacity={hasOrdered ? 1 : 0.8}
-            disabled={orderLoading || hasOrdered}
+            onPress={handleOrder}
+            activeOpacity={0.8}
+            disabled={orderLoading}
           >
             {orderLoading ? (
               <ActivityIndicator size="small" color="white" />
-            ) : hasOrdered ? (
-              <View style={styles.orderedContent}>
-                <Text style={styles.orderButtonText}>✓ 已下单</Text>
-                {lastOrderId && (
-                  <Text style={styles.orderIdText}>订单号: {lastOrderId}</Text>
-                )}
-              </View>
             ) : (
               <Text style={styles.orderButtonText}>立即下单</Text>
             )}
           </TouchableOpacity>
-          
-          {hasOrdered && (
-            <TouchableOpacity 
-              style={styles.reorderButton}
-              onPress={() => {
-                Alert.alert(
-                  '重新下单',
-                  '您确定要为此商品重新下单吗？',
-                  [
-                    { text: '取消', style: 'cancel' },
-                    {
-                      text: '确定',
-                      onPress: () => {
-                        // 清除下单状态，允许重新下单
-                        const orderKey = `product_ordered_${product?.id}`;
-                        localStorage.removeItem(orderKey);
-                        setHasOrdered(false);
-                        setLastOrderId(null);
-                      }
-                    }
-                  ]
-                );
-              }}
-            >
-              <Text style={styles.reorderButtonText}>重新下单</Text>
-            </TouchableOpacity>
-          )}
         </View>
         
         {/* 商品图片轮播 */}
@@ -676,34 +571,6 @@ const styles = StyleSheet.create({
   orderButtonDisabled: {
     backgroundColor: '#ccc',
     opacity: 0.6,
-  },
-  orderButtonOrdered: {
-    backgroundColor: '#4caf50', // 绿色表示已下单
-  },
-  orderedContent: {
-    alignItems: 'center',
-  },
-  orderIdText: {
-    color: 'white',
-    fontSize: 12,
-    marginTop: 4,
-    opacity: 0.9,
-  },
-  reorderButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#e91e63',
-    paddingVertical: 10,
-    paddingHorizontal: 32,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 12,
-  },
-  reorderButtonText: {
-    color: '#e91e63',
-    fontSize: 14,
-    fontWeight: '600',
   },
   header: {
     position: 'absolute',
