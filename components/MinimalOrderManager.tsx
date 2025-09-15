@@ -11,7 +11,8 @@ try {
   console.error('🚨 MinimalOrderManager: GraphQL导入失败:', error);
 }
 
-// 步骤2.5: 真正导入GraphQL hook
+// 步骤2.5: 使用安全版本的GraphQL hook进行测试
+import { useCustomerOrdersSafe } from '../hooks/useCustomerOrdersSafe';
 
 /**
  * 简化的OrderManager - 用于调试
@@ -24,19 +25,19 @@ export const MinimalOrderManager: React.FC = () => {
   const [debugInfo, setDebugInfo] = useState<string>('初始化中...');
   const [hookStatus, setHookStatus] = useState<string>('未调用');
 
-  // 步骤3: 尝试调用useCustomerOrders hook
+  // 步骤4: 使用安全版本的hook测试GraphQL查询问题
   let orders, loading, error;
   try {
-    console.log('🔍 MinimalOrderManager: 准备调用useCustomerOrders hook');
-    const hookResult = useCustomerOrders(userInfo?.openid || null);
+    console.log('🔍 MinimalOrderManager: 准备调用useCustomerOrdersSafe hook');
+    const hookResult = useCustomerOrdersSafe(userInfo?.openid || null);
     orders = hookResult.orders;
     loading = hookResult.loading;
     error = hookResult.error;
-    console.log('🔍 MinimalOrderManager: useCustomerOrders调用成功');
-    setHookStatus('调用成功');
+    console.log('🔍 MinimalOrderManager: useCustomerOrdersSafe调用成功');
+    setHookStatus('安全版本调用成功');
   } catch (hookError) {
-    console.error('🚨 MinimalOrderManager: useCustomerOrders调用失败:', hookError);
-    setHookStatus(`调用失败: ${hookError instanceof Error ? hookError.message : String(hookError)}`);
+    console.error('🚨 MinimalOrderManager: useCustomerOrdersSafe调用失败:', hookError);
+    setHookStatus(`安全版本调用失败: ${hookError instanceof Error ? hookError.message : String(hookError)}`);
   }
 
   useEffect(() => {
@@ -56,7 +57,7 @@ export const MinimalOrderManager: React.FC = () => {
   try {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>订单管理 (步骤3: Hook调用测试)</Text>
+        <Text style={styles.title}>订单管理 (步骤4: 安全Hook测试)</Text>
         <Text style={styles.message}>这是简化版本的订单管理组件</Text>
         <Text style={styles.debug}>调试: {debugInfo}</Text>
         <Text style={styles.debug}>Hook状态: {hookStatus}</Text>
