@@ -29,13 +29,17 @@ export const useViewManager = () => {
     boutiqueId,
     productId,
     nickName,
-    avatar
+    avatar,
+    productName,
+    productPrice
   }: {
     openId: string;
     boutiqueId: string;
     productId: string;
     nickName?: string;
     avatar?: string;
+    productName?: string;
+    productPrice?: number;
   }) => {
     try {
       console.log('开始记录商品浏览:', {
@@ -59,7 +63,9 @@ export const useViewManager = () => {
           }
         },
         product: {
-          id: productId
+          id: productId,
+          name: productName || '未知商品',
+          price: productPrice || 0
         },
         boutique: {
           id: boutiqueId

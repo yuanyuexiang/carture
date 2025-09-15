@@ -26,7 +26,7 @@ const ProductDetailScreen: React.FC = () => {
   const { boutiqueId } = useBoutiqueContext();
   
   // 添加商品浏览记录功能
-  useProductViewRecorder(id);
+  const { recordView } = useProductViewRecorder();
   const router = useRouter();
   const { data, loading, error } = useGetProductByIdQuery({ variables: { id: id as string } });
   const product = data?.products_by_id;
@@ -57,6 +57,17 @@ const ProductDetailScreen: React.FC = () => {
       }
     }
   }, [product?.id]);
+
+  // 记录商品浏览
+  useEffect(() => {
+    if (product?.id && product?.name && product?.price) {
+      console.log('记录商品浏览:', { id: product.id, name: product.name, price: product.price });
+      recordView(product.id, {
+        name: product.name,
+        price: product.price
+      });
+    }
+  }, [product?.id, product?.name, product?.price, recordView]);
 
   // 主图转为 Directus 图片 URL
   const mainImageUrl = product?.main_image ? getDirectusThumbnailUrl(product.main_image, 400) : null;

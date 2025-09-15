@@ -2,13 +2,13 @@ import { useEffect, useRef } from 'react';
 import { WechatAuth } from '../utils/wechat-auth';
 import { useViewManager } from './useViewManager';
 
-export const useProductViewRecorder = (productId?: string) => {
+export const useProductViewRecorder = () => {
   const { recordProductView } = useViewManager();
   const recordedRef = useRef<Set<string>>(new Set());
   
-  console.log('🚀 useProductViewRecorder Hook 调用，productId:', productId, '已记录商品:', Array.from(recordedRef.current));
+  console.log('🚀 useProductViewRecorder Hook 调用，已记录商品:', Array.from(recordedRef.current));
 
-  const recordView = async (productId: string) => {
+  const recordView = async (productId: string, productInfo?: { name?: string; price?: number }) => {
     try {
       if (!productId || recordedRef.current.has(productId)) {
         console.log('⚠️ 商品已记录或ID为空，跳过:', productId);
@@ -30,7 +30,9 @@ export const useProductViewRecorder = (productId?: string) => {
           boutiqueId: '1', // 从URL或全局状态获取
           productId: productId,
           nickName: wechatUser.nickname,
-          avatar: wechatUser.headimgurl
+          avatar: wechatUser.headimgurl,
+          productName: productInfo?.name,
+          productPrice: productInfo?.price
         });
         
         recordedRef.current.add(productId);
@@ -45,26 +47,6 @@ export const useProductViewRecorder = (productId?: string) => {
       return { success: false, error };
     }
   };
-
-  useEffect(() => {
-    console.log('📱 useEffect 触发，productId:', productId);
-    
-    if (!productId || recordedRef.current.has(productId)) {
-      console.log('❌ 商品ID为空或已记录，跳过');
-      return;
-    }
-    
-    console.log('⏰ 设置延迟记录商品浏览');
-    const timeoutId = setTimeout(() => {
-      console.log('🎯 执行延迟商品浏览记录');
-      recordView(productId);
-    }, 1000);
-
-    return () => {
-      console.log('🧹 清理延迟记录定时器');
-      clearTimeout(timeoutId);
-    };
-  }, [productId]);
 
   return { recordView };
 };
