@@ -131,6 +131,8 @@ export const useSimpleOrder = () => {
 };
 
 export const useCustomerOrders = (openid: string | null) => {
+  console.log('🔍 useCustomerOrders: 开始执行, openid:', openid);
+  
   const { data, loading, error, refetch } = useQuery(GET_USER_ORDERS, {
     variables: {
       openId: openid || ''
@@ -138,9 +140,38 @@ export const useCustomerOrders = (openid: string | null) => {
     skip: !openid,
     fetchPolicy: 'cache-and-network',
     errorPolicy: 'all',
+    onError: (error) => {
+      console.error('🚨 useCustomerOrders: GraphQL查询错误:', error);
+      console.error('🚨 错误消息:', error.message);
+      if (error.networkError) {
+        console.error('🚨 网络错误:', error.networkError);
+      }
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        console.error('🚨 GraphQL错误详情:', error.graphQLErrors);
+        error.graphQLErrors.forEach((err, index) => {
+          console.error(`🚨 GraphQL错误 ${index + 1}:`, err.message);
+          console.error(`🚨 错误位置:`, err.locations);
+          console.error(`🚨 错误路径:`, err.path);
+        });
+      }
+    },
+    onCompleted: (data) => {
+      console.log('✅ useCustomerOrders: 查询成功, 数据:', data);
+      console.log('✅ 订单数量:', data?.orders?.length || 0);
+    },
+    onLoading: () => {
+      console.log('⏳ useCustomerOrders: 查询中...');
+    }
   });
 
   const orders = data?.orders || [];
+  
+  console.log('🔍 useCustomerOrders: 返回状态:', {
+    ordersCount: orders.length,
+    loading,
+    hasError: !!error,
+    errorMessage: error?.message
+  });
 
   return {
     orders,
