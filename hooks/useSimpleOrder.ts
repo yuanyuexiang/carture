@@ -18,33 +18,39 @@ export const useSimpleOrder = () => {
         return;
       }
 
+      console.log('🚀 开始创建订单，参数:', { productId, userId });
+
       const response = await createOrderMutation({
         variables: {
           orderData: {
-            user: userId,
-            product: productId,
+            customers_id: {
+              open_id: userId
+            },
+            product: {
+              id: productId
+            },
             status: 'pending',
             date_created: new Date().toISOString(),
           }
         }
       });
 
+      console.log('🔥 GraphQL 响应:', response);
+
       if (response.data?.create_orders_item) {
-        const message = '订单创建成功！';
-        if (Platform.OS === 'web') {
-          alert(message);
-        } else {
-          Alert.alert('成功', message);
-        }
+        console.log('✅ 订单创建成功:', response.data.create_orders_item);
         return response.data.create_orders_item;
-      }
-    } catch (error) {
-      console.error('创建订单失败:', error);
-      const message = '创建订单失败，请重试';
-      if (Platform.OS === 'web') {
-        alert(message);
       } else {
-        Alert.alert('错误', message);
+        console.error('❌ 订单创建失败: response.data?.create_orders_item 为空');
+        console.log('完整响应:', JSON.stringify(response, null, 2));
+      }
+    } catch (error: any) {
+      console.error('❌ 创建订单异常:', error);
+      if (error.networkError) {
+        console.error('网络错误:', error.networkError);
+      }
+      if (error.graphQLErrors) {
+        console.error('GraphQL错误:', error.graphQLErrors);
       }
     }
   };

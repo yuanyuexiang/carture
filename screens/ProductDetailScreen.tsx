@@ -183,7 +183,9 @@ const ProductDetailScreen: React.FC = () => {
           ]
         );
       } else {
-        Alert.alert('下单失败', '订单创建失败，请重试');
+        console.error('❌ 下单失败，orderResult:', orderResult);
+        // 暂时注释掉弹窗，查看控制台日志调试
+        // Alert.alert('下单失败', '订单创建失败，请重试');
       }
     } catch (err) {
       console.error('下单异常:', err);
