@@ -139,7 +139,7 @@ const UserInfoScreen: React.FC = () => {
         )}
 
         {/* 其他功能选项 */}
-        <View style={styles.optionsContainer}>
+        {/* <View style={styles.optionsContainer}>
           <Text style={styles.optionsTitle}>其他功能</Text>
           
           <View style={styles.optionItem}>
@@ -156,7 +156,7 @@ const UserInfoScreen: React.FC = () => {
             <Text style={styles.optionLabel}>关于</Text>
             <Text style={styles.optionValue}>版本信息和条款</Text>
           </View>
-        </View>
+        </View> */}
       </ScrollView>
     </SafeAreaView>
   );

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useCustomerOrders } from '../hooks/useSimpleOrder';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCustomerOrders, useSimpleOrder } from '../hooks/useSimpleOrder';
 import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
+import { SwipeableOrderCard } from './SwipeableOrderCard';
 
 interface OrderManagerProps {
   customerId?: string;
@@ -9,6 +10,10 @@ interface OrderManagerProps {
 
 export const OrderManager: React.FC<OrderManagerProps> = () => {
   const [wechatUserInfo, setWechatUserInfo] = useState<WechatUserInfo | null>(null);
+  const [deletingOrders, setDeletingOrders] = useState<Set<string>>(new Set());
+
+  // 获取删除订单的hook
+  const { deleteOrder } = useSimpleOrder();
 
   useEffect(() => {
     const userInfo = WechatAuth.getUserInfo();
@@ -17,9 +22,40 @@ export const OrderManager: React.FC<OrderManagerProps> = () => {
     }
   }, []);
 
-  const { orders, loading, error } = useCustomerOrders(
+  const { orders, loading, error, refetch } = useCustomerOrders(
     wechatUserInfo?.openid || null
   );
+
+  // 处理删除订单
+  const handleDeleteOrder = async (orderId: string) => {
+    console.log('🗑️ OrderManager: 删除订单', orderId);
+    
+    // 标记这个订单正在删除中
+    setDeletingOrders(prev => new Set(prev).add(orderId));
+
+    try {
+      const result = await deleteOrder(orderId);
+      
+      if (result.success) {
+        // 删除成功，刷新订单列表
+        console.log('✅ 订单删除成功，刷新列表');
+        refetch();
+        Alert.alert('成功', '订单删除成功');
+      } else {
+        Alert.alert('删除失败', result.message || '删除订单时发生错误');
+      }
+    } catch (err) {
+      console.error('删除订单错误:', err);
+      Alert.alert('删除失败', '删除订单时发生错误');
+    } finally {
+      // 移除删除中状态
+      setDeletingOrders(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(orderId);
+        return newSet;
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -49,12 +85,12 @@ export const OrderManager: React.FC<OrderManagerProps> = () => {
         </View>
       ) : (
         orders.map((order: any) => (
-          <View key={order.id} style={styles.orderCard}>
-            <Text style={styles.orderId}>订单号: {order.id}</Text>
-            <Text style={styles.totalPrice}>
-              总价: ¥{(order.total_price || 0).toFixed(2)}
-            </Text>
-          </View>
+          <SwipeableOrderCard
+            key={order.id}
+            order={order}
+            onDelete={handleDeleteOrder}
+            deleting={deletingOrders.has(order.id)}
+          />
         ))
       )}
     </ScrollView>
@@ -65,10 +101,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
-    paddingHorizontal: 16,
   },
   header: {
     paddingVertical: 16,
+    paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#e9ecef',
     marginBottom: 16,
@@ -77,28 +113,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#212529',
-  },
-  orderCard: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    marginBottom: 12,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  orderId: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#212529',
-    marginBottom: 4,
-  },
-  totalPrice: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#e74c3c',
   },
   emptyContainer: {
     flex: 1,

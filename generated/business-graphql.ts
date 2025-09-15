@@ -4440,6 +4440,20 @@ export type BusinessGetOrderItemsQueryVariables = Exact<{
 
 export type BusinessGetOrderItemsQuery = { __typename?: 'Query', order_items: Array<{ __typename?: 'order_items', id: string, quantity?: number | null, price?: number | null, product_id?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null, description?: string | null } | null }> };
 
+export type BusinessDeleteOrderMutationVariables = Exact<{
+  orderId: Scalars['ID']['input'];
+}>;
+
+
+export type BusinessDeleteOrderMutation = { __typename?: 'Mutation', delete_orders_item?: { __typename?: 'delete_one', id: string } | null };
+
+export type BusinessDeleteOrderItemMutationVariables = Exact<{
+  orderItemId: Scalars['ID']['input'];
+}>;
+
+
+export type BusinessDeleteOrderItemMutation = { __typename?: 'Mutation', delete_order_items_item?: { __typename?: 'delete_one', id: string } | null };
+
 export type BusinessGetBoutiqueByIdQueryVariables = Exact<{
   boutiqueId: Scalars['GraphQLStringOrFloat']['input'];
 }>;
@@ -4796,6 +4810,72 @@ export type GetOrderItemsQueryHookResult = ReturnType<typeof useGetOrderItemsQue
 export type GetOrderItemsLazyQueryHookResult = ReturnType<typeof useGetOrderItemsLazyQuery>;
 export type GetOrderItemsSuspenseQueryHookResult = ReturnType<typeof useGetOrderItemsSuspenseQuery>;
 export type GetOrderItemsQueryResult = ApolloReactCommon.QueryResult<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables>;
+export const DeleteOrderDocument = gql`
+    mutation DeleteOrder($orderId: ID!) {
+  delete_orders_item(id: $orderId) {
+    id
+  }
+}
+    `;
+export type BusinessDeleteOrderMutationFn = ApolloReactCommon.MutationFunction<BusinessDeleteOrderMutation, BusinessDeleteOrderMutationVariables>;
+
+/**
+ * __useDeleteOrderMutation__
+ *
+ * To run a mutation, you first call `useDeleteOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteOrderMutation, { data, loading, error }] = useDeleteOrderMutation({
+ *   variables: {
+ *      orderId: // value for 'orderId'
+ *   },
+ * });
+ */
+export function useDeleteOrderMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessDeleteOrderMutation, BusinessDeleteOrderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<BusinessDeleteOrderMutation, BusinessDeleteOrderMutationVariables>(DeleteOrderDocument, options);
+      }
+export type DeleteOrderMutationHookResult = ReturnType<typeof useDeleteOrderMutation>;
+export type DeleteOrderMutationResult = ApolloReactCommon.MutationResult<BusinessDeleteOrderMutation>;
+export type DeleteOrderMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessDeleteOrderMutation, BusinessDeleteOrderMutationVariables>;
+export const DeleteOrderItemDocument = gql`
+    mutation DeleteOrderItem($orderItemId: ID!) {
+  delete_order_items_item(id: $orderItemId) {
+    id
+  }
+}
+    `;
+export type BusinessDeleteOrderItemMutationFn = ApolloReactCommon.MutationFunction<BusinessDeleteOrderItemMutation, BusinessDeleteOrderItemMutationVariables>;
+
+/**
+ * __useDeleteOrderItemMutation__
+ *
+ * To run a mutation, you first call `useDeleteOrderItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteOrderItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteOrderItemMutation, { data, loading, error }] = useDeleteOrderItemMutation({
+ *   variables: {
+ *      orderItemId: // value for 'orderItemId'
+ *   },
+ * });
+ */
+export function useDeleteOrderItemMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessDeleteOrderItemMutation, BusinessDeleteOrderItemMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<BusinessDeleteOrderItemMutation, BusinessDeleteOrderItemMutationVariables>(DeleteOrderItemDocument, options);
+      }
+export type DeleteOrderItemMutationHookResult = ReturnType<typeof useDeleteOrderItemMutation>;
+export type DeleteOrderItemMutationResult = ApolloReactCommon.MutationResult<BusinessDeleteOrderItemMutation>;
+export type DeleteOrderItemMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessDeleteOrderItemMutation, BusinessDeleteOrderItemMutationVariables>;
 export const GetBoutiqueByIdDocument = gql`
     query GetBoutiqueById($boutiqueId: GraphQLStringOrFloat!) {
   boutiques(filter: {id: {_eq: $boutiqueId}}, limit: 1) {

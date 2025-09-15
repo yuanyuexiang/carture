@@ -3,6 +3,8 @@ import {
   BusinessCreate_Order_Items_Input,
   useCreateOrderItemMutation,
   useCreateOrderMutation,
+  useDeleteOrderItemMutation,
+  useDeleteOrderMutation,
   useGetOrderItemsQuery,
   useGetUserOrdersQuery
 } from '../generated/business-graphql';
@@ -29,6 +31,8 @@ export const useSimpleOrder = () => {
   // GraphQL Mutations
   const [createOrderMutation] = useCreateOrderMutation();
   const [createOrderItemMutation] = useCreateOrderItemMutation();
+  const [deleteOrderMutation] = useDeleteOrderMutation();
+  const [deleteOrderItemMutation] = useDeleteOrderItemMutation();
 
   /**
    * 创建简单订单（仿照 recordProductView 的逻辑）
@@ -130,10 +134,50 @@ export const useSimpleOrder = () => {
     }
   }, [createOrderMutation, createOrderItemMutation]);
 
+  /**
+   * 删除订单（先删除订单项，再删除订单）
+   */
+  const deleteOrder = useCallback(async (orderId: string) => {
+    console.log('🗑️ deleteOrder 被调用, orderId:', orderId);
+    setLoading(true);
+    setError(null);
+
+    try {
+      console.log('=== 开始删除订单 ===');
+
+      // 直接删除订单，让后台处理级联删除订单项
+      // 如果后台没有级联删除，我们需要先手动获取并删除订单项
+      console.log('删除订单:', orderId);
+      const orderResult = await deleteOrderMutation({
+        variables: { orderId }
+      });
+
+      console.log('✅ 订单删除完成:', orderResult);
+
+      return {
+        success: true,
+        message: '订单删除成功！'
+      };
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '删除订单失败';
+      console.error('❌ 删除订单失败:', errorMessage, err);
+      setError(errorMessage);
+      return {
+        success: false,
+        error: errorMessage,
+        message: errorMessage
+      };
+    } finally {
+      setLoading(false);
+    }
+  }, [deleteOrderMutation]);
+
   return {
     loading,
     error,
     createSimpleOrder,
+    deleteOrder,
     clearError: () => setError(null)
   };
 };
