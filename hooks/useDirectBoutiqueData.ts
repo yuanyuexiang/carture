@@ -90,7 +90,7 @@ export const useDirectBoutiqueData = () => {
   useEffect(() => {
     // 必须同时满足的条件：
     // 1. 有店铺ID
-    // 2. 已经获取到店铺信息（不在加载中）
+    // 2. 已经获取到店铺信息（不在加载中且无错误）
     // 3. 店铺确实存在
     // 4. 有微信用户信息
     if (boutiqueId && !boutiqueLoading && !boutiqueError && boutiqueData?.boutiques?.[0]) {
@@ -104,27 +104,23 @@ export const useDirectBoutiqueData = () => {
           openId: wechatUserInfo.openid
         });
 
-        // 延迟一点执行，确保页面渲染完成
-        const timer = setTimeout(() => {
-          manualRecordVisit(wechatUserInfo, boutiqueId, 'boutique-entry')
-            .then(result => {
-              if (result.success) {
-                console.log('🎉 店铺访问记录成功');
-              } else {
-                console.log('⚠️ 店铺访问记录跳过:', result.message);
-              }
-            })
-            .catch(err => {
-              console.error('❌ 店铺访问记录失败:', err);
-            });
-        }, 500);
-
-        return () => clearTimeout(timer);
+        // 使用全局管理器记录访问，自动防重复
+        manualRecordVisit(wechatUserInfo, boutiqueId, 'boutique-entry')
+          .then(result => {
+            if (result.success) {
+              console.log('🎉 店铺访问记录成功');
+            } else {
+              console.log('⚠️ 店铺访问记录跳过:', result.message);
+            }
+          })
+          .catch(err => {
+            console.error('❌ 店铺访问记录失败:', err);
+          });
       } else {
         console.log('🏪❌ 没有微信用户信息，跳过visit记录');
       }
     }
-  }, [boutiqueId, boutiqueLoading, boutiqueError, boutiqueData, manualRecordVisit]);
+  }, [boutiqueId, boutiqueLoading, boutiqueError, boutiqueData]); // 移除 manualRecordVisit 依赖
 
   return result;
 };

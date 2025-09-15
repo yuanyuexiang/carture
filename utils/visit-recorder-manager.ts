@@ -1,0 +1,211 @@
+import { WechatUserInfo } from './wechat-auth';
+
+interface VisitRecord {
+  boutiqueId: string;
+  openId: string;
+  timestamp: number;
+  source: string;
+}
+
+/**
+ * 全局访问记录管理器 - 单例模式
+ * 防止重复调用，确保每个用户-店铺组合在指定时间内只记录一次访问
+ */
+class VisitRecorderManager {
+  private static instance: VisitRecorderManager | null = null;
+  private pendingRecords: Map<string, Promise<any>> = new Map(); // 正在处理的记录
+  private recentRecords: Map<string, VisitRecord> = new Map(); // 最近的记录缓存
+  private readonly DUPLICATE_INTERVAL = 30 * 60 * 1000; // 30分钟防重复间隔
+
+  private constructor() {
+    // 从localStorage恢复状态
+    this.loadFromLocalStorage();
+    
+    // 定期清理过期记录
+    setInterval(() => this.cleanExpiredRecords(), 5 * 60 * 1000); // 每5分钟清理一次
+  }
+
+  public static getInstance(): VisitRecorderManager {
+    if (!VisitRecorderManager.instance) {
+      VisitRecorderManager.instance = new VisitRecorderManager();
+    }
+    return VisitRecorderManager.instance;
+  }
+
+  /**
+   * 生成记录键
+   */
+  private getRecordKey(openId: string, boutiqueId: string): string {
+    return `${openId}:${boutiqueId}`;
+  }
+
+  /**
+   * 从localStorage加载状态
+   */
+  private loadFromLocalStorage(): void {
+    try {
+      const savedRecords = localStorage.getItem('visit_records_cache');
+      if (savedRecords) {
+        const records: VisitRecord[] = JSON.parse(savedRecords);
+        const now = Date.now();
+        
+        // 只加载未过期的记录
+        records.forEach(record => {
+          if (now - record.timestamp < this.DUPLICATE_INTERVAL) {
+            const key = this.getRecordKey(record.openId, record.boutiqueId);
+            this.recentRecords.set(key, record);
+          }
+        });
+        
+        console.log('📚 加载访问记录缓存:', this.recentRecords.size, '条记录');
+      }
+    } catch (error) {
+      console.error('加载访问记录缓存失败:', error);
+    }
+  }
+
+  /**
+   * 保存到localStorage
+   */
+  private saveToLocalStorage(): void {
+    try {
+      const records = Array.from(this.recentRecords.values());
+      localStorage.setItem('visit_records_cache', JSON.stringify(records));
+    } catch (error) {
+      console.error('保存访问记录缓存失败:', error);
+    }
+  }
+
+  /**
+   * 清理过期记录
+   */
+  private cleanExpiredRecords(): void {
+    const now = Date.now();
+    let cleanedCount = 0;
+    
+    for (const [key, record] of this.recentRecords.entries()) {
+      if (now - record.timestamp >= this.DUPLICATE_INTERVAL) {
+        this.recentRecords.delete(key);
+        cleanedCount++;
+      }
+    }
+    
+    if (cleanedCount > 0) {
+      console.log(`🧹 清理了 ${cleanedCount} 条过期访问记录`);
+      this.saveToLocalStorage();
+    }
+  }
+
+  /**
+   * 检查是否可以记录访问
+   */
+  private canRecord(openId: string, boutiqueId: string): { canRecord: boolean; reason?: string } {
+    const key = this.getRecordKey(openId, boutiqueId);
+    
+    // 检查是否正在处理中
+    if (this.pendingRecords.has(key)) {
+      return { canRecord: false, reason: '正在处理中' };
+    }
+
+    // 检查是否在防重复时间间隔内
+    const recentRecord = this.recentRecords.get(key);
+    if (recentRecord) {
+      const timeSinceLastRecord = Date.now() - recentRecord.timestamp;
+      if (timeSinceLastRecord < this.DUPLICATE_INTERVAL) {
+        const remainingMinutes = Math.ceil((this.DUPLICATE_INTERVAL - timeSinceLastRecord) / (60 * 1000));
+        return { canRecord: false, reason: `${remainingMinutes}分钟内已记录过` };
+      }
+    }
+
+    return { canRecord: true };
+  }
+
+  /**
+   * 记录访问（异步，防重复）
+   */
+  public async recordVisit(
+    userInfo: WechatUserInfo,
+    boutiqueId: string,
+    source: string = 'unknown',
+    recordFunction: (userInfo: WechatUserInfo, boutiqueId: string) => Promise<any>
+  ): Promise<{ success: boolean; message?: string; error?: any }> {
+    if (!userInfo?.openid || !boutiqueId) {
+      return { success: false, message: '缺少必要参数' };
+    }
+
+    const { canRecord, reason } = this.canRecord(userInfo.openid, boutiqueId);
+    
+    if (!canRecord) {
+      console.log(`⏭️ 跳过访问记录 (${source}):`, reason);
+      return { success: false, message: reason };
+    }
+
+    const key = this.getRecordKey(userInfo.openid, boutiqueId);
+    
+    console.log(`🎯 开始记录访问 (${source}):`, {
+      openId: userInfo.openid,
+      nickName: userInfo.nickname,
+      boutiqueId,
+      timestamp: new Date().toLocaleString()
+    });
+
+    // 创建执行Promise并立即存储，防止并发调用
+    const recordPromise = this.executeRecord(userInfo, boutiqueId, source, recordFunction);
+    this.pendingRecords.set(key, recordPromise);
+
+    try {
+      const result = await recordPromise;
+      
+      // 记录成功，更新缓存
+      if (result.success) {
+        const record: VisitRecord = {
+          boutiqueId,
+          openId: userInfo.openid,
+          timestamp: Date.now(),
+          source
+        };
+        
+        this.recentRecords.set(key, record);
+        this.saveToLocalStorage();
+        console.log(`✅ 访问记录完成 (${source})`);
+      }
+      
+      return result;
+    } finally {
+      // 清理pending状态
+      this.pendingRecords.delete(key);
+    }
+  }
+
+  /**
+   * 实际执行记录
+   */
+  private async executeRecord(
+    userInfo: WechatUserInfo,
+    boutiqueId: string,
+    source: string,
+    recordFunction: (userInfo: WechatUserInfo, boutiqueId: string) => Promise<any>
+  ): Promise<{ success: boolean; message?: string; error?: any }> {
+    try {
+      const result = await recordFunction(userInfo, boutiqueId);
+      return result;
+    } catch (error) {
+      console.error(`❌ 访问记录执行失败 (${source}):`, error);
+      return { success: false, error };
+    }
+  }
+
+  /**
+   * 获取统计信息（调试用）
+   */
+  public getStats() {
+    return {
+      pendingCount: this.pendingRecords.size,
+      recentCount: this.recentRecords.size,
+      recentRecords: Array.from(this.recentRecords.values())
+    };
+  }
+}
+
+// 导出单例实例
+export const visitRecorderManager = VisitRecorderManager.getInstance();
