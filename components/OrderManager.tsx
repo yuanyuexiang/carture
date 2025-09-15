@@ -9,6 +9,8 @@ interface OrderManagerProps {
 }
 
 export const OrderManager: React.FC<OrderManagerProps> = () => {
+  console.log('🔍 OrderManager 组件开始渲染');
+  
   const [wechatUserInfo, setWechatUserInfo] = useState<WechatUserInfo | null>(null);
   const [deletingOrders, setDeletingOrders] = useState<Set<string>>(new Set());
 
@@ -16,15 +18,33 @@ export const OrderManager: React.FC<OrderManagerProps> = () => {
   const { deleteOrder } = useSimpleOrder();
 
   useEffect(() => {
-    const userInfo = WechatAuth.getUserInfo();
-    if (userInfo) {
-      setWechatUserInfo(userInfo);
+    try {
+      console.log('🔍 OrderManager: 获取用户信息');
+      const userInfo = WechatAuth.getUserInfo();
+      console.log('🔍 OrderManager: 用户信息:', userInfo);
+      if (userInfo) {
+        setWechatUserInfo(userInfo);
+      }
+    } catch (error) {
+      console.error('🚨 OrderManager: 获取用户信息出错:', error);
     }
   }, []);
 
+  console.log('🔍 OrderManager: 调用 useCustomerOrders, openid:', wechatUserInfo?.openid);
+  
   const { orders, loading, error, refetch } = useCustomerOrders(
     wechatUserInfo?.openid || null
   );
+  
+  console.log('🔍 OrderManager: useCustomerOrders 返回:', { 
+    ordersCount: orders?.length || 0, 
+    loading, 
+    hasError: !!error 
+  });
+  
+  if (error) {
+    console.error('🚨 OrderManager: GraphQL 查询错误:', error);
+  }
 
   // 处理删除订单
   const handleDeleteOrder = async (orderId: string) => {

@@ -1,4 +1,3 @@
-import { ThemedText } from '@/components/ThemedText';
 import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
@@ -17,10 +16,13 @@ import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
  * 显示已授权的微信用户信息和操作选项
  */
 const UserInfoScreen: React.FC = () => {
+  console.log('🔍 UserInfoScreen 组件开始渲染');
+  
   const [userInfo, setUserInfo] = useState<WechatUserInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
   const isWechatBrowser = WechatAuth.isWechatBrowser();
+  console.log('🔍 isWechatBrowser:', isWechatBrowser);
 
   // 直接从localStorage读取用户信息
   useEffect(() => {
@@ -71,6 +73,12 @@ const UserInfoScreen: React.FC = () => {
     setUserInfo(null);
   };
 
+  console.log('🔍 UserInfoScreen 准备渲染，状态:', { 
+    userInfo: userInfo ? '有用户信息' : '无用户信息', 
+    loading, 
+    isWechatBrowser 
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
@@ -82,7 +90,7 @@ const UserInfoScreen: React.FC = () => {
       >
         {/* 页面标题 */}
         <View style={styles.header}>
-          <ThemedText style={styles.headerTitle}>我的</ThemedText>
+          <Text style={styles.headerTitle}>我的</Text>
         </View>
 
         {/* 用户信息 */}

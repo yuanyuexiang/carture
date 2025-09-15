@@ -1,2 +1,6 @@
-import UserInfoScreen from '../../screens/UserInfoScreen';
-export default UserInfoScreen;
+import SimpleUserInfoScreen from '../../screens/SimpleUserInfoScreen';
+
+export default function TabTwoScreen() {
+  console.log('🔥 profile.tsx 渲染 SimpleUserInfoScreen');
+  return <SimpleUserInfoScreen />;
+}
