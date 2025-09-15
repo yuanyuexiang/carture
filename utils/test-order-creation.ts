@@ -26,7 +26,7 @@ export const testOrderCreation = async () => {
     if (result.success) {
       console.log('✅ 订单创建成功!');
       console.log('订单ID:', result.orderId);
-      console.log('客户信息:', result.customerInfo);
+      console.log('订单信息:', result.orderData);
     } else {
       console.error('❌ 订单创建失败:', result.error);
     }
