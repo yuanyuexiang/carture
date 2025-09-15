@@ -8,7 +8,6 @@ import {
   View,
 } from 'react-native';
 import { useWechatAuth } from '../hooks/useWechatAuth';
-import { useWechatVisitRecorder } from '../hooks/useWechatVisitRecorder';
 import { WechatAuthStatus } from './WechatAuthStatus';
 
 interface AuthWrapperProps {
@@ -29,9 +28,6 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
     startAuth,
     clearAuth,
   } = useWechatAuth();
-
-  // 启用微信访问记录功能
-  useWechatVisitRecorder();
 
   const [initializing, setInitializing] = useState(true);
 

@@ -1,8 +1,11 @@
+import { useEffect } from 'react';
 import { useBoutiqueContext } from '../contexts/BoutiqueContext';
 import {
     useGetBoutiqueByIdQuery,
     useGetCategoriesByBoutiqueQuery
 } from '../generated/business-graphql';
+import { WechatAuth } from '../utils/wechat-auth';
+import { useWechatVisitRecorder } from './useWechatVisitRecorder';
 
 /**
  * 直接通过 URL 参数的 boutique_id 获取店铺和分类信息的 Hook
@@ -10,6 +13,7 @@ import {
  */
 export const useDirectBoutiqueData = () => {
   const { boutiqueId, loading: contextLoading } = useBoutiqueContext();
+  const { manualRecordVisit } = useWechatVisitRecorder();
 
   // 将字符串类型的 boutiqueId 转换为数字
   const numericBoutiqueId = boutiqueId ? parseInt(boutiqueId, 10) : null;
@@ -48,7 +52,7 @@ export const useDirectBoutiqueData = () => {
     (!boutiqueLoading && boutiqueId && (!boutiqueData?.boutiques || boutiqueData.boutiques.length === 0) && !boutiqueError) // 有参数但没找到店铺
   );
   
-  return {
+  const result = {
     // 店铺信息 - 取第一个结果
     boutique: boutiqueData?.boutiques?.[0] || null,
     boutiqueLoading,
@@ -81,4 +85,46 @@ export const useDirectBoutiqueData = () => {
       boutiqueNotFound
     }
   };
+
+  // 严格限制visit记录：只在微信授权成功且成功获取到店铺信息时记录
+  useEffect(() => {
+    // 必须同时满足的条件：
+    // 1. 有店铺ID
+    // 2. 已经获取到店铺信息（不在加载中）
+    // 3. 店铺确实存在
+    // 4. 有微信用户信息
+    if (boutiqueId && !boutiqueLoading && !boutiqueError && boutiqueData?.boutiques?.[0]) {
+      const wechatUserInfo = WechatAuth.getUserInfo();
+      
+      if (wechatUserInfo?.openid) {
+        console.log('🏪✅ 满足visit记录条件:', {
+          boutiqueId,
+          boutiqueName: boutiqueData.boutiques[0].name,
+          userNickname: wechatUserInfo.nickname,
+          openId: wechatUserInfo.openid
+        });
+
+        // 延迟一点执行，确保页面渲染完成
+        const timer = setTimeout(() => {
+          manualRecordVisit(wechatUserInfo, boutiqueId, 'boutique-entry')
+            .then(result => {
+              if (result.success) {
+                console.log('🎉 店铺访问记录成功');
+              } else {
+                console.log('⚠️ 店铺访问记录跳过:', result.message);
+              }
+            })
+            .catch(err => {
+              console.error('❌ 店铺访问记录失败:', err);
+            });
+        }, 500);
+
+        return () => clearTimeout(timer);
+      } else {
+        console.log('🏪❌ 没有微信用户信息，跳过visit记录');
+      }
+    }
+  }, [boutiqueId, boutiqueLoading, boutiqueError, boutiqueData, manualRecordVisit]);
+
+  return result;
 };
