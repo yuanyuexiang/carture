@@ -37,3 +37,13 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+*.md
+*.markdown
+*.mdown
+*.mkdn
+*.mkd
+*.mdwn
+*.mdtxt
+*.mdtext
+*.mdx
+*.mdx
