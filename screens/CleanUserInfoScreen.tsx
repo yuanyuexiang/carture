@@ -7,6 +7,8 @@ import {
     Text,
     View,
 } from 'react-native';
+import { OrderManager } from '../components/OrderManager';
+import { WechatUserCard } from '../components/WechatUserCard';
 import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
 
 /**
@@ -60,10 +62,17 @@ const UserInfoScreen: React.FC = () => {
         {/* 用户信息 */}
         <View style={styles.mainContent}>
           {userInfo ? (
-            <View style={styles.userCard}>
-              <Text style={styles.userName}>{userInfo.nickname}</Text>
-              <Text style={styles.userInfo}>openid: {userInfo.openid}</Text>
-            </View>
+            <WechatUserCard
+              userInfo={userInfo}
+              onForceReauth={() => {
+                console.log('CleanUserInfoScreen: forceReauth 被调用');
+                // forceReauth();
+              }}
+              onClearAuth={() => {
+                console.log('CleanUserInfoScreen: clearAuth 被调用');
+                // clearAuth();
+              }}
+            />
           ) : (
             <View style={styles.fallbackContainer}>
               <Text style={styles.fallbackTitle}>用户信息</Text>
@@ -80,6 +89,14 @@ const UserInfoScreen: React.FC = () => {
             </View>
           )}
         </View>
+
+        {/* 订单管理 */}
+        {userInfo && (
+          <View style={styles.orderSection}>
+            <Text style={styles.sectionTitle}>我的订单</Text>
+            <OrderManager />
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -161,6 +178,26 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  orderSection: {
+    marginHorizontal: 16,
+    marginTop: 16,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
   },
 });
 
