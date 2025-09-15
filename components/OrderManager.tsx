@@ -43,13 +43,7 @@ export const OrderManager: React.FC<OrderManagerProps> = () => {
         // 删除成功，刷新订单列表
         console.log('✅ 订单删除成功，刷新列表');
         refetch();
-        
-        // Web 环境使用 alert，移动端使用 Alert.alert
-        if (typeof window !== 'undefined') {
-          alert('订单删除成功');
-        } else {
-          Alert.alert('成功', '订单删除成功');
-        }
+        // 删除成功不再显示弹窗提示，用户通过订单消失就能知道删除成功
       } else {
         console.error('❌ 删除失败:', result.message);
         if (typeof window !== 'undefined') {
