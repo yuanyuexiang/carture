@@ -216,59 +216,18 @@ export class WechatAuth {
    */
   static getUserInfo(): WechatUserInfo | null {
     try {
-      // React Native 兼容性检查
-      if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
-        console.log('localStorage不可用（React Native环境）');
-        // 在React Native开发环境中返回模拟数据
-        if (process.env.NODE_ENV === 'development') {
-          return {
-            openid: 'rn_mock_openid_123456',
-            nickname: 'RN测试用户',
-            headimgurl: 'https://via.placeholder.com/150',
-            sex: 1,
-            language: 'zh_CN',
-            country: '中国',
-            province: '北京',
-            city: '北京',
-            privilege: [],
-            login_time: Date.now()
-          };
-        }
-        return null;
-      }
-
       const userInfoStr = localStorage.getItem(this.STORAGE_KEY_USER_INFO);
-      const localUserInfo = userInfoStr ? JSON.parse(userInfoStr) : null;
-      
-      // 如果有本地用户信息，直接返回
-      if (localUserInfo) {
-        return localUserInfo;
+      if (userInfoStr) {
+        const userInfo = JSON.parse(userInfoStr);
+        console.log('读取到用户信息:', userInfo.nickname || '未知用户');
+        return userInfo;
       }
       
-      // 开发环境：创建模拟用户信息
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔧 开发环境：创建模拟用户信息');
-        const mockUserInfo: WechatUserInfo = {
-          openid: 'dev_openid_123456',
-          nickname: '开发用户',
-          headimgurl: 'https://via.placeholder.com/64x64.png?text=Dev',
-          sex: 1,
-          language: 'zh_CN',
-          country: '中国',
-          province: '北京',
-          city: '北京',
-          privilege: [],
-          login_time: Math.floor(Date.now() / 1000)
-        };
-        
-        // 保存模拟用户信息到本地存储
-        localStorage.setItem(this.STORAGE_KEY_USER_INFO, JSON.stringify(mockUserInfo));
-        return mockUserInfo;
-      }
-      
+      console.log('没有找到用户信息');
       return null;
+      
     } catch (error) {
-      console.error('获取本地用户信息失败:', error);
+      console.log('读取用户信息出错:', error);
       return null;
     }
   }
