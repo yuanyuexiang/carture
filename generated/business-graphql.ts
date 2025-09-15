@@ -42,8 +42,6 @@ export type BusinessMutation = {
   create_categories_items: Array<BusinessCategories>;
   create_customers_item?: Maybe<BusinessCustomers>;
   create_customers_items: Array<BusinessCustomers>;
-  create_order_items_item?: Maybe<BusinessOrder_Items>;
-  create_order_items_items: Array<BusinessOrder_Items>;
   create_orders_item?: Maybe<BusinessOrders>;
   create_orders_items: Array<BusinessOrders>;
   create_products_item?: Maybe<BusinessProducts>;
@@ -60,8 +58,6 @@ export type BusinessMutation = {
   delete_categories_items?: Maybe<BusinessDelete_Many>;
   delete_customers_item?: Maybe<BusinessDelete_One>;
   delete_customers_items?: Maybe<BusinessDelete_Many>;
-  delete_order_items_item?: Maybe<BusinessDelete_One>;
-  delete_order_items_items?: Maybe<BusinessDelete_Many>;
   delete_orders_item?: Maybe<BusinessDelete_One>;
   delete_orders_items?: Maybe<BusinessDelete_Many>;
   delete_products_item?: Maybe<BusinessDelete_One>;
@@ -81,9 +77,6 @@ export type BusinessMutation = {
   update_customers_batch: Array<BusinessCustomers>;
   update_customers_item?: Maybe<BusinessCustomers>;
   update_customers_items: Array<BusinessCustomers>;
-  update_order_items_batch: Array<BusinessOrder_Items>;
-  update_order_items_item?: Maybe<BusinessOrder_Items>;
-  update_order_items_items: Array<BusinessOrder_Items>;
   update_orders_batch: Array<BusinessOrders>;
   update_orders_item?: Maybe<BusinessOrders>;
   update_orders_items: Array<BusinessOrders>;
@@ -142,22 +135,6 @@ export type BusinessMutationCreate_Customers_ItemArgs = {
 export type BusinessMutationCreate_Customers_ItemsArgs = {
   data?: InputMaybe<Array<BusinessCreate_Customers_Input>>;
   filter?: InputMaybe<BusinessCustomers_Filter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-
-export type BusinessMutationCreate_Order_Items_ItemArgs = {
-  data: BusinessCreate_Order_Items_Input;
-};
-
-
-export type BusinessMutationCreate_Order_Items_ItemsArgs = {
-  data?: InputMaybe<Array<BusinessCreate_Order_Items_Input>>;
-  filter?: InputMaybe<BusinessOrder_Items_Filter>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
@@ -272,16 +249,6 @@ export type BusinessMutationDelete_Customers_ItemArgs = {
 
 
 export type BusinessMutationDelete_Customers_ItemsArgs = {
-  ids: Array<InputMaybe<Scalars['ID']['input']>>;
-};
-
-
-export type BusinessMutationDelete_Order_Items_ItemArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type BusinessMutationDelete_Order_Items_ItemsArgs = {
   ids: Array<InputMaybe<Scalars['ID']['input']>>;
 };
 
@@ -414,35 +381,6 @@ export type BusinessMutationUpdate_Customers_ItemArgs = {
 export type BusinessMutationUpdate_Customers_ItemsArgs = {
   data: BusinessUpdate_Customers_Input;
   filter?: InputMaybe<BusinessCustomers_Filter>;
-  ids: Array<InputMaybe<Scalars['ID']['input']>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-
-export type BusinessMutationUpdate_Order_Items_BatchArgs = {
-  data?: InputMaybe<Array<BusinessUpdate_Order_Items_Input>>;
-  filter?: InputMaybe<BusinessOrder_Items_Filter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-
-export type BusinessMutationUpdate_Order_Items_ItemArgs = {
-  data: BusinessUpdate_Order_Items_Input;
-  id: Scalars['ID']['input'];
-};
-
-
-export type BusinessMutationUpdate_Order_Items_ItemsArgs = {
-  data: BusinessUpdate_Order_Items_Input;
-  filter?: InputMaybe<BusinessOrder_Items_Filter>;
   ids: Array<InputMaybe<Scalars['ID']['input']>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -610,10 +548,6 @@ export type BusinessQuery = {
   customers_aggregated: Array<BusinessCustomers_Aggregated>;
   customers_by_id?: Maybe<BusinessCustomers>;
   customers_by_version?: Maybe<BusinessVersion_Customers>;
-  order_items: Array<BusinessOrder_Items>;
-  order_items_aggregated: Array<BusinessOrder_Items_Aggregated>;
-  order_items_by_id?: Maybe<BusinessOrder_Items>;
-  order_items_by_version?: Maybe<BusinessVersion_Order_Items>;
   orders: Array<BusinessOrders>;
   orders_aggregated: Array<BusinessOrders_Aggregated>;
   orders_by_id?: Maybe<BusinessOrders>;
@@ -731,39 +665,6 @@ export type BusinessQueryCustomers_By_IdArgs = {
 
 
 export type BusinessQueryCustomers_By_VersionArgs = {
-  id: Scalars['ID']['input'];
-  version: Scalars['String']['input'];
-};
-
-
-export type BusinessQueryOrder_ItemsArgs = {
-  filter?: InputMaybe<BusinessOrder_Items_Filter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-
-export type BusinessQueryOrder_Items_AggregatedArgs = {
-  filter?: InputMaybe<BusinessOrder_Items_Filter>;
-  groupBy?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-
-export type BusinessQueryOrder_Items_By_IdArgs = {
-  id: Scalars['ID']['input'];
-  version?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type BusinessQueryOrder_Items_By_VersionArgs = {
   id: Scalars['ID']['input'];
   version: Scalars['String']['input'];
 };
@@ -959,7 +860,6 @@ export type BusinessSubscription = {
   directus_users_mutated?: Maybe<BusinessDirectus_Users_Mutated>;
   directus_versions_mutated?: Maybe<BusinessDirectus_Versions_Mutated>;
   directus_webhooks_mutated?: Maybe<BusinessDirectus_Webhooks_Mutated>;
-  order_items_mutated?: Maybe<BusinessOrder_Items_Mutated>;
   orders_mutated?: Maybe<BusinessOrders_Mutated>;
   products_mutated?: Maybe<BusinessProducts_Mutated>;
   terminals_mutated?: Maybe<BusinessTerminals_Mutated>;
@@ -1084,11 +984,6 @@ export type BusinessSubscriptionDirectus_Versions_MutatedArgs = {
 
 
 export type BusinessSubscriptionDirectus_Webhooks_MutatedArgs = {
-  event?: InputMaybe<BusinessEventEnum>;
-};
-
-
-export type BusinessSubscriptionOrder_Items_MutatedArgs = {
   event?: InputMaybe<BusinessEventEnum>;
 };
 
@@ -1537,14 +1432,6 @@ export type BusinessCreate_Directus_Users_Input = {
   token?: InputMaybe<Scalars['Hash']['input']>;
 };
 
-export type BusinessCreate_Order_Items_Input = {
-  id?: InputMaybe<Scalars['ID']['input']>;
-  order_id?: InputMaybe<BusinessCreate_Orders_Input>;
-  price?: InputMaybe<Scalars['Float']['input']>;
-  product_id?: InputMaybe<BusinessCreate_Products_Input>;
-  quantity?: InputMaybe<Scalars['Int']['input']>;
-};
-
 export type BusinessCreate_Orders_Input = {
   boutique?: InputMaybe<BusinessCreate_Boutiques_Input>;
   boutique_id?: InputMaybe<BusinessCreate_Boutiques_Input>;
@@ -1552,6 +1439,7 @@ export type BusinessCreate_Orders_Input = {
   date_created?: InputMaybe<Scalars['Date']['input']>;
   date_updated?: InputMaybe<Scalars['Date']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
+  product?: InputMaybe<BusinessCreate_Products_Input>;
   status?: InputMaybe<Scalars['String']['input']>;
   total_price?: InputMaybe<Scalars['Float']['input']>;
   user_created?: InputMaybe<BusinessCreate_Directus_Users_Input>;
@@ -3312,84 +3200,6 @@ export type BusinessNumber_Filter_Operators = {
   _null?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type BusinessOrder_Items = {
-  __typename?: 'order_items';
-  id: Scalars['ID']['output'];
-  order_id?: Maybe<BusinessOrders>;
-  price?: Maybe<Scalars['Float']['output']>;
-  product_id?: Maybe<BusinessProducts>;
-  quantity?: Maybe<Scalars['Int']['output']>;
-};
-
-
-export type BusinessOrder_ItemsOrder_IdArgs = {
-  filter?: InputMaybe<BusinessOrders_Filter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-
-export type BusinessOrder_ItemsProduct_IdArgs = {
-  filter?: InputMaybe<BusinessProducts_Filter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-export type BusinessOrder_Items_Aggregated = {
-  __typename?: 'order_items_aggregated';
-  avg?: Maybe<BusinessOrder_Items_Aggregated_Fields>;
-  avgDistinct?: Maybe<BusinessOrder_Items_Aggregated_Fields>;
-  count?: Maybe<BusinessOrder_Items_Aggregated_Count>;
-  countAll?: Maybe<Scalars['Int']['output']>;
-  countDistinct?: Maybe<BusinessOrder_Items_Aggregated_Count>;
-  group?: Maybe<Scalars['JSON']['output']>;
-  max?: Maybe<BusinessOrder_Items_Aggregated_Fields>;
-  min?: Maybe<BusinessOrder_Items_Aggregated_Fields>;
-  sum?: Maybe<BusinessOrder_Items_Aggregated_Fields>;
-  sumDistinct?: Maybe<BusinessOrder_Items_Aggregated_Fields>;
-};
-
-export type BusinessOrder_Items_Aggregated_Count = {
-  __typename?: 'order_items_aggregated_count';
-  id?: Maybe<Scalars['Int']['output']>;
-  order_id?: Maybe<Scalars['Int']['output']>;
-  price?: Maybe<Scalars['Int']['output']>;
-  product_id?: Maybe<Scalars['Int']['output']>;
-  quantity?: Maybe<Scalars['Int']['output']>;
-};
-
-export type BusinessOrder_Items_Aggregated_Fields = {
-  __typename?: 'order_items_aggregated_fields';
-  id?: Maybe<Scalars['Float']['output']>;
-  order_id?: Maybe<Scalars['Float']['output']>;
-  price?: Maybe<Scalars['Float']['output']>;
-  product_id?: Maybe<Scalars['Float']['output']>;
-  quantity?: Maybe<Scalars['Float']['output']>;
-};
-
-export type BusinessOrder_Items_Filter = {
-  _and?: InputMaybe<Array<InputMaybe<BusinessOrder_Items_Filter>>>;
-  _or?: InputMaybe<Array<InputMaybe<BusinessOrder_Items_Filter>>>;
-  id?: InputMaybe<BusinessNumber_Filter_Operators>;
-  order_id?: InputMaybe<BusinessOrders_Filter>;
-  price?: InputMaybe<BusinessNumber_Filter_Operators>;
-  product_id?: InputMaybe<BusinessProducts_Filter>;
-  quantity?: InputMaybe<BusinessNumber_Filter_Operators>;
-};
-
-export type BusinessOrder_Items_Mutated = {
-  __typename?: 'order_items_mutated';
-  data?: Maybe<BusinessOrder_Items>;
-  event?: Maybe<BusinessEventEnum>;
-  key: Scalars['ID']['output'];
-};
-
 export type BusinessOrders = {
   __typename?: 'orders';
   boutique?: Maybe<BusinessBoutiques>;
@@ -3400,6 +3210,7 @@ export type BusinessOrders = {
   date_updated?: Maybe<Scalars['Date']['output']>;
   date_updated_func?: Maybe<BusinessDatetime_Functions>;
   id: Scalars['ID']['output'];
+  product?: Maybe<BusinessProducts>;
   status?: Maybe<Scalars['String']['output']>;
   total_price?: Maybe<Scalars['Float']['output']>;
   user_created?: Maybe<BusinessDirectus_Users>;
@@ -3429,6 +3240,16 @@ export type BusinessOrdersBoutique_IdArgs = {
 
 export type BusinessOrdersCustomers_IdArgs = {
   filter?: InputMaybe<BusinessCustomers_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type BusinessOrdersProductArgs = {
+  filter?: InputMaybe<BusinessProducts_Filter>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
@@ -3477,6 +3298,7 @@ export type BusinessOrders_Aggregated_Count = {
   date_created?: Maybe<Scalars['Int']['output']>;
   date_updated?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
+  product?: Maybe<Scalars['Int']['output']>;
   status?: Maybe<Scalars['Int']['output']>;
   total_price?: Maybe<Scalars['Int']['output']>;
   user_created?: Maybe<Scalars['Int']['output']>;
@@ -3488,6 +3310,7 @@ export type BusinessOrders_Aggregated_Fields = {
   boutique_id?: Maybe<Scalars['Float']['output']>;
   customers_id?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
+  product?: Maybe<Scalars['Float']['output']>;
   total_price?: Maybe<Scalars['Float']['output']>;
 };
 
@@ -3502,6 +3325,7 @@ export type BusinessOrders_Filter = {
   date_updated?: InputMaybe<BusinessDate_Filter_Operators>;
   date_updated_func?: InputMaybe<BusinessDatetime_Function_Filter_Operators>;
   id?: InputMaybe<BusinessNumber_Filter_Operators>;
+  product?: InputMaybe<BusinessProducts_Filter>;
   status?: InputMaybe<BusinessString_Filter_Operators>;
   total_price?: InputMaybe<BusinessNumber_Filter_Operators>;
   user_created?: InputMaybe<BusinessDirectus_Users_Filter>;
@@ -3962,14 +3786,6 @@ export type BusinessUpdate_Directus_Users_Input = {
   token?: InputMaybe<Scalars['Hash']['input']>;
 };
 
-export type BusinessUpdate_Order_Items_Input = {
-  id?: InputMaybe<Scalars['ID']['input']>;
-  order_id?: InputMaybe<BusinessUpdate_Orders_Input>;
-  price?: InputMaybe<Scalars['Float']['input']>;
-  product_id?: InputMaybe<BusinessUpdate_Products_Input>;
-  quantity?: InputMaybe<Scalars['Int']['input']>;
-};
-
 export type BusinessUpdate_Orders_Input = {
   boutique?: InputMaybe<BusinessUpdate_Boutiques_Input>;
   boutique_id?: InputMaybe<BusinessUpdate_Boutiques_Input>;
@@ -3977,6 +3793,7 @@ export type BusinessUpdate_Orders_Input = {
   date_created?: InputMaybe<Scalars['Date']['input']>;
   date_updated?: InputMaybe<Scalars['Date']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
+  product?: InputMaybe<BusinessUpdate_Products_Input>;
   status?: InputMaybe<Scalars['String']['input']>;
   total_price?: InputMaybe<Scalars['Float']['input']>;
   user_created?: InputMaybe<BusinessUpdate_Directus_Users_Input>;
@@ -4093,15 +3910,6 @@ export type BusinessVersion_Customers = {
   user_updated?: Maybe<Scalars['JSON']['output']>;
 };
 
-export type BusinessVersion_Order_Items = {
-  __typename?: 'version_order_items';
-  id?: Maybe<Scalars['ID']['output']>;
-  order_id?: Maybe<Scalars['JSON']['output']>;
-  price?: Maybe<Scalars['Float']['output']>;
-  product_id?: Maybe<Scalars['JSON']['output']>;
-  quantity?: Maybe<Scalars['Int']['output']>;
-};
-
 export type BusinessVersion_Orders = {
   __typename?: 'version_orders';
   boutique?: Maybe<Scalars['JSON']['output']>;
@@ -4110,6 +3918,7 @@ export type BusinessVersion_Orders = {
   date_created?: Maybe<Scalars['Date']['output']>;
   date_updated?: Maybe<Scalars['Date']['output']>;
   id?: Maybe<Scalars['ID']['output']>;
+  product?: Maybe<Scalars['JSON']['output']>;
   status?: Maybe<Scalars['String']['output']>;
   total_price?: Maybe<Scalars['Float']['output']>;
   user_created?: Maybe<Scalars['JSON']['output']>;
@@ -4410,35 +4219,21 @@ export type BusinessCreateOrderMutationVariables = Exact<{
 }>;
 
 
-export type BusinessCreateOrderMutation = { __typename?: 'Mutation', create_orders_item?: { __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null } | null };
-
-export type BusinessCreateOrderItemMutationVariables = Exact<{
-  orderItemData: BusinessCreate_Order_Items_Input;
-}>;
-
-
-export type BusinessCreateOrderItemMutation = { __typename?: 'Mutation', create_order_items_item?: { __typename?: 'order_items', id: string, quantity?: number | null, price?: number | null, product_id?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null } | null } | null };
+export type BusinessCreateOrderMutation = { __typename?: 'Mutation', create_orders_item?: { __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null } | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null } | null };
 
 export type BusinessGetUserOrdersQueryVariables = Exact<{
   openId: Scalars['String']['input'];
 }>;
 
 
-export type BusinessGetUserOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
+export type BusinessGetUserOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null } | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
 
 export type BusinessGetOrderByIdQueryVariables = Exact<{
   orderId: Scalars['GraphQLStringOrFloat']['input'];
 }>;
 
 
-export type BusinessGetOrderByIdQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
-
-export type BusinessGetOrderItemsQueryVariables = Exact<{
-  orderId: Scalars['GraphQLStringOrFloat']['input'];
-}>;
-
-
-export type BusinessGetOrderItemsQuery = { __typename?: 'Query', order_items: Array<{ __typename?: 'order_items', id: string, quantity?: number | null, price?: number | null, product_id?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null, description?: string | null } | null }> };
+export type BusinessGetOrderByIdQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null, description?: string | null } | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
 
 export type BusinessDeleteOrderMutationVariables = Exact<{
   orderId: Scalars['ID']['input'];
@@ -4446,13 +4241,6 @@ export type BusinessDeleteOrderMutationVariables = Exact<{
 
 
 export type BusinessDeleteOrderMutation = { __typename?: 'Mutation', delete_orders_item?: { __typename?: 'delete_one', id: string } | null };
-
-export type BusinessDeleteOrderItemMutationVariables = Exact<{
-  orderItemId: Scalars['ID']['input'];
-}>;
-
-
-export type BusinessDeleteOrderItemMutation = { __typename?: 'Mutation', delete_order_items_item?: { __typename?: 'delete_one', id: string } | null };
 
 export type BusinessGetBoutiqueByIdQueryVariables = Exact<{
   boutiqueId: Scalars['GraphQLStringOrFloat']['input'];
@@ -4590,6 +4378,12 @@ export const CreateOrderDocument = gql`
     total_price
     status
     date_created
+    product {
+      id
+      name
+      price
+      main_image
+    }
     boutique_id {
       id
       name
@@ -4623,47 +4417,6 @@ export function useCreateOrderMutation(baseOptions?: ApolloReactHooks.MutationHo
 export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMutation>;
 export type CreateOrderMutationResult = ApolloReactCommon.MutationResult<BusinessCreateOrderMutation>;
 export type CreateOrderMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessCreateOrderMutation, BusinessCreateOrderMutationVariables>;
-export const CreateOrderItemDocument = gql`
-    mutation CreateOrderItem($orderItemData: create_order_items_input!) {
-  create_order_items_item(data: $orderItemData) {
-    id
-    product_id {
-      id
-      name
-      price
-      main_image
-    }
-    quantity
-    price
-  }
-}
-    `;
-export type BusinessCreateOrderItemMutationFn = ApolloReactCommon.MutationFunction<BusinessCreateOrderItemMutation, BusinessCreateOrderItemMutationVariables>;
-
-/**
- * __useCreateOrderItemMutation__
- *
- * To run a mutation, you first call `useCreateOrderItemMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateOrderItemMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createOrderItemMutation, { data, loading, error }] = useCreateOrderItemMutation({
- *   variables: {
- *      orderItemData: // value for 'orderItemData'
- *   },
- * });
- */
-export function useCreateOrderItemMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessCreateOrderItemMutation, BusinessCreateOrderItemMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<BusinessCreateOrderItemMutation, BusinessCreateOrderItemMutationVariables>(CreateOrderItemDocument, options);
-      }
-export type CreateOrderItemMutationHookResult = ReturnType<typeof useCreateOrderItemMutation>;
-export type CreateOrderItemMutationResult = ApolloReactCommon.MutationResult<BusinessCreateOrderItemMutation>;
-export type CreateOrderItemMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessCreateOrderItemMutation, BusinessCreateOrderItemMutationVariables>;
 export const GetUserOrdersDocument = gql`
     query GetUserOrders($openId: String!) {
   orders(
@@ -4674,6 +4427,12 @@ export const GetUserOrdersDocument = gql`
     total_price
     status
     date_created
+    product {
+      id
+      name
+      price
+      main_image
+    }
     boutique_id {
       id
       name
@@ -4721,6 +4480,13 @@ export const GetOrderByIdDocument = gql`
     total_price
     status
     date_created
+    product {
+      id
+      name
+      price
+      main_image
+      description
+    }
     boutique_id {
       id
       name
@@ -4761,55 +4527,6 @@ export type GetOrderByIdQueryHookResult = ReturnType<typeof useGetOrderByIdQuery
 export type GetOrderByIdLazyQueryHookResult = ReturnType<typeof useGetOrderByIdLazyQuery>;
 export type GetOrderByIdSuspenseQueryHookResult = ReturnType<typeof useGetOrderByIdSuspenseQuery>;
 export type GetOrderByIdQueryResult = ApolloReactCommon.QueryResult<BusinessGetOrderByIdQuery, BusinessGetOrderByIdQueryVariables>;
-export const GetOrderItemsDocument = gql`
-    query GetOrderItems($orderId: GraphQLStringOrFloat!) {
-  order_items(filter: {order_id: {id: {_eq: $orderId}}}) {
-    id
-    quantity
-    price
-    product_id {
-      id
-      name
-      price
-      main_image
-      description
-    }
-  }
-}
-    `;
-
-/**
- * __useGetOrderItemsQuery__
- *
- * To run a query within a React component, call `useGetOrderItemsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetOrderItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetOrderItemsQuery({
- *   variables: {
- *      orderId: // value for 'orderId'
- *   },
- * });
- */
-export function useGetOrderItemsQuery(baseOptions: ApolloReactHooks.QueryHookOptions<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables> & ({ variables: BusinessGetOrderItemsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables>(GetOrderItemsDocument, options);
-      }
-export function useGetOrderItemsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables>(GetOrderItemsDocument, options);
-        }
-export function useGetOrderItemsSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables>) {
-          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables>(GetOrderItemsDocument, options);
-        }
-export type GetOrderItemsQueryHookResult = ReturnType<typeof useGetOrderItemsQuery>;
-export type GetOrderItemsLazyQueryHookResult = ReturnType<typeof useGetOrderItemsLazyQuery>;
-export type GetOrderItemsSuspenseQueryHookResult = ReturnType<typeof useGetOrderItemsSuspenseQuery>;
-export type GetOrderItemsQueryResult = ApolloReactCommon.QueryResult<BusinessGetOrderItemsQuery, BusinessGetOrderItemsQueryVariables>;
 export const DeleteOrderDocument = gql`
     mutation DeleteOrder($orderId: ID!) {
   delete_orders_item(id: $orderId) {
@@ -4843,39 +4560,6 @@ export function useDeleteOrderMutation(baseOptions?: ApolloReactHooks.MutationHo
 export type DeleteOrderMutationHookResult = ReturnType<typeof useDeleteOrderMutation>;
 export type DeleteOrderMutationResult = ApolloReactCommon.MutationResult<BusinessDeleteOrderMutation>;
 export type DeleteOrderMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessDeleteOrderMutation, BusinessDeleteOrderMutationVariables>;
-export const DeleteOrderItemDocument = gql`
-    mutation DeleteOrderItem($orderItemId: ID!) {
-  delete_order_items_item(id: $orderItemId) {
-    id
-  }
-}
-    `;
-export type BusinessDeleteOrderItemMutationFn = ApolloReactCommon.MutationFunction<BusinessDeleteOrderItemMutation, BusinessDeleteOrderItemMutationVariables>;
-
-/**
- * __useDeleteOrderItemMutation__
- *
- * To run a mutation, you first call `useDeleteOrderItemMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteOrderItemMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteOrderItemMutation, { data, loading, error }] = useDeleteOrderItemMutation({
- *   variables: {
- *      orderItemId: // value for 'orderItemId'
- *   },
- * });
- */
-export function useDeleteOrderItemMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessDeleteOrderItemMutation, BusinessDeleteOrderItemMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<BusinessDeleteOrderItemMutation, BusinessDeleteOrderItemMutationVariables>(DeleteOrderItemDocument, options);
-      }
-export type DeleteOrderItemMutationHookResult = ReturnType<typeof useDeleteOrderItemMutation>;
-export type DeleteOrderItemMutationResult = ApolloReactCommon.MutationResult<BusinessDeleteOrderItemMutation>;
-export type DeleteOrderItemMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessDeleteOrderItemMutation, BusinessDeleteOrderItemMutationVariables>;
 export const GetBoutiqueByIdDocument = gql`
     query GetBoutiqueById($boutiqueId: GraphQLStringOrFloat!) {
   boutiques(filter: {id: {_eq: $boutiqueId}}, limit: 1) {

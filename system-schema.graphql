@@ -2471,20 +2471,6 @@ input number_filter_operators {
   _nbetween: [GraphQLStringOrFloat]
 }
 
-type order_items {
-  id: ID!
-  order_id(filter: orders_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): orders
-  product_id(filter: products_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): products
-  quantity: Int
-  price: Float
-}
-
-type order_items_mutated {
-  key: ID!
-  event: EventEnum
-  data: order_items
-}
-
 type orders {
   id: ID!
   total_price: Float
@@ -2497,24 +2483,8 @@ type orders {
   date_updated: Date
   date_updated_func: datetime_functions
   customers_id(filter: customers_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): customers
+  product(filter: products_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): products
   boutique(filter: boutiques_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): boutiques
-}
-
-input orders_filter {
-  id: number_filter_operators
-  total_price: number_filter_operators
-  status: string_filter_operators
-  boutique_id: boutiques_filter
-  user_created: directus_users_filter
-  date_created: date_filter_operators
-  date_created_func: datetime_function_filter_operators
-  user_updated: directus_users_filter
-  date_updated: date_filter_operators
-  date_updated_func: datetime_function_filter_operators
-  customers_id: customers_filter
-  _and: [orders_filter]
-  _or: [orders_filter]
-  boutique: boutiques_filter
 }
 
 type orders_mutated {
@@ -2793,7 +2763,6 @@ type Subscription {
   directus_users_mutated(event: EventEnum): directus_users_mutated
   directus_versions_mutated(event: EventEnum): directus_versions_mutated
   directus_webhooks_mutated(event: EventEnum): directus_webhooks_mutated
-  order_items_mutated(event: EventEnum): order_items_mutated
   orders_mutated(event: EventEnum): orders_mutated
   products_mutated(event: EventEnum): products_mutated
   terminals_mutated(event: EventEnum): terminals_mutated
