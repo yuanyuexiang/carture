@@ -35,10 +35,15 @@ export const GET_USER_ORDERS = gql`
         name
         price
         main_image
+        boutique_id {
+          id
+          name
+        }
       }
-      boutique {
+      customer {
         id
-        name
+        open_id
+        nick_name
       }
     }
   }
