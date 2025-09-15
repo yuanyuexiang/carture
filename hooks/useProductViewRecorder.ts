@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { WechatAuth } from '../utils/wechat-auth';
 import { useViewManager } from './useViewManager';
 
@@ -8,7 +8,7 @@ export const useProductViewRecorder = () => {
   
   console.log('🚀 useProductViewRecorder Hook 调用，已记录商品:', Array.from(recordedRef.current));
 
-  const recordView = async (productId: string, productInfo?: { name?: string; price?: number }) => {
+  const recordView = useCallback(async (productId: string, productInfo?: { name?: string; price?: number }) => {
     try {
       if (!productId || recordedRef.current.has(productId)) {
         console.log('⚠️ 商品已记录或ID为空，跳过:', productId);
@@ -46,7 +46,7 @@ export const useProductViewRecorder = () => {
       console.error('❌ 记录商品浏览失败:', error);
       return { success: false, error };
     }
-  };
+  }, [recordProductView]);
 
   return { recordView };
 };

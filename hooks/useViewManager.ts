@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
+import { useCallback } from 'react';
 import {
     CREATE_PRODUCT_VIEW,
     GET_BOUTIQUE_PRODUCT_VIEW_STATS,
@@ -24,7 +25,7 @@ export const useViewManager = () => {
    * @param nickName 用户昵称（可选）
    * @param avatar 用户头像（可选）
    */
-  const recordProductView = async ({
+  const recordProductView = useCallback(async ({
     openId,
     boutiqueId,
     productId,
@@ -105,7 +106,7 @@ export const useViewManager = () => {
         message: `创建商品浏览记录失败: ${error instanceof Error ? error.message : '未知错误'}`
       };
     }
-  };
+  }, [createProductView]);
 
   /**
    * 获取客户信息（通过 open_id 和精品店）

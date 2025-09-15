@@ -67,7 +67,7 @@ const ProductDetailScreen: React.FC = () => {
         price: product.price
       });
     }
-  }, [product?.id, product?.name, product?.price, recordView]);
+  }, [product?.id, product?.name, product?.price]); // 移除 recordView 依赖
 
   // 主图转为 Directus 图片 URL
   const mainImageUrl = product?.main_image ? getDirectusThumbnailUrl(product.main_image, 400) : null;
