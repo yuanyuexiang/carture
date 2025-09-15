@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { useBoutiqueContext } from '../contexts/BoutiqueContext';
 import {
-    useGetBoutiqueByIdQuery,
-    useGetCategoriesByBoutiqueQuery
+  useGetBoutiqueByIdQuery,
+  useGetCategoriesByBoutiqueQuery
 } from '../generated/business-graphql';
-import { WechatAuth } from '../utils/wechat-auth';
 import { useWechatVisitRecorder } from './useWechatVisitRecorder';
 
 /**
@@ -88,6 +87,9 @@ export const useDirectBoutiqueData = () => {
 
   // 严格限制visit记录：只在微信授权成功且成功获取到店铺信息时记录
   useEffect(() => {
+    // 暂时禁用自动访问记录，避免阻塞页面显示
+    // TODO: 重新启用访问记录，需要确保customer存在
+    /*
     // 必须同时满足的条件：
     // 1. 有店铺ID
     // 2. 已经获取到店铺信息（不在加载中且无错误）
@@ -120,6 +122,7 @@ export const useDirectBoutiqueData = () => {
         console.log('🏪❌ 没有微信用户信息，跳过visit记录');
       }
     }
+    */
   }, [boutiqueId, boutiqueLoading, boutiqueError, boutiqueData]); // 移除 manualRecordVisit 依赖
 
   return result;

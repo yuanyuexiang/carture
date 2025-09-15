@@ -1,31 +1,26 @@
 import { WechatUserInfo } from './wechat-auth';
 
 interface VisitRecord {
-  boutiqueId: string;
   openId: string;
+  boutiqueId: string;
   timestamp: number;
   source: string;
 }
 
-/**
- * 全局访问记录管理器 - 单例模式
- * 防止重复调用，确保每个用户-店铺组合在指定时间内只记录一次访问
- */
 class VisitRecorderManager {
-  private static instance: VisitRecorderManager | null = null;
-  private pendingRecords: Map<string, Promise<any>> = new Map(); // 正在处理的记录
-  private recentRecords: Map<string, VisitRecord> = new Map(); // 最近的记录缓存
-  private readonly DUPLICATE_INTERVAL = 30 * 60 * 1000; // 30分钟防重复间隔
+  private static instance: VisitRecorderManager;
+  private recentRecords: Map<string, VisitRecord> = new Map();
+  private pendingVisits: Set<string> = new Set();
+  
+  // 3分钟内认为是重复访问
+  private readonly DUPLICATE_INTERVAL = 3 * 60 * 1000;
 
-  private constructor() {
-    // 从localStorage恢复状态
+  constructor() {
     this.loadFromLocalStorage();
-    
-    // 定期清理过期记录
-    setInterval(() => this.cleanExpiredRecords(), 5 * 60 * 1000); // 每5分钟清理一次
+    this.startCleanupTimer();
   }
 
-  public static getInstance(): VisitRecorderManager {
+  static getInstance(): VisitRecorderManager {
     if (!VisitRecorderManager.instance) {
       VisitRecorderManager.instance = new VisitRecorderManager();
     }
@@ -33,18 +28,30 @@ class VisitRecorderManager {
   }
 
   /**
-   * 生成记录键
+   * 检查localStorage是否可用
    */
-  private getRecordKey(openId: string, boutiqueId: string): string {
-    return `${openId}:${boutiqueId}`;
+  private isLocalStorageAvailable(): boolean {
+    try {
+      return typeof window !== 'undefined' && 
+             typeof window.localStorage !== 'undefined' &&
+             window.localStorage !== null;
+    } catch (error) {
+      return false;
+    }
   }
 
   /**
    * 从localStorage加载状态
    */
   private loadFromLocalStorage(): void {
+    // 在React Native环境中直接返回，避免访问localStorage
+    if (!this.isLocalStorageAvailable()) {
+      console.log('📚 localStorage不可用（React Native环境），跳过状态加载');
+      return;
+    }
+
     try {
-      const savedRecords = localStorage.getItem('visit_records_cache');
+      const savedRecords = window.localStorage!.getItem('visit_records_cache');
       if (savedRecords) {
         const records: VisitRecord[] = JSON.parse(savedRecords);
         const now = Date.now();
@@ -68,9 +75,15 @@ class VisitRecorderManager {
    * 保存到localStorage
    */
   private saveToLocalStorage(): void {
+    // 在React Native环境中直接返回，避免访问localStorage
+    if (!this.isLocalStorageAvailable()) {
+      console.log('📚 localStorage不可用（React Native环境），跳过状态保存');
+      return;
+    }
+
     try {
       const records = Array.from(this.recentRecords.values());
-      localStorage.setItem('visit_records_cache', JSON.stringify(records));
+      window.localStorage!.setItem('visit_records_cache', JSON.stringify(records));
     } catch (error) {
       console.error('保存访问记录缓存失败:', error);
     }
@@ -91,118 +104,142 @@ class VisitRecorderManager {
     }
     
     if (cleanedCount > 0) {
-      console.log(`🧹 清理了 ${cleanedCount} 条过期访问记录`);
+      console.log('📚 清理过期访问记录:', cleanedCount, '条');
       this.saveToLocalStorage();
     }
   }
 
   /**
-   * 检查是否可以记录访问
+   * 启动定期清理定时器
    */
-  private canRecord(openId: string, boutiqueId: string): { canRecord: boolean; reason?: string } {
+  private startCleanupTimer(): void {
+    // 每分钟清理一次过期记录
+    setInterval(() => {
+      this.cleanExpiredRecords();
+    }, 60 * 1000);
+  }
+
+  /**
+   * 生成记录的唯一键
+   */
+  private getRecordKey(openId: string, boutiqueId: string): string {
+    return `${openId}-${boutiqueId}`;
+  }
+
+  /**
+   * 检查是否为重复访问（三层保护）
+   */
+  private isDuplicateVisit(openId: string, boutiqueId: string): boolean {
     const key = this.getRecordKey(openId, boutiqueId);
     
-    // 检查是否正在处理中
-    if (this.pendingRecords.has(key)) {
-      return { canRecord: false, reason: '正在处理中' };
+    // 第一层：检查并发保护
+    if (this.pendingVisits.has(key)) {
+      console.log('🚫 重复访问被拦截 - 并发保护:', { openId, boutiqueId });
+      return true;
     }
-
-    // 检查是否在防重复时间间隔内
+    
+    // 第二层：检查时间间隔
     const recentRecord = this.recentRecords.get(key);
     if (recentRecord) {
       const timeSinceLastRecord = Date.now() - recentRecord.timestamp;
       if (timeSinceLastRecord < this.DUPLICATE_INTERVAL) {
-        const remainingMinutes = Math.ceil((this.DUPLICATE_INTERVAL - timeSinceLastRecord) / (60 * 1000));
-        return { canRecord: false, reason: `${remainingMinutes}分钟内已记录过` };
+        console.log('🚫 重复访问被拦截 - 时间间隔保护:', { 
+          openId, 
+          boutiqueId, 
+          间隔: `${Math.round(timeSinceLastRecord / 1000)}秒` 
+        });
+        return true;
       }
     }
-
-    return { canRecord: true };
+    
+    return false;
   }
 
   /**
-   * 记录访问（异步，防重复）
+   * 记录新的访问
    */
-  public async recordVisit(
-    userInfo: WechatUserInfo,
-    boutiqueId: string,
-    source: string = 'unknown',
-    recordFunction: (userInfo: WechatUserInfo, boutiqueId: string) => Promise<any>
-  ): Promise<{ success: boolean; message?: string; error?: any }> {
-    if (!userInfo?.openid || !boutiqueId) {
-      return { success: false, message: '缺少必要参数' };
-    }
-
-    const { canRecord, reason } = this.canRecord(userInfo.openid, boutiqueId);
-    
-    if (!canRecord) {
-      console.log(`⏭️ 跳过访问记录 (${source}):`, reason);
-      return { success: false, message: reason };
-    }
-
-    const key = this.getRecordKey(userInfo.openid, boutiqueId);
-    
-    console.log(`🎯 开始记录访问 (${source}):`, {
-      openId: userInfo.openid,
-      nickName: userInfo.nickname,
+  private recordVisit(openId: string, boutiqueId: string, source: string): void {
+    const key = this.getRecordKey(openId, boutiqueId);
+    const record: VisitRecord = {
+      openId,
       boutiqueId,
-      timestamp: new Date().toLocaleString()
+      timestamp: Date.now(),
+      source
+    };
+    
+    this.recentRecords.set(key, record);
+    this.saveToLocalStorage();
+    
+    console.log('📝 记录访问:', { 
+      openId: openId.substring(0, 8) + '***', 
+      boutiqueId, 
+      source,
+      缓存记录数: this.recentRecords.size
     });
+  }
 
-    // 创建执行Promise并立即存储，防止并发调用
-    const recordPromise = this.executeRecord(userInfo, boutiqueId, source, recordFunction);
-    this.pendingRecords.set(key, recordPromise);
-
+  /**
+   * 尝试记录访问（带完整的重复检查和保护）
+   */
+  async attemptRecordVisit(
+    openId: string, 
+    boutiqueId: string, 
+    userInfo: WechatUserInfo, 
+    recordVisitCallback: () => Promise<void>,
+    source: string = 'manual'
+  ): Promise<boolean> {
+    const key = this.getRecordKey(openId, boutiqueId);
+    
     try {
-      const result = await recordPromise;
-      
-      // 记录成功，更新缓存
-      if (result.success) {
-        const record: VisitRecord = {
-          boutiqueId,
-          openId: userInfo.openid,
-          timestamp: Date.now(),
-          source
-        };
-        
-        this.recentRecords.set(key, record);
-        this.saveToLocalStorage();
-        console.log(`✅ 访问记录完成 (${source})`);
+      // 检查是否为重复访问
+      if (this.isDuplicateVisit(openId, boutiqueId)) {
+        return false;
       }
       
-      return result;
-    } finally {
-      // 清理pending状态
-      this.pendingRecords.delete(key);
-    }
-  }
-
-  /**
-   * 实际执行记录
-   */
-  private async executeRecord(
-    userInfo: WechatUserInfo,
-    boutiqueId: string,
-    source: string,
-    recordFunction: (userInfo: WechatUserInfo, boutiqueId: string) => Promise<any>
-  ): Promise<{ success: boolean; message?: string; error?: any }> {
-    try {
-      const result = await recordFunction(userInfo, boutiqueId);
-      return result;
+      // 添加并发保护
+      this.pendingVisits.add(key);
+      
+      try {
+        // 调用实际的记录函数
+        await recordVisitCallback();
+        
+        // 记录成功的访问
+        this.recordVisit(openId, boutiqueId, source);
+        
+        console.log('✅ 访问记录创建成功:', { 
+          openId: openId.substring(0, 8) + '***', 
+          boutiqueId,
+          source
+        });
+        
+        return true;
+        
+      } finally {
+        // 无论成功失败都要移除并发保护
+        this.pendingVisits.delete(key);
+      }
+      
     } catch (error) {
-      console.error(`❌ 访问记录执行失败 (${source}):`, error);
-      return { success: false, error };
+      console.error('❌ 访问记录创建失败:', error);
+      this.pendingVisits.delete(key);
+      return false;
     }
   }
 
   /**
-   * 获取统计信息（调试用）
+   * 获取统计信息（用于调试）
    */
-  public getStats() {
+  getStats() {
     return {
-      pendingCount: this.pendingRecords.size,
-      recentCount: this.recentRecords.size,
-      recentRecords: Array.from(this.recentRecords.values())
+      recentRecords: this.recentRecords.size,
+      pendingVisits: this.pendingVisits.size,
+      records: Array.from(this.recentRecords.entries()).map(([key, record]) => ({
+        key,
+        openId: record.openId.substring(0, 8) + '***',
+        boutiqueId: record.boutiqueId,
+        timestamp: new Date(record.timestamp).toLocaleString(),
+        source: record.source
+      }))
     };
   }
 }

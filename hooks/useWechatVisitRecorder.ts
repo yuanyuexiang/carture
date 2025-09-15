@@ -19,11 +19,14 @@ export const useWechatVisitRecorder = () => {
     boutiqueId: string,
     source: string = 'manual'
   ) => {
-    return await visitRecorderManager.recordVisit(
-      userInfo,
+    return await visitRecorderManager.attemptRecordVisit(
+      userInfo.openid,
       boutiqueId,
-      source,
-      recordVisit // 传入实际的记录函数
+      userInfo,
+      async () => {
+        await recordVisit(userInfo, boutiqueId);
+      },
+      source
     );
   }, [recordVisit]);
 
