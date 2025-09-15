@@ -73,37 +73,60 @@ export const SwipeableOrderCard: React.FC<SwipeableOrderCardProps> = ({
 
   // 处理删除确认
   const handleDeletePress = () => {
-    Alert.alert(
-      '确认删除',
-      '确定要删除这个订单吗？',
-      [
-        {
-          text: '取消',
-          style: 'cancel',
-          onPress: () => {
-            // 收回删除按钮
-            Animated.spring(translateX, {
-              toValue: 0,
-              useNativeDriver: true,
-            }).start();
-            setShowDeleteButton(false);
+    // Web 环境中使用 window.confirm 替代 Alert.alert
+    const isWeb = typeof window !== 'undefined';
+    
+    if (isWeb) {
+      const confirmed = window.confirm('确定要删除这个订单吗？');
+      if (confirmed) {
+        onDelete(order.id);
+        // 删除动画
+        Animated.timing(translateX, {
+          toValue: -SCREEN_WIDTH,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      } else {
+        // 收回删除按钮
+        Animated.spring(translateX, {
+          toValue: 0,
+          useNativeDriver: true,
+        }).start();
+        setShowDeleteButton(false);
+      }
+    } else {
+      Alert.alert(
+        '确认删除',
+        '确定要删除这个订单吗？',
+        [
+          {
+            text: '取消',
+            style: 'cancel',
+            onPress: () => {
+              // 收回删除按钮
+              Animated.spring(translateX, {
+                toValue: 0,
+                useNativeDriver: true,
+              }).start();
+              setShowDeleteButton(false);
+            }
+          },
+          {
+            text: '删除',
+            style: 'destructive',
+            onPress: () => {
+              onDelete(order.id);
+              // 删除动画
+              Animated.timing(translateX, {
+                toValue: -SCREEN_WIDTH,
+                duration: 300,
+                useNativeDriver: true,
+              }).start();
+            }
           }
-        },
-        {
-          text: '删除',
-          style: 'destructive',
-          onPress: () => {
-            onDelete(order.id);
-            // 删除动画
-            Animated.timing(translateX, {
-              toValue: -SCREEN_WIDTH,
-              duration: 300,
-              useNativeDriver: true,
-            }).start();
-          }
-        }
-      ]
-    );
+        ]
+      );
+    }
   };
 
   // 格式化价格显示

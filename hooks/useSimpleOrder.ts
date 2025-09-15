@@ -135,33 +135,57 @@ export const useSimpleOrder = () => {
   }, [createOrderMutation, createOrderItemMutation]);
 
   /**
-   * 删除订单（先删除订单项，再删除订单）
+   * 删除订单（简单删除，依赖后台级联删除订单项）
    */
   const deleteOrder = useCallback(async (orderId: string) => {
     console.log('🗑️ deleteOrder 被调用, orderId:', orderId);
+    console.log('🗑️ deleteOrder 订单ID类型:', typeof orderId);
     setLoading(true);
     setError(null);
 
     try {
       console.log('=== 开始删除订单 ===');
 
-      // 直接删除订单，让后台处理级联删除订单项
-      // 如果后台没有级联删除，我们需要先手动获取并删除订单项
-      console.log('删除订单:', orderId);
+      // 直接删除订单，依赖后台的级联删除来处理订单项
+      console.log('�️ 删除订单:', orderId);
       const orderResult = await deleteOrderMutation({
         variables: { orderId }
       });
 
       console.log('✅ 订单删除完成:', orderResult);
 
-      return {
-        success: true,
-        message: '订单删除成功！'
-      };
+      // 检查删除结果
+      if (orderResult.data?.delete_orders_item?.id) {
+        console.log('✅ 订单删除成功，ID:', orderResult.data.delete_orders_item.id);
+        return {
+          success: true,
+          message: '订单删除成功！'
+        };
+      } else {
+        console.warn('⚠️ 删除操作未返回预期的结果');
+        return {
+          success: false,
+          error: '删除操作未完成',
+          message: '删除操作未完成'
+        };
+      }
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '删除订单失败';
-      console.error('❌ 删除订单失败:', errorMessage, err);
+      console.error('❌ 删除订单失败:', errorMessage);
+      console.error('❌ 完整错误:', err);
+      
+      // 检查是否是网络或GraphQL错误
+      if (err && typeof err === 'object') {
+        const errorObj = err as any;
+        if (errorObj.networkError) {
+          console.error('❌ 网络错误:', errorObj.networkError);
+        }
+        if (errorObj.graphQLErrors) {
+          console.error('❌ GraphQL错误:', errorObj.graphQLErrors);
+        }
+      }
+      
       setError(errorMessage);
       return {
         success: false,

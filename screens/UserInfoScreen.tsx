@@ -137,26 +137,6 @@ const UserInfoScreen: React.FC = () => {
             </Text>
           </View>
         )}
-
-        {/* 其他功能选项 */}
-        {/* <View style={styles.optionsContainer}>
-          <Text style={styles.optionsTitle}>其他功能</Text>
-          
-          <View style={styles.optionItem}>
-            <Text style={styles.optionLabel}>设置</Text>
-            <Text style={styles.optionValue}>应用设置和偏好</Text>
-          </View>
-          
-          <View style={styles.optionItem}>
-            <Text style={styles.optionLabel}>帮助</Text>
-            <Text style={styles.optionValue}>常见问题和支持</Text>
-          </View>
-          
-          <View style={styles.optionItem}>
-            <Text style={styles.optionLabel}>关于</Text>
-            <Text style={styles.optionValue}>版本信息和条款</Text>
-          </View>
-        </View> */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -252,45 +232,6 @@ const styles = StyleSheet.create({
     color: '#666',
     lineHeight: 20,
     marginBottom: 4,
-  },
-  optionsContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginHorizontal: 16,
-    marginTop: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  optionsTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    padding: 16,
-    paddingBottom: 8,
-  },
-  optionItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-  },
-  optionLabel: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
-  },
-  optionValue: {
-    fontSize: 14,
-    color: '#666',
-    flex: 1,
-    textAlign: 'right',
-    marginLeft: 16,
   },
   debugInfo: {
     fontSize: 12,
