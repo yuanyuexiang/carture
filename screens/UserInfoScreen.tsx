@@ -1,3 +1,4 @@
+import { ThemedText } from '@/components/ThemedText';
 import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
@@ -81,8 +82,7 @@ const UserInfoScreen: React.FC = () => {
       >
         {/* 页面标题 */}
         <View style={styles.header}>
-          <Text style={styles.title}>我的</Text>
-          <Text style={styles.subtitle}>个人信息与设置</Text>
+          <ThemedText style={styles.headerTitle}>我的</ThemedText>
         </View>
 
         {/* 用户信息 */}
@@ -174,6 +174,10 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     color: '#666',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   mainContent: {
     paddingHorizontal: 16,

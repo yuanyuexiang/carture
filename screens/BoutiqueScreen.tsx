@@ -268,7 +268,7 @@ export default function BoutiqueScreen() {
         
         {/* 顶部导航 */}
         <View style={styles.header}>
-          <ThemedText style={styles.headerTitle}>我的店铺</ThemedText>
+          <ThemedText style={styles.headerTitle}>店铺</ThemedText>
         </View>
 
         <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
