@@ -1,48 +1,31 @@
-import { useApolloClient, useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { useState } from 'react';
-import { Alert, Platform } from 'react-native';
 import { CREATE_ORDER, DELETE_ORDER, GET_USER_ORDERS } from '../graphql/business/orders.graphql';
-import { GET_CUSTOMER_BY_OPENID } from '../graphql/business/visits.graphql';
+import { useCustomerManager } from './useCustomerManager';
 
 export const useSimpleOrder = () => {
   const [createOrderMutation] = useMutation(CREATE_ORDER);
   const [deleteOrderMutation] = useMutation(DELETE_ORDER);
-  const apolloClient = useApolloClient();
+  const { ensureCustomer } = useCustomerManager();
   const [loading, setLoading] = useState(false);
 
   const createSimpleOrder = async (
     productId: string, 
-    userOpenId: string, 
     productInfo?: { name: string, price: number },
     boutiqueId?: string
   ) => {
     setLoading(true);
     try {
-      if (!userOpenId) {
-        const message = '请先登录';
-        if (Platform.OS === 'web') {
-          alert(message);
-        } else {
-          Alert.alert('提示', message);
-        }
-        return;
-      }
+      console.log('🚀 开始创建订单，参数:', { productId, productInfo, boutiqueId });
 
-      console.log('🚀 开始创建订单，参数:', { productId, userOpenId, productInfo, boutiqueId });
-
-      // 1. 先根据openid获取customer ID
-      const { data: customerData } = await apolloClient.query({
-        query: GET_CUSTOMER_BY_OPENID,
-        variables: { open_id: userOpenId }
-      });
-
-      const customer = customerData?.customers?.[0];
+      // 1. 确保customer存在（使用现有的customerManager）
+      const customer = await ensureCustomer(boutiqueId);
       if (!customer?.id) {
-        console.error('❌ 找不到用户客户记录');
+        console.error('❌ 无法获取或创建客户记录');
         return;
       }
 
-      console.log('✅ 找到客户记录:', customer);
+      console.log('✅ 客户记录已准备:', customer);
 
       // 2. 使用customer信息创建订单
       const orderData: any = {
