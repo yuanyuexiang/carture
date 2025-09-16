@@ -11,7 +11,12 @@ interface TabProps {
 const Tab: React.FC<TabProps> = ({ label, selected, onPress, vertical }) => (
   <TouchableOpacity
     onPress={onPress}
-    style={[styles.tabButton, selected && styles.selectedTab, vertical && styles.verticalTab]}
+    style={[
+      styles.tabButton, 
+      selected && styles.selectedTab, 
+      vertical && styles.verticalTab,
+      vertical && selected && styles.selectedVerticalTab // 垂直且选中时的特殊样式
+    ]}
   >
     <Text style={[styles.tabText, selected && styles.selectedTabText, vertical && styles.verticalTabText]}>
       {label}
@@ -29,6 +34,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+  },
+  selectedVerticalTab: {
+    // 选中状态：右侧去掉圆角，形成连接效果
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+    // 左侧保持圆角
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
   },
   verticalTabText: {
     writingDirection: 'ltr',
