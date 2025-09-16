@@ -27,8 +27,8 @@ export default function TabLayout() {
           height: Platform.OS === 'ios' ? 85 : 65,
         },
         tabBarLabelStyle: {
-          fontSize: 12, // 增大字体从默认的10px到12px
-          fontWeight: '500', // 稍微加粗字体
+          fontSize: 14, // 进一步增大字体从12px到20px
+          fontWeight: '600', // 更加粗的字体，从500增加到600
         },
       }}>
       <Tabs.Screen
