@@ -74,8 +74,8 @@ export const GET_ORDER_BY_ID = gql`
 
 // 删除订单 (简化版，不需要处理订单项)
 export const DELETE_ORDER = gql`
-  mutation DeleteOrder($orderId: ID!) {
-    delete_orders_item(id: $orderId) {
+  mutation DELETE_ORDER($id: ID!) {
+    delete_orders_item(id: $id) {
       id
     }
   }
