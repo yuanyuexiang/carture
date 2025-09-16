@@ -1,5 +1,6 @@
+import { useFocusEffect } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useCustomerOrders, useSimpleOrder } from '../hooks/useSimpleOrder';
 import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
 // import { SwipeableOrderCard } from './SwipeableOrderCard'; // 暂时注释掉，这个组件可能有问题
@@ -13,6 +14,7 @@ export const OrderManager: React.FC<OrderManagerProps> = () => {
   
   const [wechatUserInfo, setWechatUserInfo] = useState<WechatUserInfo | null>(null);
   const [deletingOrders, setDeletingOrders] = useState<Set<string>>(new Set());
+  const [refreshing, setRefreshing] = useState(false);
 
   // 获取删除订单的hook
   const { deleteOrder } = useSimpleOrder();
@@ -35,6 +37,31 @@ export const OrderManager: React.FC<OrderManagerProps> = () => {
   const { orders, loading, error, refetch } = useCustomerOrders(
     wechatUserInfo?.openid || null
   );
+
+  // 页面焦点刷新 - 当用户切换到"我的"页面时自动刷新订单
+  useFocusEffect(
+    React.useCallback(() => {
+      if (wechatUserInfo?.openid && refetch) {
+        console.log('🔄 页面获得焦点，刷新订单列表');
+        refetch();
+      }
+    }, [wechatUserInfo?.openid, refetch])
+  );
+
+  // 手动下拉刷新处理
+  const handleRefresh = async () => {
+    if (!wechatUserInfo?.openid || !refetch) return;
+    
+    console.log('🔄 用户手动下拉刷新订单列表');
+    setRefreshing(true);
+    try {
+      await refetch();
+    } catch (error) {
+      console.error('🚨 刷新订单失败:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
   
   console.log('🔍 OrderManager: useCustomerOrders 返回:', { 
     ordersCount: orders?.length || 0, 
@@ -112,10 +139,26 @@ export const OrderManager: React.FC<OrderManagerProps> = () => {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView 
+      style={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          colors={['#ff6b35']} // Android 下拉刷新颜色
+          tintColor="#ff6b35" // iOS 下拉刷新颜色
+        />
+      }
+    >
+      <View style={styles.header}>
+        <Text style={styles.title}>我的订单</Text>
+        <Text style={styles.subtitle}>下拉刷新 • 切换页面自动刷新</Text>
+      </View>
+
       {orders.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>暂无订单</Text>
+          <Text style={styles.emptySubtext}>下单后请下拉刷新或切换页面</Text>
         </View>
       ) : (
         orders.map((order: any, index: number) => (
@@ -160,6 +203,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#212529',
   },
+  subtitle: {
+    fontSize: 12,
+    color: '#6c757d',
+    marginTop: 4,
+  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -169,6 +217,12 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     color: '#6c757d',
+  },
+  emptySubtext: {
+    fontSize: 12,
+    color: '#adb5bd',
+    marginTop: 8,
+    textAlign: 'center',
   },
   loadingText: {
     textAlign: 'center',
