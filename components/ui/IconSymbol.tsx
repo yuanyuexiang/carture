@@ -14,6 +14,10 @@ const MAPPING = {
   'paperplane.fill': '✈️',
   'chevron.left.forwardslash.chevron.right': '</>',
   'chevron.right': '>',
+  'cart.fill': '🛒',
+  'wrench.adjustable': '🔧',
+  'storefront': '🏪',
+  'person.crop.circle': '👤',
 } as IconMapping;
 
 /**
