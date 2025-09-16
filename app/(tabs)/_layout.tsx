@@ -26,6 +26,10 @@ export default function TabLayout() {
           paddingBottom: Platform.OS === 'ios' ? 20 : 10,
           height: Platform.OS === 'ios' ? 85 : 65,
         },
+        tabBarLabelStyle: {
+          fontSize: 12, // 增大字体从默认的10px到12px
+          fontWeight: '500', // 稍微加粗字体
+        },
       }}>
       <Tabs.Screen
         name="index"
@@ -39,6 +43,7 @@ export default function TabLayout() {
         options={{
           title: '调试',
           tabBarIcon: ({ color }) => <IconSymbol size={24} name="wrench.adjustable" color={color} />,
+          href: null, // 隐藏调试页面
         }}
       />
       <Tabs.Screen
