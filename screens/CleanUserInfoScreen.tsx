@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    View,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import { OrderManager } from '../components/OrderManager'; // 修复后的版本，移除了SwipeableOrderCard
 // import { SimpleOrderManager } from '../components/SimpleOrderManager'; // 测试不带SwipeableOrderCard的版本

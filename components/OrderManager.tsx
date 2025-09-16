@@ -113,10 +113,6 @@ export const OrderManager: React.FC<OrderManagerProps> = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>我的订单</Text>
-      </View>
-
       {orders.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>暂无订单</Text>
