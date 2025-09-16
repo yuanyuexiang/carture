@@ -160,7 +160,9 @@ export const OrderManager: React.FC<OrderManagerProps> = () => {
         orders.map((order: any, index: number) => (
           <View key={order.id} style={styles.orderCard}>
             <View style={styles.orderHeader}>
-              <Text style={styles.orderTitle}>订单 #{index + 1}</Text>
+              <Text style={styles.orderTitle}>
+                {order.product?.name ? `${order.product.name}` : `订单 #${index + 1}`}
+              </Text>
               <TouchableOpacity 
                 style={styles.deleteButton}
                 onPress={() => handleDeleteOrder(order.id)}
@@ -171,10 +173,10 @@ export const OrderManager: React.FC<OrderManagerProps> = () => {
                 </Text>
               </TouchableOpacity>
             </View>
-            <Text style={styles.orderInfo}>订单ID: {order.id}</Text>
+            <Text style={styles.orderInfo}>商品: {order.product?.name || '未知商品'}</Text>
+            <Text style={styles.orderInfo}>店铺: {order.product?.boutique_id?.name || '未知店铺'}</Text>
             <Text style={styles.orderInfo}>价格: ¥{order.total_price || 0}</Text>
-            <Text style={styles.orderInfo}>状态: {order.status || '未知'}</Text>
-            <Text style={styles.orderInfo}>创建时间: {order.date_created || '未知'}</Text>
+            <Text style={styles.orderInfo}>创建时间: {order.date_created ? new Date(order.date_created).toLocaleDateString() : '未知'}</Text>
           </View>
         ))
       )}
