@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useCustomerOrders, useSimpleOrder } from '../hooks/useSimpleOrder';
 import { WechatAuth, WechatUserInfo } from '../utils/wechat-auth';
-import { SwipeableOrderCard } from './SwipeableOrderCard';
+// import { SwipeableOrderCard } from './SwipeableOrderCard'; // 暂时注释掉，这个组件可能有问题
 
 interface OrderManagerProps {
   customerId?: string;
@@ -122,13 +122,25 @@ export const OrderManager: React.FC<OrderManagerProps> = () => {
           <Text style={styles.emptyText}>暂无订单</Text>
         </View>
       ) : (
-        orders.map((order: any) => (
-          <SwipeableOrderCard
-            key={order.id}
-            order={order}
-            onDelete={handleDeleteOrder}
-            deleting={deletingOrders.has(order.id)}
-          />
+        orders.map((order: any, index: number) => (
+          <View key={order.id} style={styles.orderCard}>
+            <View style={styles.orderHeader}>
+              <Text style={styles.orderTitle}>订单 #{index + 1}</Text>
+              <TouchableOpacity 
+                style={styles.deleteButton}
+                onPress={() => handleDeleteOrder(order.id)}
+                disabled={deletingOrders.has(order.id)}
+              >
+                <Text style={styles.deleteButtonText}>
+                  {deletingOrders.has(order.id) ? '删除中...' : '删除'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.orderInfo}>订单ID: {order.id}</Text>
+            <Text style={styles.orderInfo}>价格: ¥{order.total_price || 0}</Text>
+            <Text style={styles.orderInfo}>状态: {order.status || '未知'}</Text>
+            <Text style={styles.orderInfo}>创建时间: {order.date_created || '未知'}</Text>
+          </View>
         ))
       )}
     </ScrollView>
@@ -173,6 +185,41 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#e74c3c',
     padding: 20,
+  },
+  orderCard: {
+    backgroundColor: '#fff',
+    margin: 10,
+    padding: 15,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  orderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  orderTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#212529',
+  },
+  orderInfo: {
+    fontSize: 14,
+    color: '#6c757d',
+    marginBottom: 4,
+  },
+  deleteButton: {
+    backgroundColor: '#dc3545',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 4,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
 });
 
