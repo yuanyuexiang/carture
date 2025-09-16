@@ -3,21 +3,21 @@ import { ThemedView } from '@/components/ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useDirectBoutiqueData } from '@/hooks/useDirectBoutiqueData';
 import { getDirectusImageUrl, getDirectusThumbnailUrl } from '@/utils/directus';
-import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
-  ActivityIndicator,
-  Dimensions,
-  Image,
-  Modal,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    ActivityIndicator,
+    Dimensions,
+    Image,
+    Modal,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
+import { IconSymbol } from '../components/ui/IconSymbol';
 
 const { width } = Dimensions.get('window');
 
@@ -149,7 +149,7 @@ export default function BoutiqueScreen() {
     if (!images || (Array.isArray(images) && images.length === 0)) {
       return (
         <View style={styles.noImagesContainer}>
-          <Ionicons name="images-outline" size={32} color="#ccc" />
+          <IconSymbol name="images-outline" size={32} color="#ccc" />
           <Text style={styles.noImagesText}>暂无图片</Text>
         </View>
       );
@@ -232,7 +232,7 @@ export default function BoutiqueScreen() {
     return (
       <ThemedView style={styles.container}>
         <SafeAreaView style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color="#ff6b35" />
+          <IconSymbol name="alert-circle-outline" size={48} color="#ff6b35" />
           <ThemedText style={styles.errorTitle}>获取信息失败</ThemedText>
           <Text style={styles.errorMessage}>{boutiqueError.message}</Text>
           <TouchableOpacity 
@@ -251,7 +251,7 @@ export default function BoutiqueScreen() {
     return (
       <ThemedView style={styles.container}>
         <SafeAreaView style={styles.emptyContainer}>
-          <Ionicons name="storefront-outline" size={64} color="#ccc" />
+          <IconSymbol name="storefront-outline" size={64} color="#ccc" />
           <ThemedText style={styles.emptyTitle}>店铺不存在</ThemedText>
           <Text style={styles.emptyMessage}>
             请在链接中提供有效的店铺 ID，例如：?boutique_id=1
@@ -282,7 +282,7 @@ export default function BoutiqueScreen() {
               />
             ) : (
               <View style={styles.placeholderImage}>
-                <Ionicons name="storefront-outline" size={48} color="#ccc" />
+                <IconSymbol name="storefront-outline" size={48} color="#ccc" />
               </View>
             )}
             
@@ -319,7 +319,7 @@ export default function BoutiqueScreen() {
             
             <View style={styles.infoRow}>
               <View style={styles.infoIcon}>
-                <Ionicons name="location-outline" size={20} color="#ff6b35" />
+                <IconSymbol name="location-outline" size={20} color="#ff6b35" />
               </View>
               <View style={styles.infoContent}>
                 <Text style={styles.infoLabel}>地址</Text>
@@ -331,7 +331,7 @@ export default function BoutiqueScreen() {
 
             <View style={styles.infoRow}>
               <View style={styles.infoIcon}>
-                <Ionicons name="person-outline" size={20} color="#ff6b35" />
+                <IconSymbol name="person-outline" size={20} color="#ff6b35" />
               </View>
               <View style={styles.infoContent}>
                 <Text style={styles.infoLabel}>店主</Text>
@@ -343,7 +343,7 @@ export default function BoutiqueScreen() {
 
             <View style={styles.infoRow}>
               <View style={styles.infoIcon}>
-                <Ionicons name="calendar-outline" size={20} color="#ff6b35" />
+                <IconSymbol name="calendar-outline" size={20} color="#ff6b35" />
               </View>
               <View style={styles.infoContent}>
                 <Text style={styles.infoLabel}>创建时间</Text>

@@ -1,9 +1,9 @@
 // Fallback for using text symbols instead of MaterialIcons to avoid font loading issues.
 
-import { SymbolViewProps, SymbolWeight } from 'expo-symbols';
+import { SymbolWeight } from 'expo-symbols';
 import { OpaqueColorValue, Text, type StyleProp, type TextStyle } from 'react-native';
 
-type IconMapping = Record<SymbolViewProps['name'], string>;
+type IconMapping = Record<string, string>;
 type IconSymbolName = keyof typeof MAPPING;
 
 /**
@@ -18,6 +18,15 @@ const MAPPING = {
   'wrench.adjustable': '🔧',
   'storefront': '🏪',
   'person.crop.circle': '👤',
+  
+  // Ionicons 替代映射
+  'images-outline': '🖼️',
+  'alert-circle-outline': '⚠️',
+  'storefront-outline': '🏪',
+  'location-outline': '📍',
+  'person-outline': '👤',
+  'calendar-outline': '📅',
+  'search': '🔍',
 } as IconMapping;
 
 /**
