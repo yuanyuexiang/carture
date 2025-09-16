@@ -150,9 +150,6 @@ export const OrderManager: React.FC<OrderManagerProps> = () => {
         />
       }
     >
-      <View style={styles.header}>
-        <Text style={styles.subtitle}>下拉刷新 • 切换页面自动刷新</Text>
-      </View>
 
       {orders.length === 0 ? (
         <View style={styles.emptyContainer}>
