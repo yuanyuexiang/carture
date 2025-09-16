@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { WechatUserInfo } from '../utils/wechat-auth';
 
@@ -16,6 +16,39 @@ export const WechatUserCard: React.FC<WechatUserCardProps> = ({
   onForceReauth,
   onClearAuth,
 }) => {
+  // 控制开发者按钮显示/隐藏的状态
+  const [showDevButtons, setShowDevButtons] = useState(false);
+  
+  // 双击计数器和定时器
+  const [tapCount, setTapCount] = useState(0);
+  const [tapTimer, setTapTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  // 处理登录时间的双击事件
+  const handleLoginTimeTap = () => {
+    console.log('登录时间被点击，当前tapCount:', tapCount);
+    
+    // 清除之前的定时器
+    if (tapTimer) {
+      clearTimeout(tapTimer);
+      setTapTimer(null);
+    }
+    
+    const newTapCount = tapCount + 1;
+    setTapCount(newTapCount);
+    
+    if (newTapCount === 2) {
+      // 双击检测到，切换开发者按钮显示状态
+      setShowDevButtons(!showDevButtons);
+      console.log('双击检测到，开发者按钮显示状态:', !showDevButtons);
+      setTapCount(0); // 重置计数器
+    } else {
+      // 设置定时器，300ms后重置计数器
+      const timer = setTimeout(() => {
+        setTapCount(0);
+      }, 300);
+      setTapTimer(timer);
+    }
+  };
+
   // 性别转换
   const getSexText = (sex: number): string => {
     switch (sex) {
@@ -111,12 +144,12 @@ export const WechatUserCard: React.FC<WechatUserCardProps> = ({
           </Text>
         </View>
         
-        <View style={styles.detailRow}>
+        <TouchableOpacity style={styles.detailRow} onPress={handleLoginTimeTap}>
           <Text style={styles.detailLabel}>登录时间:</Text>
           <Text style={styles.detailValue}>
             {formatLoginTime(userInfo.login_time)}
           </Text>
-        </View>
+        </TouchableOpacity>
 
         {userInfo.expires_at && (
           <View style={styles.detailRow}>
@@ -142,34 +175,39 @@ export const WechatUserCard: React.FC<WechatUserCardProps> = ({
         )}
       </View>
 
-      {/* 操作按钮 */}
-      <View style={styles.actionsSection}>
-        {onForceReauth && (
-          <TouchableOpacity 
-            style={[styles.actionButton, styles.reauthButton]}
-            onPress={() => {
-              console.log('重新授权按钮被点击');
-              handleForceReauth();
-            }}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.reauthButtonText}>重新授权</Text>
-          </TouchableOpacity>
-        )}
+      {/* 开发者操作按钮 - 只在双击登录时间后显示 */}
+      {showDevButtons && (
+        <View style={styles.actionsSection}>
+          <Text style={styles.devModeText}>🔧 开发者模式</Text>
+          <View style={styles.actionButtonsRow}>
+            {onForceReauth && (
+              <TouchableOpacity 
+                style={[styles.actionButton, styles.reauthButton]}
+                onPress={() => {
+                  console.log('重新授权按钮被点击');
+                  handleForceReauth();
+                }}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.reauthButtonText}>重新授权</Text>
+              </TouchableOpacity>
+            )}
 
-        {onClearAuth && (
-          <TouchableOpacity 
-            style={[styles.actionButton, styles.clearButton]}
-            onPress={() => {
-              console.log('清除授权按钮被点击');
-              handleClearAuth();
-            }}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.clearButtonText}>清除授权</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+            {onClearAuth && (
+              <TouchableOpacity 
+                style={[styles.actionButton, styles.clearButton]}
+                onPress={() => {
+                  console.log('清除授权按钮被点击');
+                  handleClearAuth();
+                }}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.clearButtonText}>清除授权</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      )}
     </View>
   );
 };
@@ -237,11 +275,20 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   actionsSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
     borderTopWidth: 1,
     borderTopColor: '#f0f0f0',
     paddingTop: 16,
+  },
+  devModeText: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 12,
+    fontStyle: 'italic',
+  },
+  actionButtonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
   actionButton: {
     paddingHorizontal: 20,
