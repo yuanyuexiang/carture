@@ -23,20 +23,33 @@ export const useSimpleOrder = () => {
 
       // 1. 获取微信用户信息
       const wechatUserInfo = WechatAuth.getUserInfo();
+      console.log('🔍 微信用户信息:', wechatUserInfo);
+      
       if (!wechatUserInfo?.openid) {
         console.error('❌ 未找到微信用户信息，请先登录');
-        return;
+        return {
+          success: false,
+          message: '未找到微信用户信息，请先登录'
+        };
       }
 
       // 2. 检查客户信息是否存在（来自Context）
+      console.log('🔍 检查客户信息:', { customerInfo, customerError });
+      
       if (!customerInfo) {
         console.error('❌ 未找到当前店铺的客户信息，请确保已正确进入店铺');
-        return;
+        return {
+          success: false,
+          message: '未找到当前店铺的客户信息，请确保已正确进入店铺'
+        };
       }
 
       if (customerError) {
         console.error('❌ 客户信息存在错误:', customerError);
-        return;
+        return {
+          success: false,
+          message: `客户信息错误: ${customerError}`
+        };
       }
 
       console.log('✅ 使用客户信息:', {
@@ -68,23 +81,54 @@ export const useSimpleOrder = () => {
         orderData.boutique = {
           id: boutiqueId
         };
+        console.log('🏪 添加店铺信息:', { boutiqueId });
       }
 
-      console.log('📝 订单数据准备完成:', orderData);
+      console.log('📝 最终订单数据:', JSON.stringify(orderData, null, 2));
 
       // 4. 创建订单
+      console.log('🔄 调用 GraphQL 创建订单...');
+      
       const response = await createOrderMutation({
         variables: { data: orderData }  // 修正为data，匹配GraphQL schema
       });
 
+      console.log('✅ GraphQL 响应:', JSON.stringify(response, null, 2));
       console.log('✅ 订单创建成功:', response.data);
-      return response.data?.create_orders_item;
+      
+      return {
+        success: true,
+        data: response.data?.create_orders_item
+      };
 
     } catch (error: any) {
-      console.error('❌ 创建订单失败:', error);
-      throw error;
+      console.error('❌ 创建订单失败 - 详细错误信息:');
+      console.error('错误对象:', error);
+      console.error('错误消息:', error.message);
+      console.error('错误堆栈:', error.stack);
+      
+      // 如果是 GraphQL 错误，打印更多详细信息
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        console.error('GraphQL 错误详情:');
+        error.graphQLErrors.forEach((gqlError: any, index: number) => {
+          console.error(`GraphQL 错误 ${index + 1}:`, gqlError);
+          console.error('位置:', gqlError.locations);
+          console.error('路径:', gqlError.path);
+          console.error('扩展信息:', gqlError.extensions);
+        });
+      }
+      
+      if (error.networkError) {
+        console.error('网络错误:', error.networkError);
+      }
+      
+      return {
+        success: false,
+        message: error.message || '创建订单时发生未知错误'
+      };
     } finally {
       setLoading(false);
+      console.log('🏁 创建订单流程结束');
     }
   };
 
