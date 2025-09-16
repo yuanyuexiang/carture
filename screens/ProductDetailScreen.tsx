@@ -172,10 +172,10 @@ const ProductDetailScreen: React.FC = () => {
 
       console.log('✅ createSimpleOrder 返回结果:', orderResult);
 
-      if (orderResult && orderResult.id) {
+      if (orderResult && orderResult.success && orderResult.data && orderResult.data.id) {
         Alert.alert(
           '下单成功！',
-          `订单号: ${orderResult.id}\n商品: ${product.name}\n金额: ￥${product.price}\n\n您可以在"我的"页面查看订单详情`,
+          `订单号: ${orderResult.data.id}\n商品: ${product.name}\n金额: ￥${product.price}\n\n您可以在"我的"页面查看订单详情`,
           [
             { text: '继续购物', style: 'cancel' },
             {
@@ -188,8 +188,10 @@ const ProductDetailScreen: React.FC = () => {
         );
       } else {
         console.error('❌ 下单失败，orderResult:', orderResult);
-        // 暂时注释掉弹窗，查看控制台日志调试
-        // Alert.alert('下单失败', '订单创建失败，请重试');
+        Alert.alert(
+          '下单失败', 
+          orderResult?.message || '订单创建失败，请重试'
+        );
       }
     } catch (err) {
       console.error('下单异常:', err);
