@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 
 // 创建订单 (现在包含产品信息)
 export const CREATE_ORDER = gql`
-  mutation CreateOrder($orderData: create_orders_input!) {
-    create_orders_item(data: $orderData) {
+  mutation CREATE_ORDER($data: create_orders_input!) {
+    create_orders_item(data: $data) {
       id
       total_price
       status

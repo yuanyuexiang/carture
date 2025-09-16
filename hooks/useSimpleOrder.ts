@@ -74,7 +74,7 @@ export const useSimpleOrder = () => {
 
       // 4. 创建订单
       const response = await createOrderMutation({
-        variables: { orderData }
+        variables: { data: orderData }  // 修正为data，匹配GraphQL schema
       });
 
       console.log('✅ 订单创建成功:', response.data);
