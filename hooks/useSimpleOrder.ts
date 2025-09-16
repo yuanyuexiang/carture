@@ -98,11 +98,21 @@ export const useSimpleOrder = () => {
       });
 
       console.log('✅ 订单删除成功:', response.data);
-      return response.data;
+      
+      // 返回统一格式，包含success字段供OrderManager使用
+      return {
+        success: true,
+        data: response.data
+      };
 
     } catch (error: any) {
       console.error('❌ 删除订单失败:', error);
-      throw error;
+      
+      // 返回错误格式，包含success: false
+      return {
+        success: false,
+        message: error.message || '删除订单时发生错误'
+      };
     } finally {
       setLoading(false);
     }
