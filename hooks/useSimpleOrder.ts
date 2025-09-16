@@ -94,7 +94,7 @@ export const useSimpleOrder = () => {
       console.log('🗑️ 删除订单:', orderId);
 
       const response = await deleteOrderMutation({
-        variables: { id: orderId }
+        variables: { orderId: orderId }  // 修正变量名，匹配GraphQL定义
       });
 
       console.log('✅ 订单删除成功:', response.data);
