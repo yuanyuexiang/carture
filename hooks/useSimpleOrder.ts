@@ -14,7 +14,7 @@ export const useSimpleOrder = () => {
 
   const createSimpleOrder = async (
     productId: string, 
-    productInfo?: { name: string, price: number },
+    productInfo: { name: string, price: number }, // 改为必需参数
     boutiqueId?: string
   ) => {
     setLoading(true);
@@ -55,9 +55,11 @@ export const useSimpleOrder = () => {
           status: customerInfo.status || 'active'
         },
         product: {
-          id: productId
+          id: productId,
+          name: productInfo.name,    // 去掉可选链，因为现在是必需参数
+          price: productInfo.price   // 去掉可选链，因为现在是必需参数
         },
-        total_price: productInfo?.price || 0,
+        total_price: productInfo.price, // 去掉可选链
         status: 'pending'
       };
 
