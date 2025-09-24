@@ -37,7 +37,7 @@ const getApiUri = () => {
   } 
   
   // 开发环境：移动端或SSR，直接连接开发服务器
-  const devDirectUri = 'https://forge.matrix-net.tech/graphql';
+  const devDirectUri = 'https://forge.kcbaotech.com/graphql';
   console.log('📱 开发环境直接连接:', devDirectUri);
   return devDirectUri;
 };
@@ -49,7 +49,7 @@ const httpLink = createHttpLink({
   },
 });
 
-const token = 'CCZnVSanwCwzS6edoC8-2ImbzJiZLeAD';
+const token = 'CCZnVSanwCwzS6edoC8t2ImbzJiZLeAD';
 
 const authLink = setContext((_: any, context: any) => ({
   headers: {

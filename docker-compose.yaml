@@ -11,10 +11,10 @@ services:
       - matrix-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.carture.rule=Host(`carture.matrix-net.tech`)" # 替换为你的域名
+      - "traefik.http.routers.carture.rule=Host(`carture.kcbaotech.com`)" # 替换为你的域名
       - "traefik.http.routers.carture.entrypoints=websecure"
       - "traefik.http.routers.carture.service=carture"
-      - "traefik.http.routers.carture.tls.certresolver=aliyunresolver"
+      - "traefik.http.routers.carture.tls.certresolver=dnspodresolver"
       - "traefik.http.services.carture.loadbalancer.server.port=80"
 
 networks:

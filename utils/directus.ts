@@ -19,7 +19,7 @@ const getDirectusUrl = () => {
   }
   
   // 开发环境：直接连接开发服务器
-  const devDirectusUrl = 'https://forge.matrix-net.tech';
+  const devDirectusUrl = 'https://forge.kcbaotech.com';
   console.log('📱 开发环境Directus端点:', devDirectusUrl);
   return devDirectusUrl;
 };
