@@ -30,7 +30,7 @@ export interface WechatAuthResponse {
 }
 
 export class WechatAuth {
-  private static readonly APP_ID = 'wxab1aa1e7e686d436';
+  private static readonly APP_ID = 'wxc775657fc1683bd8';
   private static readonly STORAGE_KEY_USER_INFO = 'wechat_user_info';
   private static readonly STORAGE_KEY_OPENID = 'wechat_openid';
 
