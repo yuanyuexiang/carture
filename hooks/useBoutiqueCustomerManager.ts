@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-    useCreateCustomerWithBoutiqueMutation,
-    useGetCustomerByOpenIdAndBoutiqueLazyQuery
+  useCreateCustomerWithBoutiqueMutation,
+  useGetCustomerByOpenIdAndBoutiqueLazyQuery
 } from '../generated/business-graphql';
 import { WechatAuth } from '../utils/wechat-auth';
+import { useVisitManager } from './useVisitManager';
 
 export interface CustomerInfo {
   id: string;
@@ -55,10 +56,13 @@ export const useBoutiqueCustomerManager = (): UseBoutiqueCustomerManagerResult =
   // GraphQL hooks
   const [getCustomerByOpenIdAndBoutique] = useGetCustomerByOpenIdAndBoutiqueLazyQuery();
   const [createCustomerWithBoutique] = useCreateCustomerWithBoutiqueMutation();
+  
+  // 访问记录管理
+  const { recordVisit } = useVisitManager();
 
   /**
    * 处理店铺客户信息的核心逻辑
-   * 简单直接：查询 → 没有就创建,有就返回
+   * 简单直接：查询 → 没有就创建,有就返回 → 创建访问记录
    */
   const processBoutiqueCustomer = useCallback(async (boutiqueId: string): Promise<CustomerInfo | null> => {
     console.log('🔍 开始处理店铺客户信息:', boutiqueId);
@@ -83,40 +87,54 @@ export const useBoutiqueCustomerManager = (): UseBoutiqueCustomerManagerResult =
       }
     });
 
-    // 3. 如果找到客户记录,直接返回
+    let customer: CustomerInfo | null = null;
+
+    // 3. 如果找到客户记录,直接使用
     if (data?.customers && data.customers.length > 0) {
-      const customer = data.customers[0] as CustomerInfo;
+      customer = data.customers[0] as CustomerInfo;
       console.log('✅ 找到现有客户记录:', {
         customerId: customer.id,
         nickname: customer.nick_name
       });
-      return customer;
-    }
+    } else {
+      // 4. 没有找到客户记录,创建新的
+      console.log('❌ 未找到客户记录,创建新客户...');
+      const createResult = await createCustomerWithBoutique({
+        variables: {
+          open_id: wechatUserInfo.openid,
+          nick_name: wechatUserInfo.nickname || null,
+          avatar: wechatUserInfo.headimgurl || null,
+          sex: wechatUserInfo.sex || null,
+          boutiqueId: boutiqueId
+        }
+      });
 
-    // 4. 没有找到客户记录,创建新的
-    console.log('❌ 未找到客户记录,创建新客户...');
-    const createResult = await createCustomerWithBoutique({
-      variables: {
-        open_id: wechatUserInfo.openid,
-        nick_name: wechatUserInfo.nickname || null,
-        avatar: wechatUserInfo.headimgurl || null,
-        sex: wechatUserInfo.sex || null,
-        boutiqueId: boutiqueId
+      if (!createResult.data?.create_customers_item) {
+        throw new Error('创建客户记录失败');
       }
-    });
 
-    if (!createResult.data?.create_customers_item) {
-      throw new Error('创建客户记录失败');
+      customer = createResult.data.create_customers_item as CustomerInfo;
+      console.log('✅ 成功创建新客户记录:', {
+        customerId: customer.id,
+        nickname: customer.nick_name
+      });
     }
 
-    const customer = createResult.data.create_customers_item as CustomerInfo;
-    console.log('✅ 成功创建新客户记录:', {
-      customerId: customer.id,
-      nickname: customer.nick_name
-    });
+    // 5. 创建访问记录
+    console.log('📊 记录店铺访问...');
+    try {
+      const visitResult = await recordVisit(wechatUserInfo, boutiqueId);
+      if (visitResult.success) {
+        console.log('✅ 访问记录创建成功');
+      } else {
+        console.warn('⚠️ 访问记录创建失败，但不影响客户流程:', visitResult.message);
+      }
+    } catch (visitError) {
+      console.warn('⚠️ 访问记录创建异常，但不影响客户流程:', visitError);
+    }
 
     return customer;
-  }, [getCustomerByOpenIdAndBoutique, createCustomerWithBoutique]);
+  }, [getCustomerByOpenIdAndBoutique, createCustomerWithBoutique, recordVisit]);
 
   /**
    * 切换到新店铺
