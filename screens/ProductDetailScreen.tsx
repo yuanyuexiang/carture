@@ -291,7 +291,7 @@ const ProductDetailScreen: React.FC = () => {
         )}
         <Text style={styles.name}>{product.name}</Text>
         {product.subtitle && <Text style={styles.desc}>{product.subtitle}</Text>}
-        <Text style={styles.price}>￥{product.price}</Text>
+        {/* <Text style={styles.price}>￥{product.price}</Text> */}
         {product.category_id && (
           <Text style={styles.category}>分类：{product.category_id.name}</Text>
         )}
