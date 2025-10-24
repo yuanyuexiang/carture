@@ -58,6 +58,7 @@ export const useBoutiqueCustomerManager = (): UseBoutiqueCustomerManagerResult =
 
   /**
    * 处理店铺客户信息的核心逻辑
+   * 简单直接：查询 → 没有就创建,有就返回
    */
   const processBoutiqueCustomer = useCallback(async (boutiqueId: string): Promise<CustomerInfo | null> => {
     console.log('🔍 开始处理店铺客户信息:', boutiqueId);
@@ -65,7 +66,7 @@ export const useBoutiqueCustomerManager = (): UseBoutiqueCustomerManagerResult =
     // 1. 获取微信用户信息
     const wechatUserInfo = WechatAuth.getUserInfo();
     if (!wechatUserInfo?.openid) {
-      throw new Error('未找到微信用户信息，请先进行微信授权登录');
+      throw new Error('未找到微信用户信息,请先进行微信授权登录');
     }
 
     console.log('👤 微信用户信息:', {
@@ -82,39 +83,37 @@ export const useBoutiqueCustomerManager = (): UseBoutiqueCustomerManagerResult =
       }
     });
 
-    let customer: CustomerInfo | null = null;
-
+    // 3. 如果找到客户记录,直接返回
     if (data?.customers && data.customers.length > 0) {
-      // 3a. 找到现有客户记录
-      customer = data.customers[0] as CustomerInfo;
+      const customer = data.customers[0] as CustomerInfo;
       console.log('✅ 找到现有客户记录:', {
         customerId: customer.id,
         nickname: customer.nick_name
       });
-    } else {
-      // 3b. 没有找到客户记录，创建新的
-      console.log('❌ 未找到客户记录，创建新客户...');
-      
-      const createResult = await createCustomerWithBoutique({
-        variables: {
-          open_id: wechatUserInfo.openid,
-          nick_name: wechatUserInfo.nickname || null,
-          avatar: wechatUserInfo.headimgurl || null,
-          sex: wechatUserInfo.sex || null,
-          boutiqueId: boutiqueId
-        }
-      });
-
-      if (!createResult.data?.create_customers_item) {
-        throw new Error('创建客户记录失败');
-      }
-
-      customer = createResult.data.create_customers_item as CustomerInfo;
-      console.log('✅ 成功创建新客户记录:', {
-        customerId: customer.id,
-        nickname: customer.nick_name
-      });
+      return customer;
     }
+
+    // 4. 没有找到客户记录,创建新的
+    console.log('❌ 未找到客户记录,创建新客户...');
+    const createResult = await createCustomerWithBoutique({
+      variables: {
+        open_id: wechatUserInfo.openid,
+        nick_name: wechatUserInfo.nickname || null,
+        avatar: wechatUserInfo.headimgurl || null,
+        sex: wechatUserInfo.sex || null,
+        boutiqueId: boutiqueId
+      }
+    });
+
+    if (!createResult.data?.create_customers_item) {
+      throw new Error('创建客户记录失败');
+    }
+
+    const customer = createResult.data.create_customers_item as CustomerInfo;
+    console.log('✅ 成功创建新客户记录:', {
+      customerId: customer.id,
+      nickname: customer.nick_name
+    });
 
     return customer;
   }, [getCustomerByOpenIdAndBoutique, createCustomerWithBoutique]);
