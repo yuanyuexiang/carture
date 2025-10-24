@@ -62,7 +62,7 @@ export const useBoutiqueCustomerManager = (): UseBoutiqueCustomerManagerResult =
 
   /**
    * 处理店铺客户信息的核心逻辑
-   * 简单直接：查询 → 没有就创建,有就返回 → 创建访问记录
+   * 简单直接：查询 → 没有就创建,有就返回
    */
   const processBoutiqueCustomer = useCallback(async (boutiqueId: string): Promise<CustomerInfo | null> => {
     console.log('🔍 开始处理店铺客户信息:', boutiqueId);
@@ -120,21 +120,8 @@ export const useBoutiqueCustomerManager = (): UseBoutiqueCustomerManagerResult =
       });
     }
 
-    // 5. 创建访问记录
-    console.log('📊 记录店铺访问...');
-    try {
-      const visitResult = await recordVisit(wechatUserInfo, boutiqueId);
-      if (visitResult.success) {
-        console.log('✅ 访问记录创建成功');
-      } else {
-        console.warn('⚠️ 访问记录创建失败，但不影响客户流程:', visitResult.message);
-      }
-    } catch (visitError) {
-      console.warn('⚠️ 访问记录创建异常，但不影响客户流程:', visitError);
-    }
-
     return customer;
-  }, [getCustomerByOpenIdAndBoutique, createCustomerWithBoutique, recordVisit]);
+  }, [getCustomerByOpenIdAndBoutique, createCustomerWithBoutique]);
 
   /**
    * 切换到新店铺
@@ -170,6 +157,24 @@ export const useBoutiqueCustomerManager = (): UseBoutiqueCustomerManagerResult =
         boutiqueId,
         customerId: customer?.id
       });
+
+      // 切换店铺成功后，创建访问记录
+      if (customer) {
+        console.log('📊 记录店铺访问...');
+        try {
+          const wechatUserInfo = WechatAuth.getUserInfo();
+          if (wechatUserInfo) {
+            const visitResult = await recordVisit(wechatUserInfo, boutiqueId);
+            if (visitResult.success) {
+              console.log('✅ 访问记录创建成功');
+            } else {
+              console.warn('⚠️ 访问记录创建失败:', visitResult.message);
+            }
+          }
+        } catch (visitError) {
+          console.warn('⚠️ 访问记录创建异常:', visitError);
+        }
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '处理客户信息失败';
       setError(errorMessage);
