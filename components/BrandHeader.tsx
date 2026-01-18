@@ -10,7 +10,7 @@ const BrandHeader: React.FC = () => {
       <Image
         source={require('../assets/images/logo.png')}
         style={styles.logoImage}
-        resizeMode="contain"
+        resizeMode="cover"
       />
     </View>
   );
@@ -111,15 +111,16 @@ const styles = StyleSheet.create({
   brandLogo: {
     width: 48,
     height: 48,
-    backgroundColor: '#ff6b35',
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    overflow: 'hidden',
+    backgroundColor: 'transparent',
   },
   logoImage: {
-    width: 32,
-    height: 32,
+    width: '100%',
+    height: '100%',
   },
   logoText: {
     color: 'white',
