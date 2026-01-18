@@ -93,8 +93,8 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
       <View style={styles.authContainer}>
         {/* 应用标题 */}
         <View style={styles.header}>
-          <Text style={styles.appTitle}>老板衣橱</Text>
-          <Text style={styles.appSubtitle}>时尚精品男装</Text>
+          <Text style={styles.appTitle}>开晨宝科技</Text>
+          <Text style={styles.appSubtitle}>致力于创造充满丰富和充实体验的精彩生活</Text>
         </View>
 
         {/* 授权提示 */}
