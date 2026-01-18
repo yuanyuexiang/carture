@@ -1,9 +1,19 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { useDirectBoutiqueData } from '../hooks/useDirectBoutiqueData';
 
 const BrandHeader: React.FC = () => {
   const { boutique, boutiqueLoading, boutiqueError, boutiqueNotFound } = useDirectBoutiqueData();
+
+  const Logo = () => (
+    <View style={styles.brandLogo}>
+      <Image
+        source={require('../assets/images/logo.png')}
+        style={styles.logoImage}
+        resizeMode="contain"
+      />
+    </View>
+  );
 
   // 如果店铺不存在，不渲染任何内容
   if (boutiqueNotFound) {
@@ -14,9 +24,7 @@ const BrandHeader: React.FC = () => {
   if (boutiqueLoading) {
     return (
       <View style={styles.brandSection}>
-        <View style={styles.brandLogo}>
-          <Text style={styles.logoText}>衣橱</Text>
-        </View>
+        <Logo />
         <View style={styles.brandInfo}>
           <ActivityIndicator size="small" color="#ff6b35" />
           <Text style={styles.brandName}>加载中...</Text>
@@ -29,9 +37,7 @@ const BrandHeader: React.FC = () => {
   if (boutiqueError) {
     return (
       <View style={styles.brandSection}>
-        <View style={styles.brandLogo}>
-          <Text style={styles.logoText}>衣橱</Text>
-        </View>
+        <Logo />
         <View style={styles.brandInfo}>
           <Text style={styles.brandName}>加载店铺信息失败</Text>
           <Text style={styles.errorText}>{boutiqueError.message || '未知错误'}</Text>
@@ -44,9 +50,7 @@ const BrandHeader: React.FC = () => {
   if (!boutique) {
     return (
       <View style={styles.brandSection}>
-        <View style={styles.brandLogo}>
-          <Text style={styles.logoText}>衣橱</Text>
-        </View>
+        <Logo />
         <View style={styles.brandInfo}>
           <Text style={styles.brandName}>默认服装店</Text>
           <View style={styles.ratingSection}>
@@ -80,9 +84,7 @@ const BrandHeader: React.FC = () => {
 
   return (
     <View style={styles.brandSection}>
-      <View style={styles.brandLogo}>
-        <Text style={styles.logoText}>衣橱</Text>
-      </View>
+      <Logo />
       <View style={styles.brandInfo}>
         <Text style={styles.brandName}>
           {boutique.name || '我的精品店'}
@@ -114,6 +116,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+  },
+  logoImage: {
+    width: 32,
+    height: 32,
   },
   logoText: {
     color: 'white',
