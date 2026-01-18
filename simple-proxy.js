@@ -5,7 +5,7 @@ const https = require('https');
 const url = require('url');
 
 const PORT = 3001;
-const TARGET_HOST = 'forge.kcbaotech.com';
+const TARGET_HOST = 'carture.kcbaotech.com';
 const TARGET_PORT = 443;
 
 const server = http.createServer((req, res) => {
@@ -28,6 +28,17 @@ const server = http.createServer((req, res) => {
       status: 'ok', 
       message: 'Wardrobe代理服务器运行正常',
       timestamp: new Date().toISOString()
+    }));
+    return;
+  }
+
+  // 仅代理 /api 下的请求，避免把 Web 静态资源(如 /assets/...) 转发到 Directus
+  if (!req.url.startsWith('/api')) {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      error: 'NOT_PROXIED',
+      message: '此代理仅处理 /api/* 请求；静态资源请由 Expo Web 或 Nginx 提供。',
+      path: req.url,
     }));
     return;
   }

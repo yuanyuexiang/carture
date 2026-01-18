@@ -37,7 +37,7 @@ const getApiUri = () => {
   } 
   
   // 开发环境：移动端或SSR，直接连接开发服务器
-  const devDirectUri = 'https://forge.kcbaotech.com/graphql';
+  const devDirectUri = 'https://carture.kcbaotech.com/graphql';
   console.log('📱 开发环境直接连接:', devDirectUri);
   return devDirectUri;
 };
