@@ -11,6 +11,12 @@ services:
       - matrix-network
     labels:
       - "traefik.enable=true"
+      # 前端静态资源优先路由：避免被 Directus 的 /assets 规则拦截
+      - "traefik.http.routers.carture-static.rule=Host(`carture.kcbaotech.com`) && PathPrefix(`/assets/resources/`)"
+      - "traefik.http.routers.carture-static.entrypoints=websecure"
+      - "traefik.http.routers.carture-static.service=carture"
+      - "traefik.http.routers.carture-static.tls.certresolver=dnspodresolver"
+      - "traefik.http.routers.carture-static.priority=2000"
       - "traefik.http.routers.carture.rule=Host(`carture.kcbaotech.com`)" # 替换为你的域名
       - "traefik.http.routers.carture.entrypoints=websecure"
       - "traefik.http.routers.carture.service=carture"
