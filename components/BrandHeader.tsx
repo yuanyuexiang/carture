@@ -8,7 +8,7 @@ const BrandHeader: React.FC = () => {
   const Logo = () => (
     <View style={styles.brandLogo}>
       <Image
-        source={require('../assets/images/logo.png')}
+        source={require('../resources/brand/logo.png')}
         style={styles.logoImage}
         resizeMode="contain"
       />
