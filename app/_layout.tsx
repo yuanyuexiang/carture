@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 // import 'react-native-reanimated'; // 移除未使用的 reanimated 导入
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthWrapper } from '../components/AuthWrapper';
 import DataInitializer from '../components/DataInitializer';
 import WardrobeApolloProvider from '../components/WardrobeApolloProvider';
@@ -73,6 +74,7 @@ export default function RootLayout() {
   }
 
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <WardrobeApolloProvider>
         <DataInitializer>
           <BoutiqueProvider>
@@ -97,5 +99,6 @@ export default function RootLayout() {
           </BoutiqueProvider>
         </DataInitializer>
       </WardrobeApolloProvider>
+    </GestureHandlerRootView>
   );
 }

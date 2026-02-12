@@ -6,6 +6,7 @@ import {
   Dimensions,
   Image,
   Modal,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -14,6 +15,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import ZoomableImage from '../components/ZoomableImage';
 import { useBoutiqueContext } from '../contexts/BoutiqueContext';
 import { useGetProductByIdQuery } from '../generated/business-graphql';
 import { useProductViewRecorder } from '../hooks/useProductViewRecorder';
@@ -38,6 +40,7 @@ const ProductDetailScreen: React.FC = () => {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [currentImageUrl, setCurrentImageUrl] = useState<string>('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
   
   // 滑动手势状态
   const [touchStartX, setTouchStartX] = useState<number>(0);
@@ -76,12 +79,14 @@ const ProductDetailScreen: React.FC = () => {
   const openImagePreview = (imageUrl: string, index: number) => {
     setCurrentImageUrl(imageUrl);
     setCurrentImageIndex(index);
+    setIsZoomed(false);
     setPreviewVisible(true);
   };
   
   // 关闭图片预览
   const closeImagePreview = () => {
     setPreviewVisible(false);
+    setIsZoomed(false);
   };
   
   // 上一张图片
@@ -229,12 +234,14 @@ const ProductDetailScreen: React.FC = () => {
     
     const handleTouchStartNative = (event: TouchEvent) => {
       if (!previewVisible) return;
+      if (isZoomed) return;
       startX = event.touches[0].clientX;
       console.log('原生触摸开始:', startX);
     };
     
     const handleTouchEndNative = (event: TouchEvent) => {
       if (!previewVisible || !startX) return;
+      if (isZoomed) return;
       const endX = event.changedTouches[0].clientX;
       const distance = startX - endX;
       const minSwipeDistance = 50;
@@ -272,7 +279,7 @@ const ProductDetailScreen: React.FC = () => {
         window.removeEventListener('touchend', handleTouchEndNative);
       };
     }
-  }, [previewVisible, currentImageIndex, allImages]);
+  }, [previewVisible, currentImageIndex, allImages, isZoomed]);
 
   // 在所有 Hooks 调用之后再进行条件检查
   if (loading) return <ActivityIndicator />;
@@ -351,16 +358,14 @@ const ProductDetailScreen: React.FC = () => {
       >
         <StatusBar backgroundColor="rgba(0,0,0,0.9)" barStyle="light-content" />
         <SafeAreaView style={styles.modalContainer}>
-          <TouchableOpacity 
-            style={styles.modalOverlay} 
-            activeOpacity={1}
-            onPress={closeImagePreview}
-          >
+          <View style={styles.modalOverlay}>
+            <Pressable style={StyleSheet.absoluteFill} onPress={closeImagePreview} />
             <View style={styles.imagePreviewContainer}>
-              <Image 
-                source={{ uri: currentImageUrl }} 
+              <ZoomableImage
+                uri={currentImageUrl}
                 style={styles.previewImage}
-                resizeMode="contain"
+                doubleTapScale={2.5}
+                onZoomChange={setIsZoomed}
               />
               
               {/* 图片指示器 */}
@@ -385,7 +390,7 @@ const ProductDetailScreen: React.FC = () => {
                 </View>
               )}
             </View>
-          </TouchableOpacity>
+          </View>
         </SafeAreaView>
       </Modal>
     </SafeAreaView>

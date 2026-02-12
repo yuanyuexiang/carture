@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.35)', // 保持背景不透明度，确保文字可读
     padding: 12,
     justifyContent: 'flex-end', // 改为底部对齐，让重要信息在底部显示
-    minHeight: 96,
+    minHeight: 80,
   },
   placeholderCard: {
     width: '100%',
