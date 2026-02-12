@@ -52,6 +52,8 @@ export type BusinessMutation = {
   create_views_items: Array<BusinessViews>;
   create_visits_item?: Maybe<BusinessVisits>;
   create_visits_items: Array<BusinessVisits>;
+  create_wechat_users_item?: Maybe<BusinessWechat_Users>;
+  create_wechat_users_items: Array<BusinessWechat_Users>;
   delete_boutiques_item?: Maybe<BusinessDelete_One>;
   delete_boutiques_items?: Maybe<BusinessDelete_Many>;
   delete_categories_item?: Maybe<BusinessDelete_One>;
@@ -68,6 +70,8 @@ export type BusinessMutation = {
   delete_views_items?: Maybe<BusinessDelete_Many>;
   delete_visits_item?: Maybe<BusinessDelete_One>;
   delete_visits_items?: Maybe<BusinessDelete_Many>;
+  delete_wechat_users_item?: Maybe<BusinessDelete_One>;
+  delete_wechat_users_items?: Maybe<BusinessDelete_Many>;
   update_boutiques_batch: Array<BusinessBoutiques>;
   update_boutiques_item?: Maybe<BusinessBoutiques>;
   update_boutiques_items: Array<BusinessBoutiques>;
@@ -92,6 +96,9 @@ export type BusinessMutation = {
   update_visits_batch: Array<BusinessVisits>;
   update_visits_item?: Maybe<BusinessVisits>;
   update_visits_items: Array<BusinessVisits>;
+  update_wechat_users_batch: Array<BusinessWechat_Users>;
+  update_wechat_users_item?: Maybe<BusinessWechat_Users>;
+  update_wechat_users_items: Array<BusinessWechat_Users>;
 };
 
 
@@ -223,6 +230,22 @@ export type BusinessMutationCreate_Visits_ItemsArgs = {
 };
 
 
+export type BusinessMutationCreate_Wechat_Users_ItemArgs = {
+  data: BusinessCreate_Wechat_Users_Input;
+};
+
+
+export type BusinessMutationCreate_Wechat_Users_ItemsArgs = {
+  data?: InputMaybe<Array<BusinessCreate_Wechat_Users_Input>>;
+  filter?: InputMaybe<BusinessWechat_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
 export type BusinessMutationDelete_Boutiques_ItemArgs = {
   id: Scalars['ID']['input'];
 };
@@ -299,6 +322,16 @@ export type BusinessMutationDelete_Visits_ItemArgs = {
 
 
 export type BusinessMutationDelete_Visits_ItemsArgs = {
+  ids: Array<InputMaybe<Scalars['ID']['input']>>;
+};
+
+
+export type BusinessMutationDelete_Wechat_Users_ItemArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type BusinessMutationDelete_Wechat_Users_ItemsArgs = {
   ids: Array<InputMaybe<Scalars['ID']['input']>>;
 };
 
@@ -534,6 +567,35 @@ export type BusinessMutationUpdate_Visits_ItemsArgs = {
   sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
+
+export type BusinessMutationUpdate_Wechat_Users_BatchArgs = {
+  data?: InputMaybe<Array<BusinessUpdate_Wechat_Users_Input>>;
+  filter?: InputMaybe<BusinessWechat_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type BusinessMutationUpdate_Wechat_Users_ItemArgs = {
+  data: BusinessUpdate_Wechat_Users_Input;
+  id: Scalars['ID']['input'];
+};
+
+
+export type BusinessMutationUpdate_Wechat_Users_ItemsArgs = {
+  data: BusinessUpdate_Wechat_Users_Input;
+  filter?: InputMaybe<BusinessWechat_Users_Filter>;
+  ids: Array<InputMaybe<Scalars['ID']['input']>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
 export type BusinessQuery = {
   __typename?: 'Query';
   boutiques: Array<BusinessBoutiques>;
@@ -568,6 +630,10 @@ export type BusinessQuery = {
   visits_aggregated: Array<BusinessVisits_Aggregated>;
   visits_by_id?: Maybe<BusinessVisits>;
   visits_by_version?: Maybe<BusinessVersion_Visits>;
+  wechat_users: Array<BusinessWechat_Users>;
+  wechat_users_aggregated: Array<BusinessWechat_Users_Aggregated>;
+  wechat_users_by_id?: Maybe<BusinessWechat_Users>;
+  wechat_users_by_version?: Maybe<BusinessVersion_Wechat_Users>;
 };
 
 
@@ -834,6 +900,39 @@ export type BusinessQueryVisits_By_VersionArgs = {
   version: Scalars['String']['input'];
 };
 
+
+export type BusinessQueryWechat_UsersArgs = {
+  filter?: InputMaybe<BusinessWechat_Users_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type BusinessQueryWechat_Users_AggregatedArgs = {
+  filter?: InputMaybe<BusinessWechat_Users_Filter>;
+  groupBy?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type BusinessQueryWechat_Users_By_IdArgs = {
+  id: Scalars['ID']['input'];
+  version?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type BusinessQueryWechat_Users_By_VersionArgs = {
+  id: Scalars['ID']['input'];
+  version: Scalars['String']['input'];
+};
+
 export type BusinessSubscription = {
   __typename?: 'Subscription';
   boutiques_mutated?: Maybe<BusinessBoutiques_Mutated>;
@@ -859,12 +958,12 @@ export type BusinessSubscription = {
   directus_translations_mutated?: Maybe<BusinessDirectus_Translations_Mutated>;
   directus_users_mutated?: Maybe<BusinessDirectus_Users_Mutated>;
   directus_versions_mutated?: Maybe<BusinessDirectus_Versions_Mutated>;
-  directus_webhooks_mutated?: Maybe<BusinessDirectus_Webhooks_Mutated>;
   orders_mutated?: Maybe<BusinessOrders_Mutated>;
   products_mutated?: Maybe<BusinessProducts_Mutated>;
   terminals_mutated?: Maybe<BusinessTerminals_Mutated>;
   views_mutated?: Maybe<BusinessViews_Mutated>;
   visits_mutated?: Maybe<BusinessVisits_Mutated>;
+  wechat_users_mutated?: Maybe<BusinessWechat_Users_Mutated>;
 };
 
 
@@ -983,11 +1082,6 @@ export type BusinessSubscriptionDirectus_Versions_MutatedArgs = {
 };
 
 
-export type BusinessSubscriptionDirectus_Webhooks_MutatedArgs = {
-  event?: InputMaybe<BusinessEventEnum>;
-};
-
-
 export type BusinessSubscriptionOrders_MutatedArgs = {
   event?: InputMaybe<BusinessEventEnum>;
 };
@@ -1009,6 +1103,11 @@ export type BusinessSubscriptionViews_MutatedArgs = {
 
 
 export type BusinessSubscriptionVisits_MutatedArgs = {
+  event?: InputMaybe<BusinessEventEnum>;
+};
+
+
+export type BusinessSubscriptionWechat_Users_MutatedArgs = {
   event?: InputMaybe<BusinessEventEnum>;
 };
 
@@ -1050,8 +1149,10 @@ export type BusinessBoutiques = {
   id: Scalars['ID']['output'];
   images?: Maybe<Scalars['JSON']['output']>;
   images_func?: Maybe<BusinessCount_Functions>;
+  logo?: Maybe<Scalars['String']['output']>;
   main_image?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
+  official_account_image?: Maybe<Scalars['String']['output']>;
   sort?: Maybe<Scalars['Int']['output']>;
   stars?: Maybe<Scalars['Int']['output']>;
   status?: Maybe<Scalars['String']['output']>;
@@ -1105,8 +1206,10 @@ export type BusinessBoutiques_Aggregated_Count = {
   expire_date?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
   images?: Maybe<Scalars['Int']['output']>;
+  logo?: Maybe<Scalars['Int']['output']>;
   main_image?: Maybe<Scalars['Int']['output']>;
   name?: Maybe<Scalars['Int']['output']>;
+  official_account_image?: Maybe<Scalars['Int']['output']>;
   sort?: Maybe<Scalars['Int']['output']>;
   stars?: Maybe<Scalars['Int']['output']>;
   status?: Maybe<Scalars['Int']['output']>;
@@ -1138,8 +1241,10 @@ export type BusinessBoutiques_Filter = {
   id?: InputMaybe<BusinessNumber_Filter_Operators>;
   images?: InputMaybe<BusinessString_Filter_Operators>;
   images_func?: InputMaybe<BusinessCount_Function_Filter_Operators>;
+  logo?: InputMaybe<BusinessString_Filter_Operators>;
   main_image?: InputMaybe<BusinessString_Filter_Operators>;
   name?: InputMaybe<BusinessString_Filter_Operators>;
+  official_account_image?: InputMaybe<BusinessString_Filter_Operators>;
   sort?: InputMaybe<BusinessNumber_Filter_Operators>;
   stars?: InputMaybe<BusinessNumber_Filter_Operators>;
   status?: InputMaybe<BusinessString_Filter_Operators>;
@@ -1284,8 +1389,10 @@ export type BusinessCreate_Boutiques_Input = {
   expire_date?: InputMaybe<Scalars['Date']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   images?: InputMaybe<Scalars['JSON']['input']>;
+  logo?: InputMaybe<Scalars['String']['input']>;
   main_image?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  official_account_image?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['Int']['input']>;
   stars?: InputMaybe<Scalars['Int']['input']>;
   status?: InputMaybe<Scalars['String']['input']>;
@@ -1306,10 +1413,13 @@ export type BusinessCreate_Categories_Input = {
 };
 
 export type BusinessCreate_Customers_Input = {
+  address?: InputMaybe<Scalars['String']['input']>;
   avatar?: InputMaybe<Scalars['String']['input']>;
   boutique?: InputMaybe<BusinessCreate_Boutiques_Input>;
+  contact?: InputMaybe<Scalars['String']['input']>;
   date_created?: InputMaybe<Scalars['Date']['input']>;
   date_updated?: InputMaybe<Scalars['Date']['input']>;
+  full_name?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   nick_name?: InputMaybe<Scalars['String']['input']>;
   open_id: Scalars['String']['input'];
@@ -1450,6 +1560,8 @@ export type BusinessCreate_Products_Input = {
   boutique?: InputMaybe<BusinessCreate_Boutiques_Input>;
   boutique_id?: InputMaybe<BusinessCreate_Boutiques_Input>;
   brand?: InputMaybe<Scalars['String']['input']>;
+  carousel?: InputMaybe<Scalars['String']['input']>;
+  carousel_images?: InputMaybe<Scalars['JSON']['input']>;
   category_id?: InputMaybe<BusinessCreate_Categories_Input>;
   created_at?: InputMaybe<Scalars['Date']['input']>;
   date_created?: InputMaybe<Scalars['Date']['input']>;
@@ -1458,6 +1570,7 @@ export type BusinessCreate_Products_Input = {
   id?: InputMaybe<Scalars['ID']['input']>;
   images?: InputMaybe<Scalars['JSON']['input']>;
   is_on_sale?: InputMaybe<Scalars['Boolean']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
   main_image?: InputMaybe<Scalars['String']['input']>;
   market_price?: InputMaybe<Scalars['Float']['input']>;
   name: Scalars['String']['input'];
@@ -1476,9 +1589,22 @@ export type BusinessCreate_Products_Input = {
 };
 
 export type BusinessCreate_Terminals_Input = {
+  android_id?: InputMaybe<Scalars['String']['input']>;
+  authorized_boutique?: InputMaybe<BusinessCreate_Boutiques_Input>;
+  brand?: InputMaybe<Scalars['String']['input']>;
+  carousel_interval?: InputMaybe<Scalars['Int']['input']>;
   date_created?: InputMaybe<Scalars['Date']['input']>;
   date_updated?: InputMaybe<Scalars['Date']['input']>;
+  device_name?: InputMaybe<Scalars['String']['input']>;
+  device_type?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
+  manufacturer?: InputMaybe<Scalars['String']['input']>;
+  model_name?: InputMaybe<Scalars['String']['input']>;
+  os_name?: InputMaybe<Scalars['String']['input']>;
+  os_version?: InputMaybe<Scalars['String']['input']>;
+  purposes?: InputMaybe<Scalars['String']['input']>;
+  supported_cpu_architectures?: InputMaybe<Scalars['String']['input']>;
+  total_memory?: InputMaybe<Scalars['String']['input']>;
   user_created?: InputMaybe<BusinessCreate_Directus_Users_Input>;
   user_updated?: InputMaybe<BusinessCreate_Directus_Users_Input>;
 };
@@ -1504,14 +1630,38 @@ export type BusinessCreate_Visits_Input = {
   user_updated?: InputMaybe<BusinessCreate_Directus_Users_Input>;
 };
 
+export type BusinessCreate_Wechat_Users_Input = {
+  access_token?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['Date']['input']>;
+  expires_at?: InputMaybe<Scalars['Date']['input']>;
+  headimgurl?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  is_active?: InputMaybe<Scalars['Boolean']['input']>;
+  language?: InputMaybe<Scalars['String']['input']>;
+  nickname?: InputMaybe<Scalars['String']['input']>;
+  openid: Scalars['String']['input'];
+  privilege?: InputMaybe<Scalars['JSON']['input']>;
+  province?: InputMaybe<Scalars['String']['input']>;
+  refresh_token?: InputMaybe<Scalars['String']['input']>;
+  scope?: InputMaybe<Scalars['String']['input']>;
+  sex?: InputMaybe<Scalars['Int']['input']>;
+  unionid?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['Date']['input']>;
+};
+
 export type BusinessCustomers = {
   __typename?: 'customers';
+  address?: Maybe<Scalars['String']['output']>;
   avatar?: Maybe<Scalars['String']['output']>;
   boutique?: Maybe<BusinessBoutiques>;
+  contact?: Maybe<Scalars['String']['output']>;
   date_created?: Maybe<Scalars['Date']['output']>;
   date_created_func?: Maybe<BusinessDatetime_Functions>;
   date_updated?: Maybe<Scalars['Date']['output']>;
   date_updated_func?: Maybe<BusinessDatetime_Functions>;
+  full_name?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   nick_name?: Maybe<Scalars['String']['output']>;
   open_id: Scalars['String']['output'];
@@ -1569,10 +1719,13 @@ export type BusinessCustomers_Aggregated = {
 
 export type BusinessCustomers_Aggregated_Count = {
   __typename?: 'customers_aggregated_count';
+  address?: Maybe<Scalars['Int']['output']>;
   avatar?: Maybe<Scalars['Int']['output']>;
   boutique?: Maybe<Scalars['Int']['output']>;
+  contact?: Maybe<Scalars['Int']['output']>;
   date_created?: Maybe<Scalars['Int']['output']>;
   date_updated?: Maybe<Scalars['Int']['output']>;
+  full_name?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
   nick_name?: Maybe<Scalars['Int']['output']>;
   open_id?: Maybe<Scalars['Int']['output']>;
@@ -1595,12 +1748,15 @@ export type BusinessCustomers_Aggregated_Fields = {
 export type BusinessCustomers_Filter = {
   _and?: InputMaybe<Array<InputMaybe<BusinessCustomers_Filter>>>;
   _or?: InputMaybe<Array<InputMaybe<BusinessCustomers_Filter>>>;
+  address?: InputMaybe<BusinessString_Filter_Operators>;
   avatar?: InputMaybe<BusinessString_Filter_Operators>;
   boutique?: InputMaybe<BusinessBoutiques_Filter>;
+  contact?: InputMaybe<BusinessString_Filter_Operators>;
   date_created?: InputMaybe<BusinessDate_Filter_Operators>;
   date_created_func?: InputMaybe<BusinessDatetime_Function_Filter_Operators>;
   date_updated?: InputMaybe<BusinessDate_Filter_Operators>;
   date_updated_func?: InputMaybe<BusinessDatetime_Function_Filter_Operators>;
+  full_name?: InputMaybe<BusinessString_Filter_Operators>;
   id?: InputMaybe<BusinessNumber_Filter_Operators>;
   nick_name?: InputMaybe<BusinessString_Filter_Operators>;
   open_id?: InputMaybe<BusinessString_Filter_Operators>;
@@ -2721,7 +2877,9 @@ export type BusinessDirectus_Roles_Quantifier_Filter = {
 
 export type BusinessDirectus_Settings = {
   __typename?: 'directus_settings';
-  accepted_terms?: Maybe<Scalars['Boolean']['output']>;
+  ai_anthropic_api_key?: Maybe<Scalars['String']['output']>;
+  ai_openai_api_key?: Maybe<Scalars['String']['output']>;
+  ai_system_prompt?: Maybe<Scalars['String']['output']>;
   auth_login_attempts?: Maybe<Scalars['Int']['output']>;
   auth_password_policy?: Maybe<Scalars['String']['output']>;
   basemaps?: Maybe<Scalars['JSON']['output']>;
@@ -2735,15 +2893,30 @@ export type BusinessDirectus_Settings = {
   default_theme_light?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   mapbox_key?: Maybe<Scalars['String']['output']>;
+  /** $t:fields.directus_settings.mcp_allow_deletes_note */
+  mcp_allow_deletes: Scalars['Boolean']['output'];
+  /** $t:fields.directus_settings.mcp_enabled_note */
+  mcp_enabled: Scalars['Boolean']['output'];
+  /** $t:fields.directus_settings.mcp_prompts_collection_note */
+  mcp_prompts_collection?: Maybe<Scalars['String']['output']>;
+  /** $t:fields.directus_settings.mcp_system_prompt_note */
+  mcp_system_prompt?: Maybe<Scalars['String']['output']>;
+  /** $t:fields.directus_settings.mcp_system_prompt_enabled_note */
+  mcp_system_prompt_enabled?: Maybe<Scalars['Boolean']['output']>;
   module_bar?: Maybe<Scalars['JSON']['output']>;
   module_bar_func?: Maybe<BusinessCount_Functions>;
+  org_name?: Maybe<Scalars['String']['output']>;
+  product_updates?: Maybe<Scalars['Boolean']['output']>;
   /** $t:field_options.directus_settings.project_color_note */
   project_color?: Maybe<Scalars['String']['output']>;
   project_descriptor?: Maybe<Scalars['String']['output']>;
   project_id?: Maybe<Scalars['String']['output']>;
   project_logo?: Maybe<BusinessDirectus_Files>;
   project_name?: Maybe<Scalars['String']['output']>;
+  project_owner?: Maybe<Scalars['String']['output']>;
+  project_status?: Maybe<Scalars['String']['output']>;
   project_url?: Maybe<Scalars['String']['output']>;
+  project_usage?: Maybe<Scalars['String']['output']>;
   public_background?: Maybe<BusinessDirectus_Files>;
   public_favicon?: Maybe<BusinessDirectus_Files>;
   public_foreground?: Maybe<BusinessDirectus_Files>;
@@ -3122,39 +3295,6 @@ export type BusinessDirectus_Versions_Mutated = {
   key: Scalars['ID']['output'];
 };
 
-export type BusinessDirectus_Webhooks = {
-  __typename?: 'directus_webhooks';
-  actions: Array<Maybe<Scalars['String']['output']>>;
-  collections: Array<Maybe<Scalars['String']['output']>>;
-  data?: Maybe<Scalars['Boolean']['output']>;
-  headers?: Maybe<Scalars['JSON']['output']>;
-  headers_func?: Maybe<BusinessCount_Functions>;
-  id: Scalars['ID']['output'];
-  method?: Maybe<Scalars['String']['output']>;
-  migrated_flow?: Maybe<BusinessDirectus_Flows>;
-  name: Scalars['String']['output'];
-  status?: Maybe<Scalars['String']['output']>;
-  url: Scalars['String']['output'];
-  was_active_before_deprecation: Scalars['Boolean']['output'];
-};
-
-
-export type BusinessDirectus_WebhooksMigrated_FlowArgs = {
-  filter?: InputMaybe<BusinessDirectus_Flows_Filter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-};
-
-export type BusinessDirectus_Webhooks_Mutated = {
-  __typename?: 'directus_webhooks_mutated';
-  data?: Maybe<BusinessDirectus_Webhooks>;
-  event?: Maybe<BusinessEventEnum>;
-  key: Scalars['ID']['output'];
-};
-
 export type BusinessHash_Filter_Operators = {
   _empty?: InputMaybe<Scalars['Boolean']['input']>;
   _nempty?: InputMaybe<Scalars['Boolean']['input']>;
@@ -3332,6 +3472,9 @@ export type BusinessProducts = {
   boutique?: Maybe<BusinessBoutiques>;
   boutique_id?: Maybe<BusinessBoutiques>;
   brand?: Maybe<Scalars['String']['output']>;
+  carousel?: Maybe<Scalars['String']['output']>;
+  carousel_images?: Maybe<Scalars['JSON']['output']>;
+  carousel_images_func?: Maybe<BusinessCount_Functions>;
   category_id?: Maybe<BusinessCategories>;
   created_at?: Maybe<Scalars['Date']['output']>;
   created_at_func?: Maybe<BusinessDatetime_Functions>;
@@ -3344,6 +3487,7 @@ export type BusinessProducts = {
   images?: Maybe<Scalars['JSON']['output']>;
   images_func?: Maybe<BusinessCount_Functions>;
   is_on_sale?: Maybe<Scalars['Boolean']['output']>;
+  location?: Maybe<Scalars['String']['output']>;
   main_image?: Maybe<Scalars['String']['output']>;
   market_price?: Maybe<Scalars['Float']['output']>;
   name: Scalars['String']['output'];
@@ -3431,6 +3575,8 @@ export type BusinessProducts_Aggregated_Count = {
   barcode?: Maybe<Scalars['Int']['output']>;
   boutique_id?: Maybe<Scalars['Int']['output']>;
   brand?: Maybe<Scalars['Int']['output']>;
+  carousel?: Maybe<Scalars['Int']['output']>;
+  carousel_images?: Maybe<Scalars['Int']['output']>;
   category_id?: Maybe<Scalars['Int']['output']>;
   created_at?: Maybe<Scalars['Int']['output']>;
   date_created?: Maybe<Scalars['Int']['output']>;
@@ -3439,6 +3585,7 @@ export type BusinessProducts_Aggregated_Count = {
   id?: Maybe<Scalars['Int']['output']>;
   images?: Maybe<Scalars['Int']['output']>;
   is_on_sale?: Maybe<Scalars['Int']['output']>;
+  location?: Maybe<Scalars['Int']['output']>;
   main_image?: Maybe<Scalars['Int']['output']>;
   market_price?: Maybe<Scalars['Int']['output']>;
   name?: Maybe<Scalars['Int']['output']>;
@@ -3477,6 +3624,9 @@ export type BusinessProducts_Filter = {
   boutique?: InputMaybe<BusinessBoutiques_Filter>;
   boutique_id?: InputMaybe<BusinessBoutiques_Filter>;
   brand?: InputMaybe<BusinessString_Filter_Operators>;
+  carousel?: InputMaybe<BusinessString_Filter_Operators>;
+  carousel_images?: InputMaybe<BusinessString_Filter_Operators>;
+  carousel_images_func?: InputMaybe<BusinessCount_Function_Filter_Operators>;
   category_id?: InputMaybe<BusinessCategories_Filter>;
   created_at?: InputMaybe<BusinessDate_Filter_Operators>;
   created_at_func?: InputMaybe<BusinessDatetime_Function_Filter_Operators>;
@@ -3489,6 +3639,7 @@ export type BusinessProducts_Filter = {
   images?: InputMaybe<BusinessString_Filter_Operators>;
   images_func?: InputMaybe<BusinessCount_Function_Filter_Operators>;
   is_on_sale?: InputMaybe<BusinessBoolean_Filter_Operators>;
+  location?: InputMaybe<BusinessString_Filter_Operators>;
   main_image?: InputMaybe<BusinessString_Filter_Operators>;
   market_price?: InputMaybe<BusinessNumber_Filter_Operators>;
   name?: InputMaybe<BusinessString_Filter_Operators>;
@@ -3538,13 +3689,36 @@ export type BusinessString_Filter_Operators = {
 
 export type BusinessTerminals = {
   __typename?: 'terminals';
+  android_id?: Maybe<Scalars['String']['output']>;
+  authorized_boutique?: Maybe<BusinessBoutiques>;
+  brand?: Maybe<Scalars['String']['output']>;
+  carousel_interval?: Maybe<Scalars['Int']['output']>;
   date_created?: Maybe<Scalars['Date']['output']>;
   date_created_func?: Maybe<BusinessDatetime_Functions>;
   date_updated?: Maybe<Scalars['Date']['output']>;
   date_updated_func?: Maybe<BusinessDatetime_Functions>;
+  device_name?: Maybe<Scalars['String']['output']>;
+  device_type?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  manufacturer?: Maybe<Scalars['String']['output']>;
+  model_name?: Maybe<Scalars['String']['output']>;
+  os_name?: Maybe<Scalars['String']['output']>;
+  os_version?: Maybe<Scalars['String']['output']>;
+  purposes?: Maybe<Scalars['String']['output']>;
+  supported_cpu_architectures?: Maybe<Scalars['String']['output']>;
+  total_memory?: Maybe<Scalars['String']['output']>;
   user_created?: Maybe<BusinessDirectus_Users>;
   user_updated?: Maybe<BusinessDirectus_Users>;
+};
+
+
+export type BusinessTerminalsAuthorized_BoutiqueArgs = {
+  filter?: InputMaybe<BusinessBoutiques_Filter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
@@ -3583,26 +3757,54 @@ export type BusinessTerminals_Aggregated = {
 
 export type BusinessTerminals_Aggregated_Count = {
   __typename?: 'terminals_aggregated_count';
+  android_id?: Maybe<Scalars['Int']['output']>;
+  authorized_boutique?: Maybe<Scalars['Int']['output']>;
+  brand?: Maybe<Scalars['Int']['output']>;
+  carousel_interval?: Maybe<Scalars['Int']['output']>;
   date_created?: Maybe<Scalars['Int']['output']>;
   date_updated?: Maybe<Scalars['Int']['output']>;
+  device_name?: Maybe<Scalars['Int']['output']>;
+  device_type?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
+  manufacturer?: Maybe<Scalars['Int']['output']>;
+  model_name?: Maybe<Scalars['Int']['output']>;
+  os_name?: Maybe<Scalars['Int']['output']>;
+  os_version?: Maybe<Scalars['Int']['output']>;
+  purposes?: Maybe<Scalars['Int']['output']>;
+  supported_cpu_architectures?: Maybe<Scalars['Int']['output']>;
+  total_memory?: Maybe<Scalars['Int']['output']>;
   user_created?: Maybe<Scalars['Int']['output']>;
   user_updated?: Maybe<Scalars['Int']['output']>;
 };
 
 export type BusinessTerminals_Aggregated_Fields = {
   __typename?: 'terminals_aggregated_fields';
+  authorized_boutique?: Maybe<Scalars['Float']['output']>;
+  carousel_interval?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
 };
 
 export type BusinessTerminals_Filter = {
   _and?: InputMaybe<Array<InputMaybe<BusinessTerminals_Filter>>>;
   _or?: InputMaybe<Array<InputMaybe<BusinessTerminals_Filter>>>;
+  android_id?: InputMaybe<BusinessString_Filter_Operators>;
+  authorized_boutique?: InputMaybe<BusinessBoutiques_Filter>;
+  brand?: InputMaybe<BusinessString_Filter_Operators>;
+  carousel_interval?: InputMaybe<BusinessNumber_Filter_Operators>;
   date_created?: InputMaybe<BusinessDate_Filter_Operators>;
   date_created_func?: InputMaybe<BusinessDatetime_Function_Filter_Operators>;
   date_updated?: InputMaybe<BusinessDate_Filter_Operators>;
   date_updated_func?: InputMaybe<BusinessDatetime_Function_Filter_Operators>;
+  device_name?: InputMaybe<BusinessString_Filter_Operators>;
+  device_type?: InputMaybe<BusinessString_Filter_Operators>;
   id?: InputMaybe<BusinessNumber_Filter_Operators>;
+  manufacturer?: InputMaybe<BusinessString_Filter_Operators>;
+  model_name?: InputMaybe<BusinessString_Filter_Operators>;
+  os_name?: InputMaybe<BusinessString_Filter_Operators>;
+  os_version?: InputMaybe<BusinessString_Filter_Operators>;
+  purposes?: InputMaybe<BusinessString_Filter_Operators>;
+  supported_cpu_architectures?: InputMaybe<BusinessString_Filter_Operators>;
+  total_memory?: InputMaybe<BusinessString_Filter_Operators>;
   user_created?: InputMaybe<BusinessDirectus_Users_Filter>;
   user_updated?: InputMaybe<BusinessDirectus_Users_Filter>;
 };
@@ -3625,8 +3827,10 @@ export type BusinessUpdate_Boutiques_Input = {
   expire_date?: InputMaybe<Scalars['Date']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   images?: InputMaybe<Scalars['JSON']['input']>;
+  logo?: InputMaybe<Scalars['String']['input']>;
   main_image?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  official_account_image?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['Int']['input']>;
   stars?: InputMaybe<Scalars['Int']['input']>;
   status?: InputMaybe<Scalars['String']['input']>;
@@ -3647,10 +3851,13 @@ export type BusinessUpdate_Categories_Input = {
 };
 
 export type BusinessUpdate_Customers_Input = {
+  address?: InputMaybe<Scalars['String']['input']>;
   avatar?: InputMaybe<Scalars['String']['input']>;
   boutique?: InputMaybe<BusinessUpdate_Boutiques_Input>;
+  contact?: InputMaybe<Scalars['String']['input']>;
   date_created?: InputMaybe<Scalars['Date']['input']>;
   date_updated?: InputMaybe<Scalars['Date']['input']>;
+  full_name?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   nick_name?: InputMaybe<Scalars['String']['input']>;
   open_id?: InputMaybe<Scalars['String']['input']>;
@@ -3791,6 +3998,8 @@ export type BusinessUpdate_Products_Input = {
   boutique?: InputMaybe<BusinessUpdate_Boutiques_Input>;
   boutique_id?: InputMaybe<BusinessUpdate_Boutiques_Input>;
   brand?: InputMaybe<Scalars['String']['input']>;
+  carousel?: InputMaybe<Scalars['String']['input']>;
+  carousel_images?: InputMaybe<Scalars['JSON']['input']>;
   category_id?: InputMaybe<BusinessUpdate_Categories_Input>;
   created_at?: InputMaybe<Scalars['Date']['input']>;
   date_created?: InputMaybe<Scalars['Date']['input']>;
@@ -3799,6 +4008,7 @@ export type BusinessUpdate_Products_Input = {
   id?: InputMaybe<Scalars['ID']['input']>;
   images?: InputMaybe<Scalars['JSON']['input']>;
   is_on_sale?: InputMaybe<Scalars['Boolean']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
   main_image?: InputMaybe<Scalars['String']['input']>;
   market_price?: InputMaybe<Scalars['Float']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -3817,9 +4027,22 @@ export type BusinessUpdate_Products_Input = {
 };
 
 export type BusinessUpdate_Terminals_Input = {
+  android_id?: InputMaybe<Scalars['String']['input']>;
+  authorized_boutique?: InputMaybe<BusinessUpdate_Boutiques_Input>;
+  brand?: InputMaybe<Scalars['String']['input']>;
+  carousel_interval?: InputMaybe<Scalars['Int']['input']>;
   date_created?: InputMaybe<Scalars['Date']['input']>;
   date_updated?: InputMaybe<Scalars['Date']['input']>;
+  device_name?: InputMaybe<Scalars['String']['input']>;
+  device_type?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
+  manufacturer?: InputMaybe<Scalars['String']['input']>;
+  model_name?: InputMaybe<Scalars['String']['input']>;
+  os_name?: InputMaybe<Scalars['String']['input']>;
+  os_version?: InputMaybe<Scalars['String']['input']>;
+  purposes?: InputMaybe<Scalars['String']['input']>;
+  supported_cpu_architectures?: InputMaybe<Scalars['String']['input']>;
+  total_memory?: InputMaybe<Scalars['String']['input']>;
   user_created?: InputMaybe<BusinessUpdate_Directus_Users_Input>;
   user_updated?: InputMaybe<BusinessUpdate_Directus_Users_Input>;
 };
@@ -3845,6 +4068,27 @@ export type BusinessUpdate_Visits_Input = {
   user_updated?: InputMaybe<BusinessUpdate_Directus_Users_Input>;
 };
 
+export type BusinessUpdate_Wechat_Users_Input = {
+  access_token?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['Date']['input']>;
+  expires_at?: InputMaybe<Scalars['Date']['input']>;
+  headimgurl?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  is_active?: InputMaybe<Scalars['Boolean']['input']>;
+  language?: InputMaybe<Scalars['String']['input']>;
+  nickname?: InputMaybe<Scalars['String']['input']>;
+  openid?: InputMaybe<Scalars['String']['input']>;
+  privilege?: InputMaybe<Scalars['JSON']['input']>;
+  province?: InputMaybe<Scalars['String']['input']>;
+  refresh_token?: InputMaybe<Scalars['String']['input']>;
+  scope?: InputMaybe<Scalars['String']['input']>;
+  sex?: InputMaybe<Scalars['Int']['input']>;
+  unionid?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['Date']['input']>;
+};
+
 export type BusinessVersion_Boutiques = {
   __typename?: 'version_boutiques';
   address?: Maybe<Scalars['String']['output']>;
@@ -3857,8 +4101,10 @@ export type BusinessVersion_Boutiques = {
   expire_date?: Maybe<Scalars['Date']['output']>;
   id?: Maybe<Scalars['ID']['output']>;
   images?: Maybe<Scalars['JSON']['output']>;
+  logo?: Maybe<Scalars['String']['output']>;
   main_image?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
+  official_account_image?: Maybe<Scalars['String']['output']>;
   sort?: Maybe<Scalars['Int']['output']>;
   stars?: Maybe<Scalars['Int']['output']>;
   status?: Maybe<Scalars['String']['output']>;
@@ -3881,10 +4127,13 @@ export type BusinessVersion_Categories = {
 
 export type BusinessVersion_Customers = {
   __typename?: 'version_customers';
+  address?: Maybe<Scalars['String']['output']>;
   avatar?: Maybe<Scalars['String']['output']>;
   boutique?: Maybe<Scalars['JSON']['output']>;
+  contact?: Maybe<Scalars['String']['output']>;
   date_created?: Maybe<Scalars['Date']['output']>;
   date_updated?: Maybe<Scalars['Date']['output']>;
+  full_name?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['ID']['output']>;
   nick_name?: Maybe<Scalars['String']['output']>;
   open_id?: Maybe<Scalars['String']['output']>;
@@ -3916,6 +4165,8 @@ export type BusinessVersion_Products = {
   boutique?: Maybe<Scalars['JSON']['output']>;
   boutique_id?: Maybe<Scalars['JSON']['output']>;
   brand?: Maybe<Scalars['String']['output']>;
+  carousel?: Maybe<Scalars['String']['output']>;
+  carousel_images?: Maybe<Scalars['JSON']['output']>;
   category_id?: Maybe<Scalars['JSON']['output']>;
   created_at?: Maybe<Scalars['Date']['output']>;
   date_created?: Maybe<Scalars['Date']['output']>;
@@ -3924,6 +4175,7 @@ export type BusinessVersion_Products = {
   id?: Maybe<Scalars['ID']['output']>;
   images?: Maybe<Scalars['JSON']['output']>;
   is_on_sale?: Maybe<Scalars['Boolean']['output']>;
+  location?: Maybe<Scalars['String']['output']>;
   main_image?: Maybe<Scalars['String']['output']>;
   market_price?: Maybe<Scalars['Float']['output']>;
   name?: Maybe<Scalars['String']['output']>;
@@ -3943,9 +4195,22 @@ export type BusinessVersion_Products = {
 
 export type BusinessVersion_Terminals = {
   __typename?: 'version_terminals';
+  android_id?: Maybe<Scalars['String']['output']>;
+  authorized_boutique?: Maybe<Scalars['JSON']['output']>;
+  brand?: Maybe<Scalars['String']['output']>;
+  carousel_interval?: Maybe<Scalars['Int']['output']>;
   date_created?: Maybe<Scalars['Date']['output']>;
   date_updated?: Maybe<Scalars['Date']['output']>;
+  device_name?: Maybe<Scalars['String']['output']>;
+  device_type?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['ID']['output']>;
+  manufacturer?: Maybe<Scalars['String']['output']>;
+  model_name?: Maybe<Scalars['String']['output']>;
+  os_name?: Maybe<Scalars['String']['output']>;
+  os_version?: Maybe<Scalars['String']['output']>;
+  purposes?: Maybe<Scalars['String']['output']>;
+  supported_cpu_architectures?: Maybe<Scalars['String']['output']>;
+  total_memory?: Maybe<Scalars['String']['output']>;
   user_created?: Maybe<Scalars['JSON']['output']>;
   user_updated?: Maybe<Scalars['JSON']['output']>;
 };
@@ -3971,6 +4236,28 @@ export type BusinessVersion_Visits = {
   id?: Maybe<Scalars['ID']['output']>;
   user_created?: Maybe<Scalars['JSON']['output']>;
   user_updated?: Maybe<Scalars['JSON']['output']>;
+};
+
+export type BusinessVersion_Wechat_Users = {
+  __typename?: 'version_wechat_users';
+  access_token?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['Date']['output']>;
+  expires_at?: Maybe<Scalars['Date']['output']>;
+  headimgurl?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['ID']['output']>;
+  is_active?: Maybe<Scalars['Boolean']['output']>;
+  language?: Maybe<Scalars['String']['output']>;
+  nickname?: Maybe<Scalars['String']['output']>;
+  openid?: Maybe<Scalars['String']['output']>;
+  privilege?: Maybe<Scalars['JSON']['output']>;
+  province?: Maybe<Scalars['String']['output']>;
+  refresh_token?: Maybe<Scalars['String']['output']>;
+  scope?: Maybe<Scalars['String']['output']>;
+  sex?: Maybe<Scalars['Int']['output']>;
+  unionid?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['Date']['output']>;
 };
 
 export type BusinessViews = {
@@ -4199,19 +4486,135 @@ export type BusinessVisits_Mutated = {
   key: Scalars['ID']['output'];
 };
 
-export type BusinessCreateOrderMutationVariables = Exact<{
-  orderData: BusinessCreate_Orders_Input;
+export type BusinessWechat_Users = {
+  __typename?: 'wechat_users';
+  access_token?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['Date']['output']>;
+  created_at_func?: Maybe<BusinessDatetime_Functions>;
+  expires_at?: Maybe<Scalars['Date']['output']>;
+  expires_at_func?: Maybe<BusinessDatetime_Functions>;
+  headimgurl?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  is_active?: Maybe<Scalars['Boolean']['output']>;
+  language?: Maybe<Scalars['String']['output']>;
+  nickname?: Maybe<Scalars['String']['output']>;
+  openid: Scalars['String']['output'];
+  privilege?: Maybe<Scalars['JSON']['output']>;
+  privilege_func?: Maybe<BusinessCount_Functions>;
+  province?: Maybe<Scalars['String']['output']>;
+  refresh_token?: Maybe<Scalars['String']['output']>;
+  scope?: Maybe<Scalars['String']['output']>;
+  sex?: Maybe<Scalars['Int']['output']>;
+  unionid?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['Date']['output']>;
+  updated_at_func?: Maybe<BusinessDatetime_Functions>;
+};
+
+export type BusinessWechat_Users_Aggregated = {
+  __typename?: 'wechat_users_aggregated';
+  avg?: Maybe<BusinessWechat_Users_Aggregated_Fields>;
+  avgDistinct?: Maybe<BusinessWechat_Users_Aggregated_Fields>;
+  count?: Maybe<BusinessWechat_Users_Aggregated_Count>;
+  countAll?: Maybe<Scalars['Int']['output']>;
+  countDistinct?: Maybe<BusinessWechat_Users_Aggregated_Count>;
+  group?: Maybe<Scalars['JSON']['output']>;
+  max?: Maybe<BusinessWechat_Users_Aggregated_Fields>;
+  min?: Maybe<BusinessWechat_Users_Aggregated_Fields>;
+  sum?: Maybe<BusinessWechat_Users_Aggregated_Fields>;
+  sumDistinct?: Maybe<BusinessWechat_Users_Aggregated_Fields>;
+};
+
+export type BusinessWechat_Users_Aggregated_Count = {
+  __typename?: 'wechat_users_aggregated_count';
+  access_token?: Maybe<Scalars['Int']['output']>;
+  city?: Maybe<Scalars['Int']['output']>;
+  country?: Maybe<Scalars['Int']['output']>;
+  created_at?: Maybe<Scalars['Int']['output']>;
+  expires_at?: Maybe<Scalars['Int']['output']>;
+  headimgurl?: Maybe<Scalars['Int']['output']>;
+  id?: Maybe<Scalars['Int']['output']>;
+  is_active?: Maybe<Scalars['Int']['output']>;
+  language?: Maybe<Scalars['Int']['output']>;
+  nickname?: Maybe<Scalars['Int']['output']>;
+  openid?: Maybe<Scalars['Int']['output']>;
+  privilege?: Maybe<Scalars['Int']['output']>;
+  province?: Maybe<Scalars['Int']['output']>;
+  refresh_token?: Maybe<Scalars['Int']['output']>;
+  scope?: Maybe<Scalars['Int']['output']>;
+  sex?: Maybe<Scalars['Int']['output']>;
+  unionid?: Maybe<Scalars['Int']['output']>;
+  updated_at?: Maybe<Scalars['Int']['output']>;
+};
+
+export type BusinessWechat_Users_Aggregated_Fields = {
+  __typename?: 'wechat_users_aggregated_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  sex?: Maybe<Scalars['Float']['output']>;
+};
+
+export type BusinessWechat_Users_Filter = {
+  _and?: InputMaybe<Array<InputMaybe<BusinessWechat_Users_Filter>>>;
+  _or?: InputMaybe<Array<InputMaybe<BusinessWechat_Users_Filter>>>;
+  access_token?: InputMaybe<BusinessString_Filter_Operators>;
+  city?: InputMaybe<BusinessString_Filter_Operators>;
+  country?: InputMaybe<BusinessString_Filter_Operators>;
+  created_at?: InputMaybe<BusinessDate_Filter_Operators>;
+  created_at_func?: InputMaybe<BusinessDatetime_Function_Filter_Operators>;
+  expires_at?: InputMaybe<BusinessDate_Filter_Operators>;
+  expires_at_func?: InputMaybe<BusinessDatetime_Function_Filter_Operators>;
+  headimgurl?: InputMaybe<BusinessString_Filter_Operators>;
+  id?: InputMaybe<BusinessNumber_Filter_Operators>;
+  is_active?: InputMaybe<BusinessBoolean_Filter_Operators>;
+  language?: InputMaybe<BusinessString_Filter_Operators>;
+  nickname?: InputMaybe<BusinessString_Filter_Operators>;
+  openid?: InputMaybe<BusinessString_Filter_Operators>;
+  privilege?: InputMaybe<BusinessString_Filter_Operators>;
+  privilege_func?: InputMaybe<BusinessCount_Function_Filter_Operators>;
+  province?: InputMaybe<BusinessString_Filter_Operators>;
+  refresh_token?: InputMaybe<BusinessString_Filter_Operators>;
+  scope?: InputMaybe<BusinessString_Filter_Operators>;
+  sex?: InputMaybe<BusinessNumber_Filter_Operators>;
+  unionid?: InputMaybe<BusinessString_Filter_Operators>;
+  updated_at?: InputMaybe<BusinessDate_Filter_Operators>;
+  updated_at_func?: InputMaybe<BusinessDatetime_Function_Filter_Operators>;
+};
+
+export type BusinessWechat_Users_Mutated = {
+  __typename?: 'wechat_users_mutated';
+  data?: Maybe<BusinessWechat_Users>;
+  event?: Maybe<BusinessEventEnum>;
+  key: Scalars['ID']['output'];
+};
+
+export type BusinessGetUserOrdersSafeQueryVariables = Exact<{
+  openId: Scalars['String']['input'];
 }>;
 
 
-export type BusinessCreateOrderMutation = { __typename?: 'Mutation', create_orders_item?: { __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null } | null, boutique?: { __typename?: 'boutiques', id: string, name?: string | null } | null } | null };
+export type BusinessGetUserOrdersSafeQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null } | null }> };
+
+export type BusinessGetUserOrdersMinimalQueryVariables = Exact<{
+  openId: Scalars['String']['input'];
+}>;
+
+
+export type BusinessGetUserOrdersMinimalQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null }> };
+
+export type BusinessCreate_OrderMutationVariables = Exact<{
+  data: BusinessCreate_Orders_Input;
+}>;
+
+
+export type BusinessCreate_OrderMutation = { __typename?: 'Mutation', create_orders_item?: { __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null } | null, boutique?: { __typename?: 'boutiques', id: string, name?: string | null } | null } | null };
 
 export type BusinessGetUserOrdersQueryVariables = Exact<{
   openId: Scalars['String']['input'];
 }>;
 
 
-export type BusinessGetUserOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null } | null, boutique?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
+export type BusinessGetUserOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null, boutique_id?: { __typename?: 'boutiques', id: string, name?: string | null } | null } | null, customer?: { __typename?: 'customers', id: string, open_id: string, nick_name?: string | null } | null }> };
 
 export type BusinessGetOrderByIdQueryVariables = Exact<{
   orderId: Scalars['GraphQLStringOrFloat']['input'];
@@ -4220,12 +4623,12 @@ export type BusinessGetOrderByIdQueryVariables = Exact<{
 
 export type BusinessGetOrderByIdQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'orders', id: string, total_price?: number | null, status?: string | null, date_created?: any | null, product?: { __typename?: 'products', id: string, name: string, price: number, main_image?: string | null, description?: string | null } | null, boutique?: { __typename?: 'boutiques', id: string, name?: string | null } | null }> };
 
-export type BusinessDeleteOrderMutationVariables = Exact<{
-  orderId: Scalars['ID']['input'];
+export type BusinessDelete_OrderMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
 }>;
 
 
-export type BusinessDeleteOrderMutation = { __typename?: 'Mutation', delete_orders_item?: { __typename?: 'delete_one', id: string } | null };
+export type BusinessDelete_OrderMutation = { __typename?: 'Mutation', delete_orders_item?: { __typename?: 'delete_one', id: string } | null };
 
 export type BusinessGetBoutiqueByIdQueryVariables = Exact<{
   boutiqueId: Scalars['GraphQLStringOrFloat']['input'];
@@ -4256,7 +4659,7 @@ export type BusinessGetProductByIdQueryVariables = Exact<{
 }>;
 
 
-export type BusinessGetProductByIdQuery = { __typename?: 'Query', products_by_id?: { __typename?: 'products', id: string, name: string, subtitle?: string | null, description?: string | null, price: number, main_image?: string | null, images?: any | null, category_id?: { __typename?: 'categories', id: string, name: string } | null } | null };
+export type BusinessGetProductByIdQuery = { __typename?: 'Query', products_by_id?: { __typename?: 'products', id: string, name: string, subtitle?: string | null, description?: string | null, price: number, location?: string | null, main_image?: string | null, images?: any | null, category_id?: { __typename?: 'categories', id: string, name: string } | null } | null };
 
 export type BusinessGetUserBoutiqueQueryVariables = Exact<{
   userId: Scalars['ID']['input'];
@@ -4356,9 +4759,108 @@ export type BusinessCreateVisitWithFullDataMutationVariables = Exact<{
 export type BusinessCreateVisitWithFullDataMutation = { __typename?: 'Mutation', create_visits_item?: { __typename?: 'visits', id: string, date_created?: any | null, customer?: { __typename?: 'customers', id: string, nick_name?: string | null } | null, boutique?: { __typename?: 'boutiques', id: string, name?: string | null } | null } | null };
 
 
-export const CreateOrderDocument = gql`
-    mutation CreateOrder($orderData: create_orders_input!) {
-  create_orders_item(data: $orderData) {
+export const GetUserOrdersSafeDocument = gql`
+    query GetUserOrdersSafe($openId: String!) {
+  orders(
+    filter: {customer: {open_id: {_eq: $openId}}}
+    sort: ["-date_created"]
+    limit: 5
+  ) {
+    id
+    total_price
+    status
+    date_created
+    product {
+      id
+      name
+      price
+      main_image
+      boutique_id {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUserOrdersSafeQuery__
+ *
+ * To run a query within a React component, call `useGetUserOrdersSafeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserOrdersSafeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserOrdersSafeQuery({
+ *   variables: {
+ *      openId: // value for 'openId'
+ *   },
+ * });
+ */
+export function useGetUserOrdersSafeQuery(baseOptions: ApolloReactHooks.QueryHookOptions<BusinessGetUserOrdersSafeQuery, BusinessGetUserOrdersSafeQueryVariables> & ({ variables: BusinessGetUserOrdersSafeQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<BusinessGetUserOrdersSafeQuery, BusinessGetUserOrdersSafeQueryVariables>(GetUserOrdersSafeDocument, options);
+      }
+export function useGetUserOrdersSafeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetUserOrdersSafeQuery, BusinessGetUserOrdersSafeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<BusinessGetUserOrdersSafeQuery, BusinessGetUserOrdersSafeQueryVariables>(GetUserOrdersSafeDocument, options);
+        }
+export function useGetUserOrdersSafeSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetUserOrdersSafeQuery, BusinessGetUserOrdersSafeQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<BusinessGetUserOrdersSafeQuery, BusinessGetUserOrdersSafeQueryVariables>(GetUserOrdersSafeDocument, options);
+        }
+export type GetUserOrdersSafeQueryHookResult = ReturnType<typeof useGetUserOrdersSafeQuery>;
+export type GetUserOrdersSafeLazyQueryHookResult = ReturnType<typeof useGetUserOrdersSafeLazyQuery>;
+export type GetUserOrdersSafeSuspenseQueryHookResult = ReturnType<typeof useGetUserOrdersSafeSuspenseQuery>;
+export type GetUserOrdersSafeQueryResult = ApolloReactCommon.QueryResult<BusinessGetUserOrdersSafeQuery, BusinessGetUserOrdersSafeQueryVariables>;
+export const GetUserOrdersMinimalDocument = gql`
+    query GetUserOrdersMinimal($openId: String!) {
+  orders(filter: {customer: {open_id: {_eq: $openId}}}, limit: 3) {
+    id
+    total_price
+    status
+  }
+}
+    `;
+
+/**
+ * __useGetUserOrdersMinimalQuery__
+ *
+ * To run a query within a React component, call `useGetUserOrdersMinimalQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserOrdersMinimalQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserOrdersMinimalQuery({
+ *   variables: {
+ *      openId: // value for 'openId'
+ *   },
+ * });
+ */
+export function useGetUserOrdersMinimalQuery(baseOptions: ApolloReactHooks.QueryHookOptions<BusinessGetUserOrdersMinimalQuery, BusinessGetUserOrdersMinimalQueryVariables> & ({ variables: BusinessGetUserOrdersMinimalQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<BusinessGetUserOrdersMinimalQuery, BusinessGetUserOrdersMinimalQueryVariables>(GetUserOrdersMinimalDocument, options);
+      }
+export function useGetUserOrdersMinimalLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<BusinessGetUserOrdersMinimalQuery, BusinessGetUserOrdersMinimalQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<BusinessGetUserOrdersMinimalQuery, BusinessGetUserOrdersMinimalQueryVariables>(GetUserOrdersMinimalDocument, options);
+        }
+export function useGetUserOrdersMinimalSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<BusinessGetUserOrdersMinimalQuery, BusinessGetUserOrdersMinimalQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<BusinessGetUserOrdersMinimalQuery, BusinessGetUserOrdersMinimalQueryVariables>(GetUserOrdersMinimalDocument, options);
+        }
+export type GetUserOrdersMinimalQueryHookResult = ReturnType<typeof useGetUserOrdersMinimalQuery>;
+export type GetUserOrdersMinimalLazyQueryHookResult = ReturnType<typeof useGetUserOrdersMinimalLazyQuery>;
+export type GetUserOrdersMinimalSuspenseQueryHookResult = ReturnType<typeof useGetUserOrdersMinimalSuspenseQuery>;
+export type GetUserOrdersMinimalQueryResult = ApolloReactCommon.QueryResult<BusinessGetUserOrdersMinimalQuery, BusinessGetUserOrdersMinimalQueryVariables>;
+export const Create_OrderDocument = gql`
+    mutation CREATE_ORDER($data: create_orders_input!) {
+  create_orders_item(data: $data) {
     id
     total_price
     status
@@ -4376,32 +4878,32 @@ export const CreateOrderDocument = gql`
   }
 }
     `;
-export type BusinessCreateOrderMutationFn = ApolloReactCommon.MutationFunction<BusinessCreateOrderMutation, BusinessCreateOrderMutationVariables>;
+export type BusinessCreate_OrderMutationFn = ApolloReactCommon.MutationFunction<BusinessCreate_OrderMutation, BusinessCreate_OrderMutationVariables>;
 
 /**
- * __useCreateOrderMutation__
+ * __useCreate_OrderMutation__
  *
- * To run a mutation, you first call `useCreateOrderMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateOrderMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreate_OrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreate_OrderMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createOrderMutation, { data, loading, error }] = useCreateOrderMutation({
+ * const [createOrderMutation, { data, loading, error }] = useCreate_OrderMutation({
  *   variables: {
- *      orderData: // value for 'orderData'
+ *      data: // value for 'data'
  *   },
  * });
  */
-export function useCreateOrderMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessCreateOrderMutation, BusinessCreateOrderMutationVariables>) {
+export function useCreate_OrderMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessCreate_OrderMutation, BusinessCreate_OrderMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<BusinessCreateOrderMutation, BusinessCreateOrderMutationVariables>(CreateOrderDocument, options);
+        return ApolloReactHooks.useMutation<BusinessCreate_OrderMutation, BusinessCreate_OrderMutationVariables>(Create_OrderDocument, options);
       }
-export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMutation>;
-export type CreateOrderMutationResult = ApolloReactCommon.MutationResult<BusinessCreateOrderMutation>;
-export type CreateOrderMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessCreateOrderMutation, BusinessCreateOrderMutationVariables>;
+export type Create_OrderMutationHookResult = ReturnType<typeof useCreate_OrderMutation>;
+export type Create_OrderMutationResult = ApolloReactCommon.MutationResult<BusinessCreate_OrderMutation>;
+export type Create_OrderMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessCreate_OrderMutation, BusinessCreate_OrderMutationVariables>;
 export const GetUserOrdersDocument = gql`
     query GetUserOrders($openId: String!) {
   orders(filter: {customer: {open_id: {_eq: $openId}}}, sort: ["-date_created"]) {
@@ -4414,10 +4916,15 @@ export const GetUserOrdersDocument = gql`
       name
       price
       main_image
+      boutique_id {
+        id
+        name
+      }
     }
-    boutique {
+    customer {
       id
-      name
+      open_id
+      nick_name
     }
   }
 }
@@ -4509,39 +5016,39 @@ export type GetOrderByIdQueryHookResult = ReturnType<typeof useGetOrderByIdQuery
 export type GetOrderByIdLazyQueryHookResult = ReturnType<typeof useGetOrderByIdLazyQuery>;
 export type GetOrderByIdSuspenseQueryHookResult = ReturnType<typeof useGetOrderByIdSuspenseQuery>;
 export type GetOrderByIdQueryResult = ApolloReactCommon.QueryResult<BusinessGetOrderByIdQuery, BusinessGetOrderByIdQueryVariables>;
-export const DeleteOrderDocument = gql`
-    mutation DeleteOrder($orderId: ID!) {
-  delete_orders_item(id: $orderId) {
+export const Delete_OrderDocument = gql`
+    mutation DELETE_ORDER($id: ID!) {
+  delete_orders_item(id: $id) {
     id
   }
 }
     `;
-export type BusinessDeleteOrderMutationFn = ApolloReactCommon.MutationFunction<BusinessDeleteOrderMutation, BusinessDeleteOrderMutationVariables>;
+export type BusinessDelete_OrderMutationFn = ApolloReactCommon.MutationFunction<BusinessDelete_OrderMutation, BusinessDelete_OrderMutationVariables>;
 
 /**
- * __useDeleteOrderMutation__
+ * __useDelete_OrderMutation__
  *
- * To run a mutation, you first call `useDeleteOrderMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteOrderMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useDelete_OrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDelete_OrderMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [deleteOrderMutation, { data, loading, error }] = useDeleteOrderMutation({
+ * const [deleteOrderMutation, { data, loading, error }] = useDelete_OrderMutation({
  *   variables: {
- *      orderId: // value for 'orderId'
+ *      id: // value for 'id'
  *   },
  * });
  */
-export function useDeleteOrderMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessDeleteOrderMutation, BusinessDeleteOrderMutationVariables>) {
+export function useDelete_OrderMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<BusinessDelete_OrderMutation, BusinessDelete_OrderMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<BusinessDeleteOrderMutation, BusinessDeleteOrderMutationVariables>(DeleteOrderDocument, options);
+        return ApolloReactHooks.useMutation<BusinessDelete_OrderMutation, BusinessDelete_OrderMutationVariables>(Delete_OrderDocument, options);
       }
-export type DeleteOrderMutationHookResult = ReturnType<typeof useDeleteOrderMutation>;
-export type DeleteOrderMutationResult = ApolloReactCommon.MutationResult<BusinessDeleteOrderMutation>;
-export type DeleteOrderMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessDeleteOrderMutation, BusinessDeleteOrderMutationVariables>;
+export type Delete_OrderMutationHookResult = ReturnType<typeof useDelete_OrderMutation>;
+export type Delete_OrderMutationResult = ApolloReactCommon.MutationResult<BusinessDelete_OrderMutation>;
+export type Delete_OrderMutationOptions = ApolloReactCommon.BaseMutationOptions<BusinessDelete_OrderMutation, BusinessDelete_OrderMutationVariables>;
 export const GetBoutiqueByIdDocument = gql`
     query GetBoutiqueById($boutiqueId: GraphQLStringOrFloat!) {
   boutiques(filter: {id: {_eq: $boutiqueId}}, limit: 1) {
@@ -4695,6 +5202,7 @@ export const GetProductByIdDocument = gql`
     subtitle
     description
     price
+    location
     main_image
     images
     category_id {

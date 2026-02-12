@@ -129,16 +129,16 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   imageArea: {
-    flex: 2.5, // 稍微减少图片空间
+    flex: 3, // 图片区域占比更大（约 3/4）
     justifyContent: 'center',
     alignItems: 'center',
   },
   textArea: {
-    flex: 2.5, // 保持合适的文字区域空间
+    flex: 1, // 文字区域占比更小（约 1/4）
     backgroundColor: 'rgba(0, 0, 0, 0.35)', // 保持背景不透明度，确保文字可读
     padding: 12,
     justifyContent: 'flex-end', // 改为底部对齐，让重要信息在底部显示
-    minHeight: 120,
+    minHeight: 96,
   },
   placeholderCard: {
     width: '100%',

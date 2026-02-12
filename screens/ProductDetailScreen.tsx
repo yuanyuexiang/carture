@@ -295,6 +295,9 @@ const ProductDetailScreen: React.FC = () => {
         {product.category_id && (
           <Text style={styles.category}>分类：{product.category_id.name}</Text>
         )}
+        {product.location && (
+          <Text style={styles.category}>摆放位置：{product.location}</Text>
+        )}
         {product.description && <Text style={styles.desc}>{product.description}</Text>}
         
         {/* 下单按钮 */}
