@@ -6,6 +6,7 @@ import {
   Dimensions,
   Image,
   Modal,
+  PixelRatio,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -20,7 +21,7 @@ import { useBoutiqueContext } from '../contexts/BoutiqueContext';
 import { useGetProductByIdQuery } from '../generated/business-graphql';
 import { useProductViewRecorder } from '../hooks/useProductViewRecorder';
 import { useSimpleOrder } from '../hooks/useSimpleOrder';
-import { getDirectusThumbnailUrl } from '../utils/directus';
+import { getDirectusImageUrl, getDirectusThumbnailUrl } from '../utils/directus';
 import { WechatAuth } from '../utils/wechat-auth';
 
 const ProductDetailScreen: React.FC = () => {
@@ -38,7 +39,7 @@ const ProductDetailScreen: React.FC = () => {
   
   // 图片预览状态
   const [previewVisible, setPreviewVisible] = useState(false);
-  const [currentImageUrl, setCurrentImageUrl] = useState<string>('');
+  const [currentImageId, setCurrentImageId] = useState<string>('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   
@@ -57,10 +58,13 @@ const ProductDetailScreen: React.FC = () => {
     }
   }, [product?.id, product?.name, product?.price]); // 移除 recordView 依赖
 
-  // 主图转为 Directus 图片 URL
-  const mainImageUrl = product?.main_image ? getDirectusThumbnailUrl(product.main_image, 400) : null;
-  // 轮播图转为 Directus 图片 URL 数组
+  const mainImageId = product?.main_image || null;
+
+  // 轮播图（Directus 文件 id 数组）
   const imagesArr = Array.isArray(product?.images) ? product.images : [];
+
+  // 列表/页面展示仍用缩略图（省流量）
+  const mainImageUrl = mainImageId ? getDirectusThumbnailUrl(mainImageId, 400) : null;
   const imagesUrls = imagesArr.map((imgId: string) => getDirectusThumbnailUrl(imgId, 300));
   
   // 调试信息
@@ -72,12 +76,22 @@ const ProductDetailScreen: React.FC = () => {
     imagesUrls
   });
   
-  // 合并所有图片URL (主图 + 轮播图)
-  const allImages = mainImageUrl ? [mainImageUrl, ...imagesUrls] : imagesUrls;
+  // 合并所有图片 ID (主图 + 轮播图)
+  const allImageIds = mainImageId ? [mainImageId, ...imagesArr] : imagesArr;
+
+  // 预览使用高清图（避免放大后模糊）
+  const previewWidth = Math.min(
+    2400,
+    Math.ceil(Dimensions.get('window').width * PixelRatio.get() * 3)
+  );
+  const previewQuality = 95;
+  const currentImageUrl = currentImageId
+    ? getDirectusImageUrl(currentImageId, previewWidth, undefined, previewQuality)
+    : '';
   
   // 打开图片预览
-  const openImagePreview = (imageUrl: string, index: number) => {
-    setCurrentImageUrl(imageUrl);
+  const openImagePreview = (imageId: string, index: number) => {
+    setCurrentImageId(imageId);
     setCurrentImageIndex(index);
     setIsZoomed(false);
     setPreviewVisible(true);
@@ -94,16 +108,16 @@ const ProductDetailScreen: React.FC = () => {
     if (currentImageIndex > 0) {
       const prevIndex = currentImageIndex - 1;
       setCurrentImageIndex(prevIndex);
-      setCurrentImageUrl(allImages[prevIndex]);
+      setCurrentImageId(allImageIds[prevIndex]);
     }
   };
   
   // 下一张图片
   const goToNextImage = () => {
-    if (currentImageIndex < allImages.length - 1) {
+    if (currentImageIndex < allImageIds.length - 1) {
       const nextIndex = currentImageIndex + 1;
       setCurrentImageIndex(nextIndex);
-      setCurrentImageUrl(allImages[nextIndex]);
+      setCurrentImageId(allImageIds[nextIndex]);
     }
   };
   
@@ -216,13 +230,13 @@ const ProductDetailScreen: React.FC = () => {
         if (currentImageIndex > 0) {
           const prevIndex = currentImageIndex - 1;
           setCurrentImageIndex(prevIndex);
-          setCurrentImageUrl(allImages[prevIndex]);
+          setCurrentImageId(allImageIds[prevIndex]);
         }
       } else if (event.key === 'ArrowRight') {
-        if (currentImageIndex < allImages.length - 1) {
+        if (currentImageIndex < allImageIds.length - 1) {
           const nextIndex = currentImageIndex + 1;
           setCurrentImageIndex(nextIndex);
-          setCurrentImageUrl(allImages[nextIndex]);
+          setCurrentImageId(allImageIds[nextIndex]);
         }
       } else if (event.key === 'Escape') {
         setPreviewVisible(false);
@@ -253,10 +267,10 @@ const ProductDetailScreen: React.FC = () => {
       if (distance > 0) {
         // 向左滑动，显示下一张
         console.log('原生向左滑动，下一张');
-        if (currentImageIndex < allImages.length - 1) {
+          if (currentImageIndex < allImageIds.length - 1) {
           const nextIndex = currentImageIndex + 1;
           setCurrentImageIndex(nextIndex);
-          setCurrentImageUrl(allImages[nextIndex]);
+            setCurrentImageId(allImageIds[nextIndex]);
         }
       } else {
         // 向右滑动，显示上一张
@@ -264,7 +278,7 @@ const ProductDetailScreen: React.FC = () => {
         if (currentImageIndex > 0) {
           const prevIndex = currentImageIndex - 1;
           setCurrentImageIndex(prevIndex);
-          setCurrentImageUrl(allImages[prevIndex]);
+            setCurrentImageId(allImageIds[prevIndex]);
         }
       }
     };
@@ -279,7 +293,7 @@ const ProductDetailScreen: React.FC = () => {
         window.removeEventListener('touchend', handleTouchEndNative);
       };
     }
-  }, [previewVisible, currentImageIndex, allImages, isZoomed]);
+  }, [previewVisible, currentImageIndex, allImageIds, isZoomed]);
 
   // 在所有 Hooks 调用之后再进行条件检查
   if (loading) return <ActivityIndicator />;
@@ -291,7 +305,7 @@ const ProductDetailScreen: React.FC = () => {
       <ScrollView style={styles.container}>
         {mainImageUrl && (
           <View style={styles.imageWrap}>
-            <TouchableOpacity onPress={() => openImagePreview(mainImageUrl, 0)}>
+            <TouchableOpacity onPress={() => mainImageId && openImagePreview(mainImageId, 0)}>
               <Image source={{ uri: mainImageUrl }} style={styles.image} />
             </TouchableOpacity>
           </View>
@@ -336,14 +350,17 @@ const ProductDetailScreen: React.FC = () => {
               style={styles.imagesScroll}
               contentContainerStyle={styles.imagesScrollContent}
             >
-              {imagesUrls.map((imgUrl: string, idx: number) => (
+              {imagesArr.map((imgId: string, idx: number) => {
+                const imgUrl = getDirectusThumbnailUrl(imgId, 300);
+                return (
                 <TouchableOpacity 
-                  key={idx} 
-                  onPress={() => openImagePreview(imgUrl, mainImageUrl ? idx + 1 : idx)}
+                  key={imgId || idx}
+                  onPress={() => openImagePreview(imgId, mainImageId ? idx + 1 : idx)}
                 >
                   <Image source={{ uri: imgUrl }} style={styles.imagesItem} />
                 </TouchableOpacity>
-              ))}
+                );
+              })}
             </ScrollView>
           </View>
         )}
@@ -364,14 +381,13 @@ const ProductDetailScreen: React.FC = () => {
               <ZoomableImage
                 uri={currentImageUrl}
                 style={styles.previewImage}
-                doubleTapScale={2.5}
                 onZoomChange={setIsZoomed}
               />
               
               {/* 图片指示器 */}
               <View style={styles.imageIndicator}>
                 <Text style={styles.indicatorText}>
-                  {currentImageIndex + 1} / {allImages.length}
+                  {currentImageIndex + 1} / {allImageIds.length}
                 </Text>
               </View>
               
@@ -384,7 +400,7 @@ const ProductDetailScreen: React.FC = () => {
               </TouchableOpacity>
               
               {/* 简化的滑动提示 */}
-              {allImages.length > 1 && (
+              {allImageIds.length > 1 && (
                 <View style={styles.swipeHint}>
                   <Text style={styles.swipeHintText}>左右滑动切换图片</Text>
                 </View>
